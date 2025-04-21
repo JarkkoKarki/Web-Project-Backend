@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Api endpoints</title>
+    <title>Api Endpoints</title>
     <link href="app/css/style.css" rel="stylesheet" />
   </head>
   <body>
     <header>
-      <h1>Project Rest api</h1>
+      <h1>Project REST API Documentation</h1>
     </header>
     <div>
       <div class="wrapper">
@@ -17,7 +17,15 @@
         </div>
         <div class="title">
           <h3>Users</h3>
-          <p>/api/users</p>
+          <ul>
+            <li><strong>GET</strong> /api/users - Retrieve all users</li>
+            <li><strong>GET</strong> /api/users/:id - Retrieve a user by ID</li>
+            <li><strong>POST</strong> /api/users - Create a new user</li>
+            <li><strong>PUT</strong> /api/users/:id - Update a user by ID</li>
+            <li>
+              <strong>DELETE</strong> /api/users/:id - Delete a user by ID
+            </li>
+          </ul>
         </div>
       </div>
     </div>

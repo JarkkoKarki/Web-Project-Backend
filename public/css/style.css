@@ -67,3 +67,8 @@ p {
   justify-content: center;
   font-size: 1.5em;
 }
+
+li {
+  padding: 2em;
+  border-bottom: solid 1px black;
+}
