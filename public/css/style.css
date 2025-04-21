@@ -1,24 +1,69 @@
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  display: block;
   background-color: rgb(66, 69, 71);
-  padding: 2rem;
   margin: 0;
 }
 
-h1,
+header {
+  display: block;
+  background-color: rgb(86, 90, 94);
+  border-bottom-left-radius: 0.65em;
+  border-bottom-right-radius: 0.65em;
+  width: 100%;
+  height: 60%;
+  margin: 0;
+}
+h1 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  color: rgb(255, 255, 255);
+  padding: 4rem;
+}
+
 .wrapper {
   display: flex;
   color: white;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   background-color: rgb(86, 90, 94);
   border-radius: 0.65em;
-  padding: 2em;
-  align-items: center;
+  padding: 4em;
+  margin: 10%;
+  flex-direction: column;
+  border: solid black 2px;
+}
+
+.wrapper h2 {
+  background-color: rgb(59, 59, 59);
+  border-radius: 1em;
+  width: 6em;
+  padding: 1.2em;
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  margin: 2em;
+  display: flex;
   justify-content: center;
   flex-direction: column;
+  border: solid black 1px;
+  border-radius: 0.65em;
+  box-shadow: 2px 3px 0.5em rgb(0, 0, 0);
+}
+
+h3 {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(59, 59, 59);
+  border-bottom-right-radius: 1em;
+  width: 6em;
+  padding: 1.2em;
+  margin: 0;
 }
 p {
+  display: flex;
+  justify-content: center;
   font-size: 1.5em;
 }
