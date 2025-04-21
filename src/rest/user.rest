@@ -1,0 +1,35 @@
+### Create User
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "Testi",
+  "email": "Testi.Testi@Testi.Testi",
+  "password": "salasana",
+  "role": "user",
+  "address": "Test Address"
+}
+
+### Get Users
+GET http://localhost:3000/api/users
+Content-Type: application/json
+
+### Get user by ID
+GET http://localhost:3000/api/users/16
+Content-Type: application/json
+
+### Update a user by ID
+PUT http://localhost:3000/api/users/16
+Content-Type: application/json
+
+{
+  "username": "Testi",
+  "email": "updated.email@test.com",
+  "password": "newpassword",
+  "role": "user",
+  "address": "Updated Address"
+}
+
+### Delete a user by ID
+DELETE http://localhost:3000/api/users/17
+Content-Type: application/json
