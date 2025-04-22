@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Api Endpoints</title>
-    <link href="app/css/style.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
   </head>
   <body>
     <header>
@@ -27,15 +27,15 @@
               <p>Example Response:</p>
               <pre>
                 {
-                  "id": 101,
-                  "username": "matti",
-                  "password": "$2b$10$rdUzxAcXahkFKPha89jMLedWGE1mYVlERZchxRG98ak69lB.IhWkG",
-                  "role": "user",
-                  "address": "Test Address",
-                  "created_at": "2025-04-22T13:27:51.000Z",
-                  "email": "matti.matti@Testi.Testi",
-                  "filename": "file"
-                }
+                  "id": 14,
+                  "username": "john_doe",
+                  "password": "secret123",
+                  "role": "customer",
+                  "address": "Example ave 5",
+                  "created_at": "2025-04-21T16:01:08.000Z",
+                  "email": "",
+                  "filename": ""
+                },
               </pre>
             </li>
             <li>
@@ -66,19 +66,35 @@
               </pre>
               <p>Body:</p>
               <pre>
-                {
-                  "username": "hfsff",
-                  "email": "accchssfg@Testi.Testi",
-                  "password": "salasana",
-                  "address": "Test Address",
-                  "filename": "file"
+                  {
+                    "username": "bgadg",
+                    "email": "gdagadgbgdabdgad@Testi.Testi",
+                    "password": "badggbad",
+                    "address": "Test Address",
+                    "filename": "file"
+                  }
+
+                  OR WITH FILE
+                  
+                  Content-Type: image/jpeg  
+                  OR  
+                  Content-Type: image/png
+
+                  {  
+                  "username": "bgadg",
+                  "email": "gdagadgbgdabdgad@Testi.Testi",
+                  "password": "badggbad",
+                  "address": "Test Address"
+                  "profilePicture": "image.jpg"
                 }
               </pre>
               <p>Example Response:</p>
               <pre>
                 {
                   "message": "User created successfully",
-                  "user_id": 103
+                  "user_id": 124,
+                  "filename": "c3f9e28351eb8057a5646d09711fc56b",
+                  "thumbnailPath": "uploads\\c3f9e28351eb8057a5646d09711fc56b_thumb.jpg"
                 }
               </pre>
             </li>
@@ -87,6 +103,7 @@
               <p>Header:</p>
               <pre>
               Content-Type: application/json
+              Authorization: Bearer "Token"
               </pre>
               <p>Body:</p>
               <pre>
@@ -94,9 +111,23 @@
                   "username": "Testi",
                   "email": "updated.email@test.com",
                   "password": "newpassword",
-                  "role": "user",
                   "address": "Updated Address"
                 }
+
+                OR WITH FILE
+                  
+                Content-Type: image/jpeg  
+                OR  
+                Content-Type: image/png
+                
+                {  
+                  "username": "Testi",
+                  "email": "Testi@Testi.Testi",
+                  "password": "Testi",
+                  "address": "Testi"
+                  "profilePicture": "image.jpg"
+                }
+
               </pre>
               <p>Example Response:</p>
               <pre>
@@ -110,6 +141,7 @@
               <p>Header:</p>
               <pre>
               Content-Type: application/json
+              Authorization: Bearer "ADMIN_TOKEN"
               </pre>
               <p>Example Response:</p>
               <pre>
@@ -164,12 +196,11 @@
               <p>Body:</p>
               <pre>
                 {
-                "username": "testuser",
-                "email": "testuser@example.com",
-                "password": "password123",
-                "filename": "file",
-                "address": "Testitie",
-                "role": "admin"
+                  "username": "dafhadf",
+                  "email": "adfhadf@example.com",
+                  "password": "adfhadf",
+                  "address": "Testitie",
+                  "role": "admin"
                 }
               </pre>
               <p>Example Response:</p>
