@@ -1,0 +1,25 @@
+### Register a new user
+POST http://localhost:3000/api/auth
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Login a user
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+### Get current user (requires token)
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer "TOKEN"
+### Logout a user
+GET http://localhost:3000/api/auth/logout

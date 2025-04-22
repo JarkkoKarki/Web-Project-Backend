@@ -20,6 +20,19 @@ const addUser = async (user) => {
   return { user_id: rows.insertId };
 };
 
+const login = async (username) => {
+  const sql = `SELECT * FROM users WHERE username = ?`;
+  const [rows] = await promisePool.execute(sql, [username]);
+
+  console.log("Login query result:", rows);
+
+  if (rows.length === 0) {
+    return false;
+  }
+
+  return rows[0];
+};
+
 const findUserById = async (id) => {
   const [rows] = await promisePool.execute("SELECT * FROM users WHERE id = ?", [
     id,
@@ -101,4 +114,5 @@ export {
   modifyUser,
   removeUser,
   createUser,
+  login,
 };
