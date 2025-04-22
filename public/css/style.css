@@ -77,3 +77,9 @@ li {
   padding: 2em;
   border-bottom: solid 1px black;
 }
+
+pre {
+  background-color: rgb(59, 59, 59, 0.8);
+  border-radius: 2em;
+  padding: 2em;
+}
