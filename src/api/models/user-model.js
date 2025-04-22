@@ -89,30 +89,19 @@ const addUserAdmin = async ({
   }
 };
 
-const modifyUser = async (user, id) => {
+const modifyUser = async (updateData, userId) => {
   try {
-    const filteredUser = Object.fromEntries(
-      Object.entries(user).filter(([key]) => key !== "role")
-    );
+    delete updateData.role;
 
-    const fields = Object.keys(filteredUser)
+    const fields = Object.keys(updateData)
       .map((key) => `${key} = ?`)
       .join(", ");
-    const values = [...Object.values(filteredUser), id];
+    const values = Object.values(updateData);
 
     const sql = `UPDATE users SET ${fields} WHERE id = ?`;
-    console.log("SQL Query:", sql);
-    console.log("Values:", values);
+    const [result] = await promisePool.execute(sql, [...values, userId]);
 
-    const [result] = await promisePool.execute(sql, values);
-
-    console.log("Update result:", result);
-
-    if (result.affectedRows === 0) {
-      return { message: "User not found" };
-    }
-
-    return { message: "User updated successfully" };
+    return result.affectedRows > 0;
   } catch (error) {
     console.error("Error in modifyUser:", error);
     throw error;

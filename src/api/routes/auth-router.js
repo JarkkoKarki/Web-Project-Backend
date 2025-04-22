@@ -1,5 +1,5 @@
 import { authUser, postUserAdmin } from "../controllers/auth-controller.js";
-import { authenticateToken } from "../middlewares/middlewares.js";
+import { authenticateToken, checkAdmin } from "../middlewares/middlewares.js";
 import express from "express";
 
 const authRouter = express.Router();
@@ -11,7 +11,7 @@ authRouter.get("/me", authenticateToken, (req, res) => {
   res.json(res.locals.user);
 });
 
-authRouter.post("/register", authenticateToken, postUserAdmin);
+authRouter.post("/register", authenticateToken, checkAdmin, postUserAdmin);
 
 authRouter.get("/logout", (req, res, next) => {
   try {

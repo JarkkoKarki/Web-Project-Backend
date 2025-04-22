@@ -31,7 +31,7 @@ const authUser = async (req, res) => {
 
 const postUserAdmin = async (req, res) => {
   try {
-    const { username, email, password, filename, address, role } = req.body;
+    const { username, email, password, address, role } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -39,7 +39,7 @@ const postUserAdmin = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      filename,
+      filename: "uploads/defaul.png",
       address,
       role,
     });

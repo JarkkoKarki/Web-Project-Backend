@@ -7,32 +7,39 @@ dotenv.config();
 export const upload = multer({
   dest: "uploads/",
   limits: {
-    fileSize: 10 * 1024 * 1024, // Max file size: 10 MB
+    fileSize: 10 * 1024 * 1024, // 10 MB
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
       cb(null, true);
     } else {
-      const error = new Error("Only image files are allowed!");
-      error.status = 400;
-      cb(error, false);
+      cb(new Error("Only .jpeg and .png files are allowed"), false);
     }
   },
 });
 
 export const uploadFields = upload.fields([
   { name: "profilePicture", maxCount: 1 },
+  { name: "file", maxCount: 1 },
 ]);
 
 export const createThumbnail = async (req, res, next) => {
   try {
     if (!req.file) {
-      const error = new Error("No file uploaded");
+      console.log("No file uploaded, skipping thumbnail creation.");
+      return next();
+    }
+
+    if (
+      req.file.mimetype !== "image/jpeg" &&
+      req.file.mimetype !== "image/png"
+    ) {
+      const error = new Error("Unsupported file format");
       error.status = 400;
       return next(error);
     }
 
-    console.log("Uploaded file path:", req.file.path);
+    console.log("Uploaded file details:", req.file);
 
     let extension = "jpg";
     if (req.file.mimetype === "image/png") {
@@ -101,6 +108,28 @@ export const checkUserOwnership = (req, res, next) => {
   } catch (error) {
     console.error("Error in checkUserOwnership:", error);
     next(error);
+  }
+};
+
+export const checkAdmin = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.role !== "admin") {
+      return res.status(403).json({ error: "Forbidden: Admins only" });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Error in checkAdmin middleware:", error);
+    res.status(403).json({ error: "Forbidden: Invalid token" });
   }
 };
 

@@ -23,21 +23,37 @@ const getUserById = async (req, res) => {
 
 const postUser = async (req, res) => {
   try {
-    console.log("Incoming request body:", req.body);
+    const { username, email, password, address } = req.body;
+    const filename = req.file ? req.file.filename : "uploads/default.png";
+    const thumbnailPath = req.file
+      ? req.file.thumbnailPath
+      : "uploads/default.png";
+    console.log(username, email, password, address);
+    console.log(filename);
+    console.log(thumbnailPath);
+    if (!username || !email || !password || !address) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
 
-    req.body.password = bcrypt.hashSync(req.body.password, 10);
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
-    const result = await addUser(req.body);
-    console.log("Add user result:", result);
+    const result = await addUser({
+      username,
+      email,
+      password: hashedPassword,
+      filename: thumbnailPath,
+      address,
+    });
+
     if (result && result.user_id) {
       res.status(201).json({
         message: "User created successfully",
         user_id: result.user_id,
+        filename,
+        thumbnailPath,
       });
-    } else if (result && result.error) {
-      res.status(400).json({ error: result.error });
     } else {
-      res.status(500).json({ error: "Failed to create user" });
+      res.status(500).json({ error: "User already Exist" });
     }
   } catch (error) {
     console.error("Error in postUser:", error);
@@ -46,12 +62,38 @@ const postUser = async (req, res) => {
 };
 
 const putUser = async (req, res) => {
-  const result = await modifyUser(req.body, req.params.id);
-  if (result.message) {
-    res.status(200);
-    res.json(result);
-  } else {
-    res.sendStatus(400);
+  try {
+    const { username, email, password, address } = req.body;
+    const userId = req.params.id;
+    const filename = req.file ? req.file.filename : "uploads/default.png";
+    const thumbnailPath = req.file
+      ? req.file.thumbnailPath
+      : "uploads/default.png";
+
+    const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
+
+    const updateData = {
+      username,
+      email,
+      password: hashedPassword,
+      address,
+      filename: thumbnailPath,
+    };
+
+    Object.keys(updateData).forEach(
+      (key) => updateData[key] === null && delete updateData[key]
+    );
+
+    const result = await modifyUser(updateData, userId);
+
+    if (result) {
+      res.status(200).json({ message: "User updated successfully" });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error in putUser:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
