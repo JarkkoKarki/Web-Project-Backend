@@ -22,13 +22,26 @@ const getUserById = async (req, res) => {
 };
 
 const postUser = async (req, res) => {
-  req.body.password = bcrypt.hashSync(req.body.password, 10);
-  const result = await addUser(req.body);
-  if (result.user_id) {
-    res.status(201);
-    res.json(result);
-  } else {
-    res.sendStatus(400);
+  try {
+    console.log("Incoming request body:", req.body);
+
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
+
+    const result = await addUser(req.body);
+    console.log("Add user result:", result);
+    if (result && result.user_id) {
+      res.status(201).json({
+        message: "User created successfully",
+        user_id: result.user_id,
+      });
+    } else if (result && result.error) {
+      res.status(400).json({ error: result.error });
+    } else {
+      res.status(500).json({ error: "Failed to create user" });
+    }
+  } catch (error) {
+    console.error("Error in postUser:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 const putUser = async (req, res) => {

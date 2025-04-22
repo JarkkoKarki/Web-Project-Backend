@@ -1,6 +1,56 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import sharp from "sharp";
+import multer from "multer";
 dotenv.config();
+
+export const upload = multer({
+  dest: "uploads/",
+  limits: {
+    fileSize: 10 * 1024 * 1024, // Max file size: 10 MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      const error = new Error("Only image files are allowed!");
+      error.status = 400;
+      cb(error, false);
+    }
+  },
+});
+
+export const uploadFields = upload.fields([
+  { name: "profilePicture", maxCount: 1 },
+]);
+
+export const createThumbnail = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      const error = new Error("No file uploaded");
+      error.status = 400;
+      return next(error);
+    }
+
+    console.log("Uploaded file path:", req.file.path);
+
+    let extension = "jpg";
+    if (req.file.mimetype === "image/png") {
+      extension = "png";
+    }
+
+    const thumbnailPath = `${req.file.path}_thumb.${extension}`;
+    await sharp(req.file.path).resize(100, 100).toFile(thumbnailPath);
+
+    console.log("Thumbnail created at:", thumbnailPath);
+
+    req.file.thumbnailPath = thumbnailPath;
+    next();
+  } catch (error) {
+    console.error("Error in createThumbnail:", error);
+    next(error);
+  }
+};
 
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
