@@ -1,7 +1,7 @@
 ### Register a new user
 POST http://localhost:3000/api/auth/register
 Content-Type: application/json
-Authorization: Bearer 
+Authorization: Bearer "ADMIN_TOKEN"
 {
   "username": "testuser",
   "email": "testuser@example.com",
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ### Get current user (requires token)
 GET http://localhost:3000/api/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOCwidXNlcm5hbWUiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NTMyOTgzMCwiZXhwIjoxNzQ1MzMzNDMwfQ.d1Vtd76To41Nb65KH0BC-MtdjOJuv0NdQGfkeRCPLbI
+Authorization: Bearer "TOKEN"
 Content-Type: application/json
 ### Logout a user
 GET http://localhost:3000/api/auth/logout
