@@ -3,9 +3,9 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "hfsff",
-  "email": "accchssfg@Testi.Testi",
-  "password": "salasana",
+  "username": "badcc",
+  "email": "bdacc@Testi.Testi",
+  "password": "badcc",
   "address": "Test Address",
   "filename": "file"
 }
@@ -15,11 +15,11 @@ GET http://localhost:3000/api/users
 Content-Type: application/json
 
 ### Get user by ID
-GET http://localhost:3000/api/users/16
+GET http://localhost:3000/api/users/102
 Content-Type: application/json
 
 ### Update a user by ID
-PUT http://localhost:3000/api/users/16
+PUT http://localhost:3000/api/users/13
 Content-Type: application/json
 
 {
@@ -31,5 +31,5 @@ Content-Type: application/json
 }
 
 ### Delete a user by ID
-DELETE http://localhost:3000/api/users/16
+DELETE http://localhost:3000/api/users/100
 Content-Type: application/json

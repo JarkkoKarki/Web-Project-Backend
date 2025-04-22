@@ -79,45 +79,26 @@ const addUserAdmin = async ({
       "INSERT INTO users (username, email, password, filename, address, role) VALUES (?, ?, ?, ?, ?, ?)",
       [username, email, password, filename, address, role]
     );
+
     console.log("Insert result:", result);
 
     return result.affectedRows > 0 ? { user_id: result.insertId } : false;
   } catch (error) {
-    console.error("Error in addUser:", error);
+    console.error("Error in addUserAdmin:", error);
     return false;
   }
 };
 
-const createUser = async ({ username, email, password, address = "" }) => {
-  role = "user";
-  try {
-    const [existingUser] = await promisePool.execute(
-      "SELECT * FROM users WHERE username = ? OR email = ?",
-      [username, email]
-    );
-
-    if (existingUser.length > 0) {
-      console.log("User already exists:", existingUser);
-      return { error: "Username or email already exists" };
-    }
-
-    const [result] = await promisePool.execute(
-      "INSERT INTO users (username, email, password, role, address) VALUES (?, ?, ?, ?, ?)",
-      [username, email, password, role, address]
-    );
-
-    return result.affectedRows > 0;
-  } catch (error) {
-    console.error("Error in createUser:", error);
-    return false;
-  }
-};
 const modifyUser = async (user, id) => {
   try {
-    const fields = Object.keys(user)
+    const filteredUser = Object.fromEntries(
+      Object.entries(user).filter(([key]) => key !== "role")
+    );
+
+    const fields = Object.keys(filteredUser)
       .map((key) => `${key} = ?`)
       .join(", ");
-    const values = [...Object.values(user), id];
+    const values = [...Object.values(filteredUser), id];
 
     const sql = `UPDATE users SET ${fields} WHERE id = ?`;
     console.log("SQL Query:", sql);
@@ -137,7 +118,6 @@ const modifyUser = async (user, id) => {
     throw error;
   }
 };
-
 const removeUser = async (id) => {
   try {
     const sql = `DELETE FROM users WHERE id = ?`;
@@ -168,6 +148,5 @@ export {
   addUserAdmin,
   modifyUser,
   removeUser,
-  createUser,
   login,
 };

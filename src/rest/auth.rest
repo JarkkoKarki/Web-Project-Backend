@@ -3,12 +3,12 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 Authorization: Bearer "ADMIN_TOKEN"
 {
-  "username": "testuser",
-  "email": "testuser@example.com",
-  "password": "password123",
+  "username": "vvvvvvvccv",
+  "email": "vvvvvvvccv@example.com",
+  "password": "vvvvvvvccv",
   "filename": "file",
   "address": "Testitie",
-  "role": "admin"
+  "role": "user"
 }
 
 ### Login a user
@@ -16,8 +16,8 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "testuser",
-  "password": "password123"
+  "username": "vvvvvvvcc",
+  "password": "vvvvvvvcc"
 }
 
 ### Get current user (requires token)
