@@ -3,9 +3,9 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "badcc",
-  "email": "bdacc@Testi.Testi",
-  "password": "badcc",
+  "username": "aaaaa",
+  "email": "aaaaa@Testi.Testi",
+  "password": "aaaaa",
   "address": "Test Address",
   "filename": "file"
 }
@@ -15,21 +15,77 @@ GET http://localhost:3000/api/users
 Content-Type: application/json
 
 ### Get user by ID
-GET http://localhost:3000/api/users/102
+GET http://localhost:3000/api/users/115
 Content-Type: application/json
 
 ### Update a user by ID
-PUT http://localhost:3000/api/users/13
+PUT http://localhost:3000/api/users/128
 Content-Type: application/json
+Authorization: Bearer "TOKEN"
 
 {
   "username": "Testi",
   "email": "updated.email@test.com",
   "password": "newpassword",
-  "role": "user",
   "address": "Updated Address"
 }
 
+### Update user With A picture
+
+PUT http://localhost:3000/api/users/128
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer "TOKEN"
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="profilePicture"; filename="image.jpg"
+Content-Type: image/jpeg
+
+< Web-Project-Backend/public/kisse1.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="username"
+
+angdangd
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+angdangd.email@example.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="password"
+
+angdangd
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="address"
+
+Updated Address
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 ### Delete a user by ID
-DELETE http://localhost:3000/api/users/100
+DELETE http://localhost:3000/api/users/108
 Content-Type: application/json
+Authorization: Bearer "ADMIN_TOKEN"
+
+### Create User Picture
+POST http://localhost:3000/api/users
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="profilePicture"; filename="image.jpg"
+Content-Type: image/jpeg
+
+< Web-Project-Backend/public/kisse1.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="username"
+
+angdangd
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+angdangd@Testi.Testi
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="password"
+
+angdangd
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="address"
+
+Test Address
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

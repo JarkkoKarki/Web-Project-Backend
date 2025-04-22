@@ -1,14 +1,13 @@
 ### Register a new user
 POST http://localhost:3000/api/auth/register
 Content-Type: application/json
-Authorization: Bearer "ADMIN_TOKEN"
+Authorization: Bearer "TOKEN"
 {
-  "username": "vvvvvvvccv",
-  "email": "vvvvvvvccv@example.com",
-  "password": "vvvvvvvccv",
-  "filename": "file",
+  "username": "dafhadf",
+  "email": "adfhadf@example.com",
+  "password": "adfhadf",
   "address": "Testitie",
-  "role": "user"
+  "role": "admin"
 }
 
 ### Login a user
@@ -16,13 +15,13 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "vvvvvvvcc",
-  "password": "vvvvvvvcc"
+  "username": "bbbbbbbbb",
+  "password": "bbbbbbbbb"
 }
 
 ### Get current user (requires token)
 GET http://localhost:3000/api/auth/me
-Authorization: Bearer "TOKEN"
 Content-Type: application/json
+Authorization: Bearer "TOKEN"
 ### Logout a user
 GET http://localhost:3000/api/auth/logout
