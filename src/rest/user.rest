@@ -3,11 +3,11 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "Testi",
-  "email": "Testi.Testi@Testi.Testi",
+  "username": "vvvv",
+  "email": "vvvvv.vvvaaaa@Testi.Testi",
   "password": "salasana",
-  "role": "user",
-  "address": "Test Address"
+  "address": "Test Address",
+  "filename": "file",
 }
 
 ### Get Users

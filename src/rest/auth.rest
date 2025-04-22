@@ -1,12 +1,15 @@
 ### Register a new user
-POST http://localhost:3000/api/auth
+POST http://localhost:3000/api/auth/register
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNSwidXNlcm5hbWUiOiJhZG1pbjEyMzQiLCJpYXQiOjE3NDUzMjgzNTYsImV4cCI6MTc0NTMzMTk1Nn0.0wDFw1RATA_3mYt7gc-D__nqQMUnNmhC4rwWAhzBkmg
 
 {
-  "name": "Test User",
   "username": "testuser",
   "email": "testuser@example.com",
-  "password": "password123"
+  "password": "password123",
+  "filename": "file",
+  "address": "Testitie",
+  "role": "admin"
 }
 
 ### Login a user

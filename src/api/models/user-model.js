@@ -6,14 +6,8 @@ const listAllUsers = async () => {
   return rows;
 };
 
-const addUser = async ({
-  username,
-  email,
-  password,
-  filename,
-  address,
-  role,
-}) => {
+const addUser = async ({ username, email, password, filename, address }) => {
+  const role = "user";
   try {
     const [existingUser] = await promisePool.execute(
       "SELECT * FROM users WHERE username = ? OR email = ?",
@@ -62,13 +56,40 @@ const findUserById = async (id) => {
   return rows[0];
 };
 
-const createUser = async ({
+const addUserAdmin = async ({
   username,
   email,
   password,
+  filename,
+  address,
   role,
-  address = "",
 }) => {
+  try {
+    const [existingUser] = await promisePool.execute(
+      "SELECT * FROM users WHERE username = ? OR email = ?",
+      [username, email]
+    );
+
+    if (existingUser.length > 0) {
+      console.log("User already exists:", existingUser);
+      return { error: "Username or email already exists" };
+    }
+
+    const [result] = await promisePool.execute(
+      "INSERT INTO users (username, email, password, filename, address, role) VALUES (?, ?, ?, ?, ?, ?)",
+      [username, email, password, filename, address, role]
+    );
+    console.log("Insert result:", result);
+
+    return result.affectedRows > 0 ? { user_id: result.insertId } : false;
+  } catch (error) {
+    console.error("Error in addUser:", error);
+    return false;
+  }
+};
+
+const createUser = async ({ username, email, password, address = "" }) => {
+  role = "user";
   try {
     const [existingUser] = await promisePool.execute(
       "SELECT * FROM users WHERE username = ? OR email = ?",
@@ -144,6 +165,7 @@ export {
   listAllUsers,
   findUserById,
   addUser,
+  addUserAdmin,
   modifyUser,
   removeUser,
   createUser,

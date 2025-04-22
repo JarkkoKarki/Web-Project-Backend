@@ -13,6 +13,11 @@ authRouter.get("/me", authenticateToken, (req, res) => {
   res.json(res.locals.user);
 });
 
+authRouter.post("/register", authenticateToken, (req, res) => {
+  console.log(req);
+  res.json(res.locals.user);
+});
+
 authRouter.get("/logout", (req, res, next) => {
   try {
     console.log(req);

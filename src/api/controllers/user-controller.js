@@ -44,6 +44,7 @@ const postUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 const putUser = async (req, res) => {
   const result = await modifyUser(req.body, req.params.id);
   if (result.message) {

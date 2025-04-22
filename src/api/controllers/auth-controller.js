@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUser, login } from "../models/user-model.js";
+import { addUserAdmin, createUser, login } from "../models/user-model.js";
 
 const registerUser = async (req, res, next) => {
   try {
@@ -73,4 +73,30 @@ const authUser = async (req, res, next) => {
     next(error);
   }
 };
-export { registerUser, authUser };
+
+const postUserAdmin = async (req, res) => {
+  try {
+    console.log("Incoming request body:", req.body);
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
+
+    const result = await addUserAdmin(req.body);
+    console.log("Add user result:", result);
+    if (result && result.user_id) {
+      res.status(201).json({
+        message: "User created successfully",
+        user_id: result.user_id,
+      });
+    } else if (result && result.error) {
+      res.status(400).json({ error: result.error });
+    } else {
+      res.status(500).json({ error: "Failed to create user" });
+    }
+  } catch (error) {
+    console.error("Error in postUser:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+export { registerUser, authUser, postUserAdmin };
