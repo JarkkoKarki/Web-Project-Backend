@@ -1,3 +1,5 @@
+import { HtmlContent } from "app/js/utils/components.js";
+
 const testFunction = (method, endpoint, type) => {
   const data = { method, endpoint, type };
   localStorage.setItem("testRequest", JSON.stringify(data));
@@ -44,25 +46,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     const result = await fetch(endpoint, { method });
     const jsonResponse = await result.json();
     console.log(jsonResponse);
+    const htmlData = HtmlContent({ method, endpoint, data });
 
-    testerDiv.innerHTML = `
-    <h2>Test Endpoint</h2>
-    <p><strong>Method:</strong> ${method}</p>
-    <p><strong>URL:</strong> ${endpoint}/<select id="ids"></select></p>
-    <form id="test-form">
-      <label>Headers (JSON):</label><br>
-      <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
-      ${
-        method !== "GET"
-          ? `
-        <label>Body (JSON):</label><br>
-        <textarea name="body">{}</textarea><br>`
-          : ""
-      }
-      <button type="submit">Send</button>
-    </form>
-    <pre id="response-output">Response will appear here...</pre>
-  `;
+    testerDiv.innerHTML = htmlData;
 
     const idOptions = document.getElementById("ids");
     jsonResponse.forEach((response) => {
@@ -73,54 +59,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   } else if (data.type == "all") {
     const { method, endpoint } = data;
+    const htmlData = HtmlContent({ method, endpoint, data });
 
-    testerDiv.innerHTML = `
-      <h2>Test Endpoint</h2>
-      <p><strong>Method:</strong> ${method}</p>
-      <p><strong>URL:</strong> ${endpoint}</p>
-      <form id="test-form">
-        <label>Headers (JSON):</label><br>
-        <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
-        ${
-          method !== "GET"
-            ? `
-          <label>Body (JSON):</label><br>
-          <textarea name="body">{}</textarea><br>`
-            : ""
-        }
-        <button type="submit">Send</button>
-      </form>
-      <pre id="response-output">Response will appear here...</pre>
-    `;
+    testerDiv.innerHTML = testerDiv.innerHTML = htmlData;
   } else if (data.type == "post") {
     const { method, endpoint } = data;
-
-    testerDiv.innerHTML = `
-      <h2>Test Endpoint</h2>
-      <p><strong>Method:</strong> ${method}</p>
-      <p><strong>URL:</strong> ${endpoint}</p>
-      <form id="test-form">
-        <label>Headers (JSON):</label><br>
-        <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
-        ${
-          method !== "GET"
-            ? `
-          <label>Body (JSON):</label><br>
-          <textarea  class="body-field" name="body">
-{
-"username": "bgadg",
-"email": "gdagadgbgdabdgad@Testi.Testi",
-"password": "badggbad",
-"address": "Test Address",
-"filename": "file"
-}
-                    </textarea><br>`
-            : ""
-        }
-        <button type="submit">Send</button>
-      </form>
-      <pre id="response-output">Response will appear here...</pre>
-    `;
+    const htmlData = HtmlContent({ method, endpoint, data });
+    testerDiv.innerHTML = testerDiv.innerHTML = htmlData;
   }
   document.getElementById("test-form").addEventListener("submit", async (e) => {
     e.preventDefault();
