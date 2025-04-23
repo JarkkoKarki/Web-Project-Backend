@@ -6,7 +6,7 @@ const testFunction = (method, endpoint) => {
 
 const getUser = document.querySelector("#get-user");
 if (getUser) {
-  getUser.addEventListener("click", () => testFunction("GET", "/api/users"));
+  getUser.addEventListener("click", () => testFunction("GET", "app/api/users"));
 }
 
 window.addEventListener("DOMContentLoaded", () => {
