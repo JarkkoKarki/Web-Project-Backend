@@ -15,8 +15,8 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "bbbbbbbbb",
-  "password": "bbbbbbbbb"
+  "username": "admin1234",
+  "password": "admin1234"
 }
 
 ### Get current user (requires token)

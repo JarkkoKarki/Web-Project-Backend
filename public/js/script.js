@@ -1,4 +1,4 @@
-import { HtmlContent } from "/app/js/utils/components.js";
+import { htmlContent } from "/app/js/utils/components.js";
 
 const testFunction = (method, endpoint, type) => {
   const data = { method, endpoint, type };
@@ -27,6 +27,48 @@ if (getUser) {
   );
 }
 
+const putUserId = document.querySelector("#put-userId");
+if (putUserId) {
+  putUserId.addEventListener("click", () =>
+    testFunction("PUT", "http://10.120.32.87/app/api/users", "put")
+  );
+}
+
+const deleteUser = document.querySelector("#delete-user");
+if (deleteUser) {
+  deleteUser.addEventListener("click", () =>
+    testFunction("DELETE", "http://10.120.32.87/app/api/users", "delete")
+  );
+}
+
+const loginUser = document.querySelector("#login-user");
+if (loginUser) {
+  loginUser.addEventListener("click", () =>
+    testFunction("POST", "http://10.120.32.87/app/api/auth/login", "post")
+  );
+}
+
+const registerUser = document.querySelector("#register-user");
+if (registerUser) {
+  registerUser.addEventListener("click", () =>
+    testFunction("POST", "http://10.120.32.87/app/api/auth/register", "post")
+  );
+}
+
+const authUser = document.querySelector("#auth-user");
+if (authUser) {
+  authUser.addEventListener("click", () =>
+    testFunction("GET", "http://10.120.32.87/app/api/auth/me", "GET")
+  );
+}
+
+const logoutUser = document.querySelector("#logout-user");
+if (logoutUser) {
+  logoutUser.addEventListener("click", () =>
+    testFunction("GET", "http://10.120.32.87/app/api/auth/logout", "get")
+  );
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   const testerDiv = document.getElementById("tester");
   if (!testerDiv) return;
@@ -46,7 +88,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const result = await fetch(endpoint, { method });
     const jsonResponse = await result.json();
     console.log(jsonResponse);
-    const htmlData = HtmlContent({ method, endpoint, data });
+    const htmlData = htmlContent({ method, endpoint, data });
 
     testerDiv.innerHTML = htmlData;
 
@@ -59,13 +101,44 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   } else if (data.type == "all") {
     const { method, endpoint } = data;
-    const htmlData = HtmlContent({ method, endpoint, data });
+    const htmlData = htmlContent({ method, endpoint, data });
 
     testerDiv.innerHTML = testerDiv.innerHTML = htmlData;
   } else if (data.type == "post") {
     const { method, endpoint } = data;
-    const htmlData = HtmlContent({ method, endpoint, data });
+    const htmlData = htmlContent({ method, endpoint, data });
     testerDiv.innerHTML = testerDiv.innerHTML = htmlData;
+  } else if (data.type == "put") {
+    console.log("put");
+    const { method, endpoint } = data;
+    const result = await fetch(endpoint, { method: "GET" });
+    const jsonResponse = await result.json();
+
+    console.log(jsonResponse);
+    const htmlData = htmlContent({ method: "PUT", endpoint, data });
+    testerDiv.innerHTML = htmlData;
+    const idOptions = document.getElementById("ids");
+    jsonResponse.forEach((response) => {
+      const option = document.createElement("option");
+      option.value = response.id;
+      option.textContent = response.name || response.id;
+      idOptions.appendChild(option);
+    });
+  } else if (data.type == "delete") {
+    const { method, endpoint } = data;
+    const result = await fetch(endpoint, { method: "GET" });
+    const jsonResponse = await result.json();
+
+    console.log(jsonResponse);
+    const htmlData = htmlContent({ method: "DELETE", endpoint, data });
+    testerDiv.innerHTML = htmlData;
+    const idOptions = document.getElementById("ids");
+    jsonResponse.forEach((response) => {
+      const option = document.createElement("option");
+      option.value = response.id;
+      option.textContent = response.name || response.id;
+      idOptions.appendChild(option);
+    });
   }
   document.getElementById("test-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -75,6 +148,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
       let finalEndpoint = endpoint;
       if (data.type === "id") {
+        const selectedId = document.getElementById("ids").value;
+        finalEndpoint = `${endpoint}/${selectedId}`;
+      } else if (data.type === "put") {
+        const selectedId = document.getElementById("ids").value;
+        finalEndpoint = `${endpoint}/${selectedId}`;
+      } else if (data.type === "delete") {
         const selectedId = document.getElementById("ids").value;
         finalEndpoint = `${endpoint}/${selectedId}`;
       }
