@@ -1,4 +1,3 @@
-/* Reset some basic styling */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -51,6 +50,22 @@ h2 {
   margin-bottom: 1rem;
 }
 
+button {
+  background-color: #66ffb3;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #1e1e2f;
+  padding: 0.2em 0.6em;
+  border-radius: 0.4em;
+  box-shadow: 1px 1px 5px rgba(0, 217, 255, 0.342);
+  margin-top: 1em;
+}
+
+button:hover {
+  background-color: #32ff9993;
+  cursor: pointer;
+}
+
 #ul-h {
   display: flex;
   flex-wrap: wrap;
@@ -84,6 +99,59 @@ h2 {
   color: #f8f8f2;
 }
 
+#tester {
+  background-color: #1b1b2f;
+  color: #f8f8f2;
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: "Courier New", Courier, monospace;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+textarea {
+  background-color: #1b1b2f;
+  color: #f8f8f2;
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: "Courier New", Courier, monospace;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+#response-output {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+  background-color: #1b1b2f;
+  color: #f8f8f2;
+  padding: 1rem;
+  border-radius: 5px;
+  font-family: "Courier New", Courier, monospace;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+  white-space: pre-wrap; /* This ensures the text wraps instead of overflowing */
+  word-wrap: break-word; /* Helps break long words that can't wrap */
+  word-break: break-all; /* Breaks words that are too long to fit */
+}
+
+pre {
+  background-color: #1b1b2f;
+  color: #f8f8f2;
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: "Courier New", Courier, monospace;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+  width: 100%; /* Ensures the pre tag takes full available width */
+  white-space: pre-wrap; /* Allows wrapping */
+  word-wrap: break-word; /* Ensures long words don't overflow */
+}
 ul {
   list-style: none;
   padding-left: 1rem;
@@ -103,18 +171,6 @@ strong {
   font-weight: bold;
 }
 
-pre {
-  background-color: #1b1b2f;
-  color: #f8f8f2;
-  padding: 1rem;
-  border-radius: 5px;
-  overflow-x: auto;
-  font-family: "Courier New", Courier, monospace;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
-}
-
 p {
   margin-top: 0.5rem;
   margin-bottom: 0.3rem;
@@ -122,7 +178,6 @@ p {
   color: #cccccc;
 }
 
-/* Footer styling */
 footer {
   margin-top: 4rem;
   text-align: center;
