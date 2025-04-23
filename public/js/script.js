@@ -1,7 +1,7 @@
 const testFunction = (method, endpoint) => {
   const data = { method, endpoint };
   localStorage.setItem("testRequest", JSON.stringify(data));
-  window.location.href = "test.html";
+  window.location.href = "app/html/test.html";
 };
 
 const getUser = document.querySelector("#get-user");

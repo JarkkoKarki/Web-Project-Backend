@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
   res.sendFile(htmlFilePath);
 });
 
-app.get("/test.html", (req, res) => {
+app.get("/test", (req, res) => {
   const htmlFilePath = path.join(__dirname, "../public/html/test.html");
   res.sendFile(htmlFilePath);
 });
