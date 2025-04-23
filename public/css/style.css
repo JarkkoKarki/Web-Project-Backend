@@ -51,6 +51,39 @@ h2 {
   margin-bottom: 1rem;
 }
 
+#ul-h {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1em;
+  list-style: none;
+}
+
+#ul-h li {
+  flex: 1 1 calc(33% - 1em);
+  margin: 0.5em;
+  text-align: center;
+  background-color: #34344e;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #00d9ff;
+  box-shadow: 0 0 5px rgba(0, 217, 255, 0.1);
+}
+
+#ul-h li:hover {
+  background-color: #00d9ff1e;
+  cursor: pointer;
+}
+
+#ul-h li a {
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 2.8em;
+  padding-right: 0.5em;
+  color: #f8f8f2;
+}
+
 ul {
   list-style: none;
   padding-left: 1rem;
