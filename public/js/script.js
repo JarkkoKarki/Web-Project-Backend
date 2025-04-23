@@ -7,7 +7,7 @@ const testFunction = (method, endpoint) => {
 const getUser = document.querySelector("#get-user");
 if (getUser) {
   getUser.addEventListener("click", () =>
-    testFunction("GET", "../app/api/users")
+    testFunction("GET", "http://10.120.32.87/app/api/users")
   );
 }
 
