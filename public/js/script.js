@@ -18,6 +18,13 @@ if (getUser) {
   );
 }
 
+const postUser = document.querySelector("#post-user");
+if (getUser) {
+  postUser.addEventListener("click", () =>
+    testFunction("POST", "http://10.120.32.87/app/api/users", "post")
+  );
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   const testerDiv = document.getElementById("tester");
   if (!testerDiv) return;
@@ -64,7 +71,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       option.textContent = response.name || response.id;
       idOptions.appendChild(option);
     });
-  } else {
+  } else if (data.type == "all") {
     const { method, endpoint } = data;
 
     testerDiv.innerHTML = `
@@ -79,6 +86,35 @@ window.addEventListener("DOMContentLoaded", async () => {
             ? `
           <label>Body (JSON):</label><br>
           <textarea name="body">{}</textarea><br>`
+            : ""
+        }
+        <button type="submit">Send</button>
+      </form>
+      <pre id="response-output">Response will appear here...</pre>
+    `;
+  } else if (data.type == "post") {
+    const { method, endpoint } = data;
+
+    testerDiv.innerHTML = `
+      <h2>Test Endpoint</h2>
+      <p><strong>Method:</strong> ${method}</p>
+      <p><strong>URL:</strong> ${endpoint}</p>
+      <form id="test-form">
+        <label>Headers (JSON):</label><br>
+        <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
+        ${
+          method !== "GET"
+            ? `
+          <label>Body (JSON):</label><br>
+          <textarea  class="body-field" name="body">
+{
+"username": "bgadg",
+"email": "gdagadgbgdabdgad@Testi.Testi",
+"password": "badggbad",
+"address": "Test Address",
+"filename": "file"
+}
+                    </textarea><br>`
             : ""
         }
         <button type="submit">Send</button>
