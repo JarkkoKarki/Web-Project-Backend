@@ -1,17 +1,24 @@
-const testFunction = (method, endpoint) => {
-  const data = { method, endpoint };
+const testFunction = (method, endpoint, type) => {
+  const data = { method, endpoint, type };
   localStorage.setItem("testRequest", JSON.stringify(data));
   window.location.href = "app/html/test.html";
 };
 
-const getUser = document.querySelector("#get-user");
-if (getUser) {
-  getUser.addEventListener("click", () =>
-    testFunction("GET", "http://10.120.32.87/app/api/users")
+const getUserId = document.querySelector("#get-userId");
+if (getUserId) {
+  getUserId.addEventListener("click", () =>
+    testFunction("GET", "http://10.120.32.87/app/api/users", "id")
   );
 }
 
-window.addEventListener("DOMContentLoaded", () => {
+const getUser = document.querySelector("#get-user");
+if (getUser) {
+  getUser.addEventListener("click", () =>
+    testFunction("GET", "http://10.120.32.87/app/api/users", "all")
+  );
+}
+
+window.addEventListener("DOMContentLoaded", async () => {
   const testerDiv = document.getElementById("tester");
   if (!testerDiv) return;
 
@@ -21,9 +28,46 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const { method, endpoint } = data;
+  let endpoint = data.endpoint;
+  let method = data.method;
 
-  testerDiv.innerHTML = `
+  if (data.type == "id") {
+    console.log("id");
+    const { method, endpoint } = data;
+    const result = await fetch(endpoint, { method });
+    const jsonResponse = await result.json();
+    console.log(jsonResponse);
+
+    testerDiv.innerHTML = `
+    <h2>Test Endpoint</h2>
+    <p><strong>Method:</strong> ${method}</p>
+    <p><strong>URL:</strong> ${endpoint}/<select id="ids"></select></p>
+    <form id="test-form">
+      <label>Headers (JSON):</label><br>
+      <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
+      ${
+        method !== "GET"
+          ? `
+        <label>Body (JSON):</label><br>
+        <textarea name="body">{}</textarea><br>`
+          : ""
+      }
+      <button type="submit">Send</button>
+    </form>
+    <pre id="response-output">Response will appear here...</pre>
+  `;
+
+    const idOptions = document.getElementById("ids");
+    jsonResponse.forEach((response) => {
+      const option = document.createElement("option");
+      option.value = response.id;
+      option.textContent = response.name || response.id;
+      idOptions.appendChild(option);
+    });
+  } else {
+    const { method, endpoint } = data;
+
+    testerDiv.innerHTML = `
       <h2>Test Endpoint</h2>
       <p><strong>Method:</strong> ${method}</p>
       <p><strong>URL:</strong> ${endpoint}</p>
@@ -41,14 +85,20 @@ window.addEventListener("DOMContentLoaded", () => {
       </form>
       <pre id="response-output">Response will appear here...</pre>
     `;
-
+  }
   document.getElementById("test-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
       const headers = JSON.parse(e.target.headers.value);
       const body = e.target.body ? e.target.body.value : null;
 
-      const res = await fetch(endpoint, {
+      let finalEndpoint = endpoint;
+      if (data.type === "id") {
+        const selectedId = document.getElementById("ids").value;
+        finalEndpoint = `${endpoint}/${selectedId}`;
+      }
+
+      const res = await fetch(finalEndpoint, {
         method,
         headers,
         ...(body && method !== "GET"
