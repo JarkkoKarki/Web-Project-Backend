@@ -11,7 +11,7 @@ authRouter.get("/me", authenticateToken, (req, res) => {
   res.json(res.locals.user);
 });
 
-authRouter.post("/register", postUserAdmin);
+authRouter.post("/register", authenticateToken, checkAdmin, postUserAdmin);
 
 authRouter.get("/logout", (req, res, next) => {
   try {
