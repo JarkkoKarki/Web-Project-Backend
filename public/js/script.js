@@ -1,4 +1,4 @@
-import { HtmlContent } from "app/js/utils/components.js";
+import { HtmlContent } from "/app/js/utils/components.js";
 
 const testFunction = (method, endpoint, type) => {
   const data = { method, endpoint, type };
