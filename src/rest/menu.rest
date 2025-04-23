@@ -1,0 +1,41 @@
+###GET products by category
+GET http://127.0.0.1:3000/api/menu
+Content-Type: application/json
+
+
+###GET product by id and its diets and category
+GET http://127.0.0.1:3000/api/menu/1
+Content-Type: application/json
+
+
+###POST product and its categories and diets
+POST http://127.0.0.1:3000/api/menu/
+Content-Type: application/json
+
+{
+  "name": "prööt",
+  "description": "döner kebab ateria",
+  "price": 17.50,
+  "picture": "Ruoka2",
+  "categories": [1,3],
+  "diets": [6, 7]
+}
+
+###Modify Product
+PUT http://127.0.0.1:3000/api/menu/5
+Content-Type: application/json
+
+{
+  "name": "kissa",
+  "description": "kissa ateria",
+  "price": 17.50,
+  "picture": "Ruoka5",
+  "categories": [1,2,3,4],
+  "diets": [1, 2,3]
+}
+
+
+###DELETE product and its  categories  and  diets
+DELETE http://127.0.0.1:3000/api/menu/4
+Content-Type: application/json
+
