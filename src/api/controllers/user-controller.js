@@ -32,7 +32,7 @@ const postUser = async (req, res) => {
     console.log(username, email, password, address);
     console.log(filename);
     console.log(thumbnailPath);
-    if (!username || !email || !password || !address) {
+    if (!username || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -67,7 +67,8 @@ const postUser = async (req, res) => {
 
 const putUser = async (req, res) => {
   try {
-    const { username, email, password, address } = req.body;
+    const { first_name, last_name, username, email, password, address, phone } =
+      req.body;
     const userId = req.params.id;
     const filename = req.file ? req.file.filename : "uploads/default.png";
     const thumbnailPath = req.file
