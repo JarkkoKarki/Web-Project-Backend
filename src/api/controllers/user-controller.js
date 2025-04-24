@@ -23,15 +23,18 @@ const getUserById = async (req, res) => {
 
 const postUser = async (req, res) => {
   try {
-    const { first_name, last_name, username, email, password, address, phone } =
-      req.body;
+    const {
+      first_name = null,
+      last_name = null,
+      username,
+      email,
+      password,
+      address = null,
+      phone = null,
+    } = req.body;
+
     const filename = req.file ? req.file.filename : "uploads/default.png";
-    const thumbnailPath = req.file
-      ? req.file.thumbnailPath
-      : "uploads/default.png";
-    console.log(username, email, password, address);
-    console.log(filename);
-    console.log(thumbnailPath);
+
     if (!username || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -44,27 +47,30 @@ const postUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      filename: thumbnailPath,
+      filename,
       address,
       phone,
     });
-    const role = "user";
+
+    if (result && result.error) {
+      return res.status(400).json({ error: result.error });
+    }
+
     if (result && result.user_id) {
-      res.status(201).json({
+      return res.status(201).json({
         message: "User created successfully",
         user_id: result.user_id,
         filename,
-        thumbnailPath,
       });
-    } else {
-      res.status(500).json({ error: "User already Exist" });
     }
+
+    // Unexpected error
+    res.status(500).json({ error: "Failed to create user" });
   } catch (error) {
     console.error("Error in postUser:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 const putUser = async (req, res) => {
   try {
     const { first_name, last_name, username, email, password, address, phone } =
