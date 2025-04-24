@@ -88,11 +88,17 @@ const putUser = async (req, res) => {
       phone,
     };
 
-    Object.keys(updateData).forEach(
-      (key) => updateData[key] === null && delete updateData[key]
-    );
+    Object.keys(updateData).forEach((key) => {
+      if (updateData[key] === undefined) {
+        updateData[key] = null;
+      }
+      if (updateData[key] === null) {
+        delete updateData[key];
+      }
+    });
+
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ error: "No fields provided for update" });
+      return res.status(400).json({ error: "No valid fields to update" });
     }
 
     const result = await modifyUser(updateData, userId);
@@ -104,7 +110,9 @@ const putUser = async (req, res) => {
     }
   } catch (error) {
     console.error("Error in putUser:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
   }
 };
 
