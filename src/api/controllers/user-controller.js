@@ -23,18 +23,15 @@ const getUserById = async (req, res) => {
 
 const postUser = async (req, res) => {
   try {
-    const {
-      first_name = "f",
-      last_name = "l",
-      username,
-      email,
-      password,
-      address = "a",
-      phone = "p",
-    } = req.body;
-
+    const { username, email, password, address, first_name, last_name, phone } =
+      req.body;
     const filename = req.file ? req.file.filename : "uploads/default.png";
-
+    const thumbnailPath = req.file
+      ? req.file.thumbnailPath
+      : "uploads/default.png";
+    console.log(username, email, password, address);
+    console.log(filename);
+    console.log(thumbnailPath);
     if (!username || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -42,38 +39,35 @@ const postUser = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const result = await addUser({
-      first_name,
-      last_name,
       username,
       email,
       password: hashedPassword,
-      filename,
+      filename: thumbnailPath,
       address,
+      first_name,
+      last_name,
       phone,
     });
 
-    if (result && result.error) {
-      return res.status(400).json({ error: result.error });
-    }
-
     if (result && result.user_id) {
-      return res.status(201).json({
+      res.status(201).json({
         message: "User created successfully",
         user_id: result.user_id,
         filename,
+        thumbnailPath,
       });
+    } else {
+      res.status(500).json({ error: "User already Exist" });
     }
-
-    res.status(500).json({ error: "Failed to create user" });
   } catch (error) {
     console.error("Error in postUser:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 const putUser = async (req, res) => {
   try {
-    const { first_name, last_name, username, email, password, address, phone } =
-      req.body;
+    const { username, email, password, address } = req.body;
     const userId = req.params.id;
     const filename = req.file ? req.file.filename : "uploads/default.png";
     const thumbnailPath = req.file
@@ -83,14 +77,11 @@ const putUser = async (req, res) => {
     const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
 
     const updateData = {
-      first_name,
-      last_name,
       username,
       email,
       password: hashedPassword,
       address,
       filename: thumbnailPath,
-      phone,
     };
 
     Object.keys(updateData).forEach(

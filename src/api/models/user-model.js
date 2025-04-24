@@ -7,14 +7,14 @@ const listAllUsers = async () => {
 };
 
 const addUser = async ({
-  first_name = "FirstName",
-  last_name = "LastName",
+  first_name = null,
+  last_name = null,
   username,
   email,
   password,
-  filename = "uploads/default.png",
-  address = "Address",
-  phone = "Phone",
+  filename = null,
+  address = null,
+  phone = null,
 }) => {
   const role = "user";
   try {
@@ -27,7 +27,6 @@ const addUser = async ({
       console.log("User already exists:", existingUser);
       return { error: "Username or email already exists" };
     }
-
     const [result] = await promisePool.execute(
       `INSERT INTO users (first_name, last_name, username, email, password, filename, address, phone, role) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -77,14 +76,11 @@ const findUserById = async (id) => {
 };
 
 const addUserAdmin = async ({
-  first_name,
-  last_name,
   username,
   email,
   password,
   filename,
   address,
-  phone,
   role,
 }) => {
   try {
@@ -99,19 +95,8 @@ const addUserAdmin = async ({
     }
 
     const [result] = await promisePool.execute(
-      `INSERT INTO users (first_name, last_name, username, email, password, filename, address, phone, role) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        first_name,
-        last_name,
-        username,
-        email,
-        password,
-        filename,
-        address,
-        phone,
-        role,
-      ]
+      "INSERT INTO users (username, email, password, filename, address, role) VALUES (?, ?, ?, ?, ?, ?)",
+      [username, email, password, filename, address, role]
     );
 
     console.log("Insert result:", result);
