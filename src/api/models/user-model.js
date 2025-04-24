@@ -26,6 +26,7 @@ const addUser = async ({
     filename,
     address,
     phone,
+    role,
   };
   Object.keys(updateData).forEach(
     (key) => updateData[key] == "0" && delete updateData[key]
