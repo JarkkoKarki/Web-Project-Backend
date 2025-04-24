@@ -38,13 +38,16 @@ const postUser = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const result = await addUser({
+      first_name,
+      last_name,
       username,
       email,
       password: hashedPassword,
       filename: thumbnailPath,
       address,
+      phone,
     });
-
+    const role = "user";
     if (result && result.user_id) {
       res.status(201).json({
         message: "User created successfully",
@@ -73,11 +76,14 @@ const putUser = async (req, res) => {
     const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
 
     const updateData = {
+      first_name,
+      last_name,
       username,
       email,
       password: hashedPassword,
       address,
       filename: thumbnailPath,
+      phone,
     };
 
     Object.keys(updateData).forEach(
