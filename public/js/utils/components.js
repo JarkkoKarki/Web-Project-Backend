@@ -95,9 +95,7 @@ export const htmlContent = ({ method, endpoint, data }) => {
   {
   "username": "Testi",
   "email": "Testi@Testi.Testi",
-  "password": "Testi",
-  "address": "Test Address",
-  "filename": "file"
+  "password": "Testi"
   }
                       </textarea><br>`
               : ""
