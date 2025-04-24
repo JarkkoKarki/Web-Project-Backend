@@ -31,18 +31,36 @@ const authUser = async (req, res) => {
 
 const postUserAdmin = async (req, res) => {
   try {
-    const { username, email, password, address, role } = req.body;
+    const {
+      username,
+      email,
+      password,
+      address,
+      role,
+      phone,
+      first_name,
+      last_name,
+    } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await addUserAdmin({
+    const postData = {
       username,
       email,
       password: hashedPassword,
       filename: "uploads/defaul.png",
       address,
       role,
-    });
+      phone,
+      first_name,
+      last_name,
+    };
+
+    Object.keys(postData).forEach(
+      (key) => postData[key] === null && delete postData[key]
+    );
+
+    const result = await addUserAdmin(postData);
 
     if (result && result.user_id) {
       res.status(201).json({ message: "User registered successfully" });

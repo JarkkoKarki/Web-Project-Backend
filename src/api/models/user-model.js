@@ -75,15 +75,20 @@ const findUserById = async (id) => {
   return rows[0];
 };
 
-const addUserAdmin = async ({
-  username,
-  email,
-  password,
-  filename,
-  address,
-  role,
-}) => {
+const addUserAdmin = async (postData) => {
   try {
+    const {
+      username,
+      email,
+      password,
+      filename,
+      address = null,
+      role,
+      phone = null,
+      first_name = null,
+      last_name = null,
+    } = postData;
+
     const [existingUser] = await promisePool.execute(
       "SELECT * FROM users WHERE username = ? OR email = ?",
       [username, email]
@@ -95,8 +100,18 @@ const addUserAdmin = async ({
     }
 
     const [result] = await promisePool.execute(
-      "INSERT INTO users (username, email, password, filename, address, role) VALUES (?, ?, ?, ?, ?, ?)",
-      [username, email, password, filename, address, role]
+      "INSERT INTO users (username, email, password, filename, address, role, phone, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        username,
+        email,
+        password,
+        filename,
+        address,
+        role,
+        phone,
+        first_name,
+        last_name,
+      ]
     );
 
     console.log("Insert result:", result);
