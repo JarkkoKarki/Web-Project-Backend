@@ -6,7 +6,16 @@ const listAllUsers = async () => {
   return rows;
 };
 
-const addUser = async ({ username, email, password, filename, address }) => {
+const addUser = async ({
+  first_name,
+  last_name,
+  username,
+  email,
+  password,
+  filename,
+  address,
+  phone,
+}) => {
   const role = "user";
   try {
     const [existingUser] = await promisePool.execute(
@@ -20,8 +29,19 @@ const addUser = async ({ username, email, password, filename, address }) => {
     }
 
     const [result] = await promisePool.execute(
-      "INSERT INTO users (username, email, password, filename, address, role) VALUES (?, ?, ?, ?, ?, ?)",
-      [username, email, password, filename, address, role]
+      `INSERT INTO users (first_name, last_name, username, email, password, filename, address, phone, role) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        first_name,
+        last_name,
+        username,
+        email,
+        password,
+        filename,
+        address,
+        phone,
+        role,
+      ]
     );
     console.log("Insert result:", result);
 
@@ -57,11 +77,14 @@ const findUserById = async (id) => {
 };
 
 const addUserAdmin = async ({
+  first_name,
+  last_name,
   username,
   email,
   password,
   filename,
   address,
+  phone,
   role,
 }) => {
   try {
@@ -76,8 +99,19 @@ const addUserAdmin = async ({
     }
 
     const [result] = await promisePool.execute(
-      "INSERT INTO users (username, email, password, filename, address, role) VALUES (?, ?, ?, ?, ?, ?)",
-      [username, email, password, filename, address, role]
+      `INSERT INTO users (first_name, last_name, username, email, password, filename, address, phone, role) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        first_name,
+        last_name,
+        username,
+        email,
+        password,
+        filename,
+        address,
+        phone,
+        role,
+      ]
     );
 
     console.log("Insert result:", result);
