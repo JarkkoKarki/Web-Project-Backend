@@ -7,14 +7,14 @@ const listAllUsers = async () => {
 };
 
 const addUser = async ({
-  first_name = null,
-  last_name = null,
+  first_name = "FirstName",
+  last_name = "LastName",
   username,
   email,
   password,
-  filename = null,
-  address = null,
-  phone = null,
+  filename = "uploads/default.png",
+  address = "Address",
+  phone = "Phone",
 }) => {
   const role = "user";
   try {

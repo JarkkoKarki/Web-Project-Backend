@@ -24,13 +24,13 @@ const getUserById = async (req, res) => {
 const postUser = async (req, res) => {
   try {
     const {
-      first_name = "First Name",
-      last_name = "Last Name",
+      first_name = "f",
+      last_name = "l",
       username,
       email,
       password,
-      address = "Address",
-      phone = "Phone",
+      address = "a",
+      phone = "p",
     } = req.body;
 
     const filename = req.file ? req.file.filename : "uploads/default.png";
