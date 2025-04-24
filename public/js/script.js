@@ -42,6 +42,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (["id", "put", "delete"].includes(data.type)) {
     const result = await fetch(endpoint, { method: "GET" });
     const jsonResponse = await result.json();
+    console.log(jsonResponse);
 
     const htmlData = htmlContent({
       method: data.type === "put" ? "PUT" : method,

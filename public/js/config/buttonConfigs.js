@@ -56,4 +56,37 @@ export const buttonConfigs = [
     endpoint: "http://10.120.32.87/app/api/auth/logout",
     type: "get",
   },
+  {
+    id: "get-menu",
+    method: "GET",
+    endpoint: "http://10.120.32.87/app/api/menu",
+    type: "get",
+  },
+  {
+    id: "get-menu-id",
+    method: "GET",
+    endpoint: "http://10.120.32.87/app/api/menu",
+    type: "id",
+    needsIdOptions: true,
+  },
+  {
+    id: "post-menu",
+    method: "POST",
+    endpoint: "http://10.120.32.87/app/api/menu",
+    type: "post",
+  },
+  {
+    id: "put-menu-id",
+    method: "PUT",
+    endpoint: "http://10.120.32.87/app/api/menu",
+    type: "put",
+    needsIdOptions: true,
+  },
+  {
+    id: "delete-menu",
+    method: "DELETE",
+    endpoint: "http://10.120.32.87/app/api/menu",
+    type: "delete",
+    needsIdOptions: true,
+  },
 ];

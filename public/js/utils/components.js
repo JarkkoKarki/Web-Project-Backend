@@ -5,12 +5,41 @@ export const testFunction = (method, endpoint, type) => {
 };
 
 export function htmlIdOptions(idOptions, jsonResponse) {
-  jsonResponse.forEach((response) => {
-    const option = document.createElement("option");
-    option.value = response.id;
-    option.textContent = response.name || response.id;
-    idOptions.appendChild(option);
-  });
+  if (jsonResponse) {
+    if (
+      jsonResponse.drinks ||
+      jsonResponse["everyone's favorite"] ||
+      jsonResponse["fields of vegan"] ||
+      jsonResponse["main course"] ||
+      jsonResponse["special offer"]
+    ) {
+      for (const category in jsonResponse) {
+        if (jsonResponse.hasOwnProperty(category)) {
+          const categoryItems = jsonResponse[category];
+
+          if (Array.isArray(categoryItems)) {
+            categoryItems.forEach((response) => {
+              const option = document.createElement("option");
+              option.value = response.id;
+              option.textContent = response.id;
+              idOptions.appendChild(option);
+            });
+          }
+        }
+      }
+    } else if (Array.isArray(jsonResponse)) {
+      jsonResponse.forEach((response) => {
+        const option = document.createElement("option");
+        option.value = response.id;
+        option.textContent = response.id;
+        idOptions.appendChild(option);
+      });
+    } else {
+      console.error("Invalid response structure");
+    }
+  } else {
+    console.error("Invalid JSON response");
+  }
 }
 
 export const htmlContent = ({ method, endpoint, data }) => {
