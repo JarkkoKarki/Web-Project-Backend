@@ -19,12 +19,15 @@ const listAllProductsByCategory = async () => {
     const productsByCategory = {};
 
     rows.forEach(row => {
+        // Use "Uncategorized" if no category exists
+        const category = row.category || "Uncategorized";
+
         // Initialize category array if it doesn't exist
-        if (!productsByCategory[row.category]) {
-            productsByCategory[row.category] = [];
+        if (!productsByCategory[category]) {
+            productsByCategory[category] = [];
         }
         // Check if the product already exists in the category
-        let existingProduct = productsByCategory[row.category].find(p => p.id === row.id);
+        let existingProduct = productsByCategory[category].find(p => p.id === row.id);
 
         // If the product doesn't exist, create a new product object
         if (!existingProduct) {
@@ -36,14 +39,17 @@ const listAllProductsByCategory = async () => {
                 filename: row.filename,
                 diets: []
             };
-            productsByCategory[row.category].push(existingProduct);
+            productsByCategory[category].push(existingProduct);
         }
         // Add diet to the product if it doesn't already exist
         if (row.diet && !existingProduct.diets.includes(row.diet)) {
             existingProduct.diets.push(row.diet);
         }
     });
-    return productsByCategory;
+    return Object.entries(productsByCategory).map(([category, items]) => ({
+        category,
+        items
+    }));
 };
 
 //Finding product by id and its categories and diets
@@ -83,6 +89,7 @@ const findProductById = async (id) => {
         filename: rows[0].filename,
         categories: categories,
         diets: diets
+
     };
 
 };
@@ -129,8 +136,8 @@ const addProduct = async (product) => {
         return {success: true, productId};
     } catch (error) {
         await connection.rollback();
-        console.error('Error adding product:', error);
-        return {false: false, error};
+        console.error("Error Adding product:", error);
+        throw error;
     } finally {
         connection.release();
     }
@@ -195,7 +202,7 @@ const modifyProduct = async  (product, id) => {
     } catch (error) {
         await connection.rollback();
         console.error("Error modifying product:", error);
-        return { false: false, error: error.message };
+        throw error;
     } finally {
         connection.release();
 
