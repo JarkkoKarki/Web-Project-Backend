@@ -7,16 +7,30 @@ const listAllUsers = async () => {
 };
 
 const addUser = async ({
-  first_name = null,
-  last_name = null,
+  first_name,
+  last_name,
   username,
   email,
   password,
-  filename = null,
-  address = null,
-  phone = null,
+  filename,
+  address,
+  phone,
 }) => {
   const role = "user";
+  const updateData = {
+    first_name,
+    last_name,
+    username,
+    email,
+    password,
+    filename,
+    address,
+    phone,
+  };
+  Object.keys(updateData).forEach(
+    (key) => updateData[key] == "0" && delete updateData[key]
+  );
+
   try {
     const [existingUser] = await promisePool.execute(
       "SELECT * FROM users WHERE username = ? OR email = ?",
@@ -48,7 +62,7 @@ const addUser = async ({
     return result.affectedRows > 0 ? { user_id: result.insertId } : false;
   } catch (error) {
     console.error("Error in addUser:", error);
-    throw error;
+    return false;
   }
 };
 
