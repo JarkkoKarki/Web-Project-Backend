@@ -67,7 +67,8 @@ const postUser = async (req, res) => {
 
 const putUser = async (req, res) => {
   try {
-    const { username, email, password, address } = req.body;
+    const { username, email, password, address, first_name, last_name, phone } =
+      req.body;
     const userId = req.params.id;
     const filename = req.file ? req.file.filename : "uploads/default.png";
     const thumbnailPath = req.file
@@ -82,11 +83,17 @@ const putUser = async (req, res) => {
       password: hashedPassword,
       address,
       filename: thumbnailPath,
+      first_name,
+      last_name,
+      phone,
     };
 
     Object.keys(updateData).forEach(
       (key) => updateData[key] === null && delete updateData[key]
     );
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: "No fields provided for update" });
+    }
 
     const result = await modifyUser(updateData, userId);
 
