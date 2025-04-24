@@ -1,73 +1,31 @@
-import { htmlContent } from "/app/js/utils/components.js";
+import {
+  htmlContent,
+  htmlIdOptions,
+  testFunction,
+} from "/app/js/utils/components.js";
+import { buttonConfigs } from "/app/js/config/buttonConfigs.js";
 
-const testFunction = (method, endpoint, type) => {
-  const data = { method, endpoint, type };
-  localStorage.setItem("testRequest", JSON.stringify(data));
-  window.location.href = "app/html/test.html";
-};
+buttonConfigs.forEach(({ id, method, endpoint, type, needsIdOptions }) => {
+  const button = document.getElementById(id);
+  if (!button) return;
 
-const getUserId = document.querySelector("#get-userId");
-if (getUserId) {
-  getUserId.addEventListener("click", () =>
-    testFunction("GET", "http://10.120.32.87/app/api/users", "id")
-  );
-}
+  button.addEventListener("click", async () => {
+    testFunction(method, endpoint, type);
 
-const getUser = document.querySelector("#get-user");
-if (getUser) {
-  getUser.addEventListener("click", () =>
-    testFunction("GET", "http://10.120.32.87/app/api/users", "all")
-  );
-}
-
-const postUser = document.querySelector("#post-user");
-if (getUser) {
-  postUser.addEventListener("click", () =>
-    testFunction("POST", "http://10.120.32.87/app/api/users", "post")
-  );
-}
-
-const putUserId = document.querySelector("#put-userId");
-if (putUserId) {
-  putUserId.addEventListener("click", () =>
-    testFunction("PUT", "http://10.120.32.87/app/api/users", "put")
-  );
-}
-
-const deleteUser = document.querySelector("#delete-user");
-if (deleteUser) {
-  deleteUser.addEventListener("click", () =>
-    testFunction("DELETE", "http://10.120.32.87/app/api/users", "delete")
-  );
-}
-
-const loginUser = document.querySelector("#login-user");
-if (loginUser) {
-  loginUser.addEventListener("click", () =>
-    testFunction("POST", "http://10.120.32.87/app/api/auth/login", "post")
-  );
-}
-
-const registerUser = document.querySelector("#register-user");
-if (registerUser) {
-  registerUser.addEventListener("click", () =>
-    testFunction("POST", "http://10.120.32.87/app/api/auth/register", "post")
-  );
-}
-
-const authUser = document.querySelector("#auth-user");
-if (authUser) {
-  authUser.addEventListener("click", () =>
-    testFunction("GET", "http://10.120.32.87/app/api/auth/me", "GET")
-  );
-}
-
-const logoutUser = document.querySelector("#logout-user");
-if (logoutUser) {
-  logoutUser.addEventListener("click", () =>
-    testFunction("GET", "http://10.120.32.87/app/api/auth/logout", "get")
-  );
-}
+    if (needsIdOptions) {
+      try {
+        const result = await fetch(endpoint, { method: "GET" });
+        const jsonResponse = await result.json();
+        const idOptions = document.getElementById("ids");
+        if (idOptions) {
+          htmlIdOptions(idOptions, jsonResponse);
+        }
+      } catch (err) {
+        console.error("Failed to fetch IDs:", err);
+      }
+    }
+  });
+});
 
 window.addEventListener("DOMContentLoaded", async () => {
   const testerDiv = document.getElementById("tester");
@@ -79,67 +37,28 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  let endpoint = data.endpoint;
-  let method = data.method;
+  const { method, endpoint } = data;
 
-  if (data.type == "id") {
-    console.log("id");
-    const { method, endpoint } = data;
-    const result = await fetch(endpoint, { method });
-    const jsonResponse = await result.json();
-    console.log(jsonResponse);
-    const htmlData = htmlContent({ method, endpoint, data });
-
-    testerDiv.innerHTML = htmlData;
-
-    const idOptions = document.getElementById("ids");
-    jsonResponse.forEach((response) => {
-      const option = document.createElement("option");
-      option.value = response.id;
-      option.textContent = response.name || response.id;
-      idOptions.appendChild(option);
-    });
-  } else if (data.type == "all") {
-    const { method, endpoint } = data;
-    const htmlData = htmlContent({ method, endpoint, data });
-
-    testerDiv.innerHTML = testerDiv.innerHTML = htmlData;
-  } else if (data.type == "post") {
-    const { method, endpoint } = data;
-    const htmlData = htmlContent({ method, endpoint, data });
-    testerDiv.innerHTML = testerDiv.innerHTML = htmlData;
-  } else if (data.type == "put") {
-    console.log("put");
-    const { method, endpoint } = data;
+  if (["id", "put", "delete"].includes(data.type)) {
     const result = await fetch(endpoint, { method: "GET" });
     const jsonResponse = await result.json();
 
-    console.log(jsonResponse);
-    const htmlData = htmlContent({ method: "PUT", endpoint, data });
-    testerDiv.innerHTML = htmlData;
-    const idOptions = document.getElementById("ids");
-    jsonResponse.forEach((response) => {
-      const option = document.createElement("option");
-      option.value = response.id;
-      option.textContent = response.name || response.id;
-      idOptions.appendChild(option);
+    const htmlData = htmlContent({
+      method: data.type === "put" ? "PUT" : method,
+      endpoint,
+      data,
     });
-  } else if (data.type == "delete") {
-    const { method, endpoint } = data;
-    const result = await fetch(endpoint, { method: "GET" });
-    const jsonResponse = await result.json();
+    testerDiv.innerHTML = htmlData;
 
-    console.log(jsonResponse);
-    const htmlData = htmlContent({ method: "DELETE", endpoint, data });
-    testerDiv.innerHTML = htmlData;
     const idOptions = document.getElementById("ids");
-    jsonResponse.forEach((response) => {
-      const option = document.createElement("option");
-      option.value = response.id;
-      option.textContent = response.name || response.id;
-      idOptions.appendChild(option);
-    });
+    if (idOptions) {
+      htmlIdOptions(idOptions, jsonResponse);
+    }
+  } else {
+    const htmlData = htmlContent({ method, endpoint, data });
+    testerDiv.innerHTML = htmlData;
   }
+
   document.getElementById("test-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
@@ -147,13 +66,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       const body = e.target.body ? e.target.body.value : null;
 
       let finalEndpoint = endpoint;
-      if (data.type === "id") {
-        const selectedId = document.getElementById("ids").value;
-        finalEndpoint = `${endpoint}/${selectedId}`;
-      } else if (data.type === "put") {
-        const selectedId = document.getElementById("ids").value;
-        finalEndpoint = `${endpoint}/${selectedId}`;
-      } else if (data.type === "delete") {
+      if (["id", "put", "delete"].includes(data.type)) {
         const selectedId = document.getElementById("ids").value;
         finalEndpoint = `${endpoint}/${selectedId}`;
       }

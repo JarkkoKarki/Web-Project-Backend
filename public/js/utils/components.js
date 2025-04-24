@@ -1,3 +1,18 @@
+export const testFunction = (method, endpoint, type) => {
+  const data = { method, endpoint, type };
+  localStorage.setItem("testRequest", JSON.stringify(data));
+  window.location.href = "app/html/test.html";
+};
+
+export function htmlIdOptions(idOptions, jsonResponse) {
+  jsonResponse.forEach((response) => {
+    const option = document.createElement("option");
+    option.value = response.id;
+    option.textContent = response.name || response.id;
+    idOptions.appendChild(option);
+  });
+}
+
 export const htmlContent = ({ method, endpoint, data }) => {
   if (data.type === "id" || data.type === "put" || data.type === "delete") {
     return `
