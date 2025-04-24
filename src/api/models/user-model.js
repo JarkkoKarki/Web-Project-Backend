@@ -28,8 +28,9 @@ const addUser = async ({
     phone,
   };
   Object.keys(updateData).forEach(
-    (key) => updateData[key] === null && delete updateData[key]
+    (key) => updateData[key] == null && delete updateData[key]
   );
+
   try {
     const [existingUser] = await promisePool.execute(
       "SELECT * FROM users WHERE username = ? OR email = ?",
