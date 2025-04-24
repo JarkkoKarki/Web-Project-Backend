@@ -23,7 +23,8 @@ const getUserById = async (req, res) => {
 
 const postUser = async (req, res) => {
   try {
-    const { username, email, password, address } = req.body;
+    const { first_name, last_name, username, email, password, address, phone } =
+      req.body;
     const filename = req.file ? req.file.filename : "uploads/default.png";
     const thumbnailPath = req.file
       ? req.file.thumbnailPath
