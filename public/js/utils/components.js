@@ -88,7 +88,7 @@ export const htmlContent = ({ method, endpoint, data }) => {
           <label>Headers (JSON):</label><br>
           <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
           ${
-            method !== "GET"
+            method !== "GET" && !endpoint.includes("/auth")
               ? `
             <label>Body (JSON):</label><br>
             <textarea  class="body-field" name="body">
@@ -98,6 +98,14 @@ export const htmlContent = ({ method, endpoint, data }) => {
   "password": "Testi"
   }
                       </textarea><br>`
+              : method === "POST"
+              ? `
+            <label>Body (JSON):</label><br>
+            <textarea  class="body-field" name="body">
+  {
+  "username": "Testi",
+  "password": "Testi"
+  }</textarea><br>`
               : ""
           }
           <button type="submit">Send</button>
