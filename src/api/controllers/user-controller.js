@@ -24,13 +24,13 @@ const getUserById = async (req, res) => {
 const postUser = async (req, res) => {
   try {
     const {
-      first_name = null,
-      last_name = null,
+      first_name = "First Name",
+      last_name = "Last Name",
       username,
       email,
       password,
-      address = null,
-      phone = null,
+      address = "Address",
+      phone = "Phone",
     } = req.body;
 
     const filename = req.file ? req.file.filename : "uploads/default.png";
@@ -64,7 +64,6 @@ const postUser = async (req, res) => {
       });
     }
 
-    // Unexpected error
     res.status(500).json({ error: "Failed to create user" });
   } catch (error) {
     console.error("Error in postUser:", error);
