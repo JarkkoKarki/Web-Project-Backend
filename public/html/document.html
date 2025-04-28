@@ -17,7 +17,7 @@
           <li><a href="#users">Users</a></li>
           <li><a href="#auth">Auth</a></li>
           <li><a href="#menu">Menu</a></li>
-          <li><a>Not Ready</a></li>
+          <li><a href="#route">Route</a></li>
           <li><a>Not Ready</a></li>
           <li><a>Not Ready</a></li>
         </ul>
@@ -372,6 +372,82 @@
         }
               </pre>
               <button id="delete-menu">Try</button>
+            </li>
+          </ul>
+        </div>
+        <div class="title">
+          <h3 id="route">Route</h3>
+          <ul>
+            <li>
+              <strong>GET</strong> /api/route/:olat/:olng/:lat/:lng - Retrieve
+              route data
+              <p>Header:</p>
+              <pre>
+                Content-Type: application/json
+              </pre>
+              <p>Example Response:</p>
+              <pre>
+                {
+                  "pageInfo": {
+                    "endCursor": "cursor_value"
+                  },
+                  "edges": [
+                    {
+                      "node": {
+                        "start": "start_location",
+                        "end": "end_location",
+                        "legs": [
+                          {
+                            "duration": 600,
+                            "mode": "BUS",
+                            "distance": 5000,
+                            "start": {
+                              "scheduledTime": "2025-04-25T10:00:00Z"
+                            },
+                            "end": {
+                              "scheduledTime": "2025-04-25T10:10:00Z"
+                            },
+                            "realtimeState": "SCHEDULED"
+                          }
+                        ],
+                        "emissionsPerPerson": {
+                          "co2": 0.5
+                        }
+                      }
+                    }
+                  ]
+                }
+              </pre>
+              <button id="get-route">Try</button>
+            </li>
+            <li>
+              <strong>GET</strong> /api/route/legs/:olat/:olng/:lat/:lng -
+              Retrieve legs data
+              <p>Header:</p>
+              <pre>
+                Content-Type: application/json
+              </pre>
+              <p>Example Response:</p>
+              <pre>
+                {
+                  "decodedLegs": [
+                    [
+                      {
+                        "startTime": "2025-04-25T10:00:00Z",
+                        "endTime": "2025-04-25T10:10:00Z",
+                        "mode": "BUS",
+                        "duration": 600,
+                        "distance": 5000,
+                        "decodedPoints": [
+                          [60.192059, 24.945831],
+                          [60.193059, 24.946831]
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              </pre>
+              <button id="get-legs">Try</button>
             </li>
           </ul>
         </div>

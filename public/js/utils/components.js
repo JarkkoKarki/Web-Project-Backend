@@ -4,35 +4,18 @@ export const testFunction = (method, endpoint, type) => {
   window.location.href = "app/html/test.html";
 };
 
-export function htmlIdOptions(idOptions, jsonResponse) {
+export function htmlIdOptionsUser(idOptions, jsonResponse) {
   if (jsonResponse) {
-    if (
-      jsonResponse.drinks ||
-      jsonResponse["everyone's favorite"] ||
-      jsonResponse["fields of vegan"] ||
-      jsonResponse["main course"] ||
-      jsonResponse["special offer"]
-    ) {
-      for (const category in jsonResponse) {
-        if (jsonResponse.hasOwnProperty(category)) {
-          const categoryItems = jsonResponse[category];
-
-          if (Array.isArray(categoryItems)) {
-            categoryItems.forEach((response) => {
-              const option = document.createElement("option");
-              option.value = response.id;
-              option.textContent = response.id;
-              idOptions.appendChild(option);
-            });
-          }
+    if (Array.isArray(jsonResponse)) {
+      jsonResponse.forEach((user) => {
+        if (user.id && user.username) {
+          const option = document.createElement("option");
+          option.value = user.id;
+          option.textContent = user.id;
+          idOptions.appendChild(option);
+        } else {
+          console.error("Invalid user structure in JSON response");
         }
-      }
-    } else if (Array.isArray(jsonResponse)) {
-      jsonResponse.forEach((response) => {
-        const option = document.createElement("option");
-        option.value = response.id;
-        option.textContent = response.id;
-        idOptions.appendChild(option);
       });
     } else {
       console.error("Invalid response structure");
@@ -42,75 +25,25 @@ export function htmlIdOptions(idOptions, jsonResponse) {
   }
 }
 
-export const htmlContent = ({ method, endpoint, data }) => {
-  if (data.type === "id" || data.type === "put" || data.type === "delete") {
-    return `
-    <h2>Test Endpoint</h2>
-    <p><strong>Method:</strong> ${method}</p>
-    <p><strong>URL:</strong> ${endpoint}/<select id="ids"></select></p>
-    <form id="test-form">
-      <label>Headers (JSON):</label><br>
-      ${
-        method === "PUT" || method === "DELETE"
-          ? `<textarea class="body-field" name="headers">
-          {
-          "Content-Type": "application/json",
-          "Authorization" : "Bearer <TOKEN>"
-          }
-          </textarea><br>`
-          : `<textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>`
-      }
-      ${
-        method !== "GET" && method !== "DELETE"
-          ? `
-        <label>Body (JSON):</label><br>
-        <textarea class="body-field" name="body">
-  {
-  "username": "Testi",
-  "email": "Testi@Testi.Testi",
-  "password": "Testi",
-  "address": "Test Address",
-  "filename": "file"
-  }
-        </textarea><br>`
-          : ""
-      }
-      <button type="submit">Send</button>
-    </form>
-    <pre id="response-output">Response will appear here...</pre>
-  `;
+export function htmlIdOptionsMenu(idOptions, jsonResponse) {
+  if (jsonResponse) {
+    if (Array.isArray(jsonResponse)) {
+      jsonResponse.forEach((item) => {
+        if (item.category && Array.isArray(item.items)) {
+          item.items.forEach((response) => {
+            const option = document.createElement("option");
+            option.value = response.id;
+            option.textContent = response.id;
+            idOptions.appendChild(option);
+          });
+        } else {
+          console.error("Invalid item structure in JSON response");
+        }
+      });
+    } else {
+      console.error("Invalid response structure");
+    }
   } else {
-    return `
-        <h2>Test Endpoint</h2>
-        <p><strong>Method:</strong> ${method}</p>
-        <p><strong>URL:</strong> ${endpoint}</p>
-        <form id="test-form">
-          <label>Headers (JSON):</label><br>
-          <textarea name="headers">{ "Content-Type": "application/json" }</textarea><br>
-          ${
-            method !== "GET" && !endpoint.includes("/auth")
-              ? `
-            <label>Body (JSON):</label><br>
-            <textarea  class="body-field" name="body">
-  {
-  "username": "Testi",
-  "email": "Testi@Testi.Testi",
-  "password": "Testi"
+    console.error("Invalid JSON response");
   }
-                      </textarea><br>`
-              : method === "POST"
-              ? `
-            <label>Body (JSON):</label><br>
-            <textarea  class="body-field" name="body">
-  {
-  "username": "Testi",
-  "password": "Testi"
-  }</textarea><br>`
-              : ""
-          }
-          <button type="submit">Send</button>
-        </form>
-        <pre id="response-output">Response will appear here...</pre>
-      `;
-  }
-};
+}

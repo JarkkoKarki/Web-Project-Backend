@@ -1,9 +1,14 @@
 import {
-  htmlContent,
-  htmlIdOptions,
+  htmlIdOptionsUser,
   testFunction,
-} from "/app/js/utils/components.js";
+  htmlIdOptionsMenu,
+} from "../js/utils/components.js";
 import { buttonConfigs } from "/app/js/config/buttonConfigs.js";
+import {
+  htmlContentMenu,
+  htmlContentUser,
+  htmlContentRoute,
+} from "/app/js/utils/htmlComponents.js";
 
 buttonConfigs.forEach(({ id, method, endpoint, type, needsIdOptions }) => {
   const button = document.getElementById(id);
@@ -17,8 +22,10 @@ buttonConfigs.forEach(({ id, method, endpoint, type, needsIdOptions }) => {
         const result = await fetch(endpoint, { method: "GET" });
         const jsonResponse = await result.json();
         const idOptions = document.getElementById("ids");
-        if (idOptions) {
-          htmlIdOptions(idOptions, jsonResponse);
+        if (idOptions && jsonResponse[0].category) {
+          htmlIdOptionsMenu(idOptions, jsonResponse);
+        } else {
+          htmlIdOptionsUser(idOptions, jsonResponse);
         }
       } catch (err) {
         console.error("Failed to fetch IDs:", err);
@@ -41,25 +48,51 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (["id", "put", "delete"].includes(data.type)) {
     const result = await fetch(endpoint, { method: "GET" });
+    console.log("data", data);
     const jsonResponse = await result.json();
     console.log(jsonResponse);
+    let htmlData = null;
 
-    const htmlData = htmlContent({
-      method: data.type === "put" ? "PUT" : method,
-      endpoint,
-      data,
-    });
+    if (data.endpoint.includes("http://10.120.32.87/app/api/menu")) {
+      htmlData = htmlContentMenu({
+        method: data.type === "put" ? "PUT" : method,
+        endpoint,
+        data,
+      });
+    } else if (data.endpoint.includes("http://10.120.32.87/app/api/users")) {
+      htmlData = htmlContentUser({
+        method: data.type === "put" ? "PUT" : method,
+        endpoint,
+        data,
+      });
+    } else {
+      htmlData = htmlContentUser({
+        method: data.type === "put" ? "PUT" : method,
+        endpoint,
+        data,
+      });
+    }
     testerDiv.innerHTML = htmlData;
 
     const idOptions = document.getElementById("ids");
-    if (idOptions) {
-      htmlIdOptions(idOptions, jsonResponse);
+    if (idOptions && jsonResponse[0].category) {
+      htmlIdOptionsMenu(idOptions, jsonResponse);
+    } else {
+      htmlIdOptionsUser(idOptions, jsonResponse);
     }
   } else {
-    const htmlData = htmlContent({ method, endpoint, data });
-    testerDiv.innerHTML = htmlData;
+    let htmlData = null;
+    if (data.endpoint.includes("http://10.120.32.87/app/api/menu")) {
+      htmlData = htmlContentMenu({ method, endpoint, data });
+      testerDiv.innerHTML = htmlData;
+    } else if (data.endpoint.includes("http://10.120.32.87/app/api/users")) {
+      htmlData = htmlContentUser({ method, endpoint, data });
+      testerDiv.innerHTML = htmlData;
+    } else {
+      const htmlData = htmlContentUser({ method, endpoint, data });
+      testerDiv.innerHTML = htmlData;
+    }
   }
-
   document.getElementById("test-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {

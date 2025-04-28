@@ -89,4 +89,24 @@ export const buttonConfigs = [
     type: "delete",
     needsIdOptions: true,
   },
+  {
+    id: "get-route",
+    method: "GET",
+    endpoint: "http://10.120.32.87/app/api/route/:olat/:olng/:lat/:lng",
+    type: "get",
+  },
+  {
+    id: "get-route",
+    method: "GET",
+    endpoint:
+      "http://10.120.32.87/app/api/route/60.192059/24.945831/60.193059/24.946831",
+    type: "get",
+  },
+  {
+    id: "get-legs",
+    method: "GET",
+    endpoint:
+      "http://10.120.32.87/app/api/route/legs/60.192059/24.945831/60.193059/24.946831",
+    type: "get",
+  },
 ];
