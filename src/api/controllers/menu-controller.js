@@ -1,14 +1,19 @@
 import {
     addProduct,
-    findProductById,
+    findProductById, listAllProducts,
     listAllProductsByCategory,
     modifyProduct,
     removeProduct
 } from "../models/menu-model.js";
 
 
-const getProduct = async (req, res) => {
+const getProductByCategory = async (req, res) => {
     const result = await listAllProductsByCategory();
+    res.json(result);
+};
+
+const getProduct = async (req, res) => {
+    const result = await listAllProducts();
     res.json(result);
 };
 
@@ -68,4 +73,4 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-export {getProduct, postProduct, putProduct, getProductById, deleteProduct}
+export {getProductByCategory, getProduct, postProduct, putProduct, getProductById, deleteProduct}

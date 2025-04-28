@@ -6,10 +6,10 @@ const listAllProductsByCategory = async () => {
 
         SELECT p.*, d.diet, c.category
         FROM products p
-        LEFT JOIN product_categories pc ON p.id = pc.product_id
-        LEFT JOIN categories c ON pc.category_id = c.id
-        LEFT JOIN product_diets pd ON p.id = pd.product_id
-        LEFT JOIN diets d ON pd.diet_id = d.id
+                 LEFT JOIN product_categories pc ON p.id = pc.product_id
+                 LEFT JOIN categories c ON pc.category_id = c.id
+                 LEFT JOIN product_diets pd ON p.id = pd.product_id
+                 LEFT JOIN diets d ON pd.diet_id = d.id
     `);
     console.log('row', rows);
     if (rows.length === 0) {
@@ -51,6 +51,56 @@ const listAllProductsByCategory = async () => {
         items
     }));
 };
+
+//Get all products listed by categories
+const listAllProducts = async () => {
+    const [rows] = await promisePool.query(`
+
+        SELECT p.*, d.diet, c.category
+        FROM products p
+                 LEFT JOIN product_categories pc ON p.id = pc.product_id
+                 LEFT JOIN categories c ON pc.category_id = c.id
+                 LEFT JOIN product_diets pd ON p.id = pd.product_id
+                 LEFT JOIN diets d ON pd.diet_id = d.id
+    `);
+    console.log('row', rows);
+    if (rows.length === 0) {
+        return false;
+    }
+
+    const products = [];
+
+    rows.forEach(row => {
+        // Find if product already exists in the list
+        let existingProduct = products.find(p => p.id === row.id);
+
+        // If the product doesn't exist, create a new product object
+        if (!existingProduct) {
+            existingProduct = {
+                id: row.id,
+                name: row.name,
+                description: row.description,
+                price: row.price,
+                filename: row.filename,
+                categories: [],
+                diets: []
+            };
+            products.push(existingProduct);
+        }
+
+        // Add category to the product if it doesn't already exist
+        if (row.category && !existingProduct.categories.includes(row.category)) {
+            existingProduct.categories.push(row.category);
+        }
+
+        // Add diet to the product if it doesn't already exist
+        if (row.diet && !existingProduct.diets.includes(row.diet)) {
+            existingProduct.diets.push(row.diet);
+        }
+    });
+    return products;
+};
+
 
 //Finding product by id and its categories and diets
 const findProductById = async (id) => {
@@ -246,4 +296,4 @@ const removeProduct = async (id) => {
     }
 };
 
-export {listAllProductsByCategory, addProduct, modifyProduct, findProductById, removeProduct}
+export {listAllProductsByCategory, listAllProducts, addProduct, modifyProduct, findProductById, removeProduct}
