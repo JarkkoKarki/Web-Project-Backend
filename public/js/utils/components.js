@@ -5,6 +5,11 @@ export const testFunction = (method, endpoint, type) => {
 };
 
 export function htmlIdOptionsUser(idOptions, jsonResponse) {
+  if (!idOptions) {
+    console.log("No Id Options");
+    return;
+  }
+
   if (jsonResponse) {
     if (Array.isArray(jsonResponse)) {
       jsonResponse.forEach((user) => {
@@ -26,6 +31,10 @@ export function htmlIdOptionsUser(idOptions, jsonResponse) {
 }
 
 export function htmlIdOptionsMenu(idOptions, jsonResponse) {
+  if (!idOptions) {
+    console.log("No Id Options");
+    return;
+  }
   if (jsonResponse) {
     if (Array.isArray(jsonResponse)) {
       jsonResponse.forEach((item) => {
