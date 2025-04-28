@@ -7,7 +7,6 @@ import { buttonConfigs } from "/app/js/config/buttonConfigs.js";
 import {
   htmlContentMenu,
   htmlContentUser,
-  htmlContentRoute,
 } from "/app/js/utils/htmlComponents.js";
 
 buttonConfigs.forEach(({ id, method, endpoint, type, needsIdOptions }) => {
