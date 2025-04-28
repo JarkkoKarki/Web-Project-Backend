@@ -47,9 +47,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (["id", "put", "delete"].includes(data.type)) {
     const result = await fetch(endpoint, { method: "GET" });
-    console.log("data", data);
     const jsonResponse = await result.json();
-    console.log(jsonResponse);
     let htmlData = null;
 
     if (data.endpoint.includes("http://10.120.32.87/app/api/menu")) {

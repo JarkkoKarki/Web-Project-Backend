@@ -5,11 +5,6 @@ export const testFunction = (method, endpoint, type) => {
 };
 
 export function htmlIdOptionsUser(idOptions, jsonResponse) {
-  if (!idOptions) {
-    console.log("No Id Options");
-    return;
-  }
-
   if (jsonResponse) {
     if (Array.isArray(jsonResponse)) {
       jsonResponse.forEach((user) => {
@@ -19,7 +14,7 @@ export function htmlIdOptionsUser(idOptions, jsonResponse) {
           option.textContent = user.id;
           idOptions.appendChild(option);
         } else {
-          console.error("Invalid user structure in JSON response");
+          console.log("No id Options");
         }
       });
     } else {
@@ -31,10 +26,6 @@ export function htmlIdOptionsUser(idOptions, jsonResponse) {
 }
 
 export function htmlIdOptionsMenu(idOptions, jsonResponse) {
-  if (!idOptions) {
-    console.log("No Id Options");
-    return;
-  }
   if (jsonResponse) {
     if (Array.isArray(jsonResponse)) {
       jsonResponse.forEach((item) => {
@@ -46,7 +37,7 @@ export function htmlIdOptionsMenu(idOptions, jsonResponse) {
             idOptions.appendChild(option);
           });
         } else {
-          console.error("Invalid item structure in JSON response");
+          console.log("No id Options");
         }
       });
     } else {
