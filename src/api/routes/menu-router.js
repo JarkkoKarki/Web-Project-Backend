@@ -7,21 +7,22 @@ import {
     deleteProduct,
     getProductByCategory
 } from "../controllers/menu-controller.js";
-import {createThumbnail, upload} from "../middlewares/middlewares.js";
+import {checkAdmin, createThumbnail, upload} from "../middlewares/middlewares.js";
 
 const menuRouter = express.Router();
 
-menuRouter.route("/").get(getProductByCategory)
-    .post(upload.single('file'),
-      createThumbnail,
-        postProduct)
+menuRouter.route("/").get(getProductByCategory).post
+    (checkAdmin,
+    upload.single('file'),
+    createThumbnail,
+    postProduct)
 
 menuRouter.route("/products").get(getProduct)
 
 
 menuRouter.route("/:id").get(getProductById)
-    .delete(deleteProduct)
-    .put(upload.single('file'),
+    .delete(checkAdmin, deleteProduct)
+    .put(checkAdmin, upload.single('file'),
         createThumbnail,
         putProduct)
 

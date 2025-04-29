@@ -200,11 +200,29 @@ const modifyProduct = async  (product, id) => {
     try {
         await connection.beginTransaction();
 
+        const [productRows] = await connection.execute(`
+        SELECT * FROM products 
+        WHERE id = ?`,
+        [id]
+        );
+
+        if (productRows.affectedRows === 0) {
+            throw new Error("Product not found");
+        }
+
+        const original = productRows[0];
+
+        // Check if the values are empty. If empty replace them with the old product values
+        const updatedName = name || original.name
+        const updatedDescription = description || original.description
+        const updatedPrice = price || original.price
+        const updatedFilename = filename || original.filename
+
         await connection.execute(`
             UPDATE products
             SET name = ?,  description = ?, price = ?,  filename = ?
             WHERE id = ?`,
-            [name,  description,  price, filename, id]
+            [updatedName,  updatedDescription,  updatedPrice, updatedFilename, id]
         );
 
         await connection.execute(`
