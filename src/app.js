@@ -28,4 +28,9 @@ app.get("/test", (req, res) => {
   res.sendFile(htmlFilePath);
 });
 
+app.get("/payments", (req, res) => {
+  const htmlFilePath = path.join(__dirname, "../public/html/payment.html");
+  res.sendFile(htmlFilePath);
+});
+
 export default app;
