@@ -20,8 +20,8 @@ const addOrder = async (order, user) => {
         const [result] = await connection.execute(`
         INSERT INTO orders 
         (user_id, total_price)
-        VALUES (?, ?),`,
-        [user.id, total_price]);
+        VALUES (?, ?)`,
+        [user.user_id, total_price]);
 
         const orderId = result.insertId;
 
