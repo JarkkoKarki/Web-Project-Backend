@@ -1,6 +1,7 @@
 import {
     addProduct,
-    findProductById, listAllProducts,
+    findProductById,
+    listAllProducts,
     listAllProductsByCategory,
     modifyProduct,
     removeProduct
@@ -73,4 +74,11 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-export {getProductByCategory, getProduct, postProduct, putProduct, getProductById, deleteProduct}
+export {
+    getProductByCategory,
+    getProduct,
+    postProduct,
+    putProduct,
+    getProductById,
+    deleteProduct,
+}

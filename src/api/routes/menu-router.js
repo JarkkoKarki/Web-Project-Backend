@@ -5,7 +5,7 @@ import {
     postProduct,
     getProductById,
     deleteProduct,
-    getProductByCategory
+    getProductByCategory,
 } from "../controllers/menu-controller.js";
 import {checkAdmin, createThumbnail, upload} from "../middlewares/middlewares.js";
 
@@ -15,15 +15,14 @@ menuRouter.route("/").get(getProductByCategory).post
     (checkAdmin,
     upload.single('file'),
     createThumbnail,
-    postProduct)
+    postProduct);
 
-menuRouter.route("/products").get(getProduct)
-
+menuRouter.route("/products").get(getProduct);
 
 menuRouter.route("/:id").get(getProductById)
     .delete(checkAdmin, deleteProduct)
     .put(checkAdmin, upload.single('file'),
         createThumbnail,
-        putProduct)
+        putProduct);
 
 export default menuRouter;

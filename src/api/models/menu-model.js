@@ -314,4 +314,11 @@ const removeProduct = async (id) => {
     }
 };
 
-export {listAllProductsByCategory, listAllProducts, addProduct, modifyProduct, findProductById, removeProduct}
+export {
+    listAllProductsByCategory,
+    listAllProducts,
+    addProduct,
+    modifyProduct,
+    findProductById,
+    removeProduct,
+}
