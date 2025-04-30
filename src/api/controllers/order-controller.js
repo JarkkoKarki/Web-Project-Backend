@@ -11,7 +11,9 @@ const getOrders = async (req, res) => {
 }
 
 const postOrder = async (req, res) => {
+    console.log(res.locals.user)
     const user = res.locals.user
+    console.log(user.id)
     const result = await addOrder(req.body, user);
     if (result) {
         res.json(result)
