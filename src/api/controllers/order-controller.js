@@ -11,14 +11,12 @@ const getOrders = async (req, res) => {
 }
 
 const postOrder = async (req, res) => {
-    console.log(res.locals.user)
     const user = res.locals.user
-    console.log(user)
     const result = await addOrder(req.body, user);
     if (result) {
-        res.json(result)
+        res.status(201).json({ message: 'Order created', orderId: result.orderId });
     } else {
-        res.sendStatus(404);
+        res.status(404).json({ error: 'Failed to add order' });
     }
 }
 

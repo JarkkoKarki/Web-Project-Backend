@@ -2,18 +2,20 @@ import promisePool from "../../utils/database.js";
 
 
 const listAllOrders = async () => {
-
+    const [rows] = await promisePool.query(`
+    SELECT * FROM orders`);
+    return rows
 }
 
 
 const addOrder = async (order, user) => {
-    const {total_price, listOfProducts = []} = order;
+    const {total_price, products = []} = order;
     const connection = await promisePool.getConnection();
     try {
         await connection.beginTransaction();
 
         const productCounts = {};
-        for (const productId of listOfProducts) {
+        for (const productId of products) {
             productCounts[productId] = (productCounts[productId] || 0) + 1;
         }
 
@@ -34,6 +36,11 @@ const addOrder = async (order, user) => {
         }
 
         await connection.commit();
+
+        if (result.affectedRows  === 0) {
+            return false;
+        }
+        return {orderId};
 
     } catch (e) {
         await connection.rollback();
