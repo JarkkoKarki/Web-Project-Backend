@@ -104,6 +104,19 @@ const putUser = async (req, res) => {
     const result = await modifyUser(updateData, userId);
 
     if (result) {
+      // Regenerate the token with updated data
+      const updatedUser = await findUserById(userId);
+      const token = jwt.sign(
+        {
+          user_id: updatedUser.id,
+          username: updatedUser.username,
+          address: updatedUser.address,
+          role: updatedUser.role,
+          filename: updatedUser.filename || "uploads/default.jpg",
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
       res.status(200).json({
         message: "User updated successfully",
         filename,
