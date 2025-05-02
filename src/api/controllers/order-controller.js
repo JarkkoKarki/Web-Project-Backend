@@ -19,11 +19,9 @@ const getMyOrders = async(req, res) => {
         return res.status(401).json({ message: "Unauthorized: user not authenticated" });
     }
     const user = res.locals.user
-    console.log(user.address)
-    console.log(user.user_address);
     const result = await listAllMyOrders(user);
     if (result) {
-        res.json(result || [])
+        res.json(result ||  [])
     } else {
         res.json(404);
     }

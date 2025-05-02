@@ -25,6 +25,7 @@ const listAllOrders = async () => {
 
             orders.push({
                 orderId: order.id,
+                address: order.user_address,
                 deliveryAddress: order.address,
                 orderDate: order.order_date,
                 status: order.status,
@@ -75,7 +76,7 @@ const listAllMyOrders = async (user) => {
 
             orders.push({
                 orderId: order.id,
-                address: order.address,
+                address: order.user_address,
                 orderDate: order.order_date,
                 status: order.status,
                 totalPrice: order.total_price,
