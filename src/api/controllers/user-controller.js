@@ -25,10 +25,10 @@ const postUser = async (req, res) => {
   try {
     const { username, email, password, address, first_name, last_name, phone } =
       req.body;
-    const filename = req.file ? req.file.filename : "uploads/default.png";
+    const filename = req.file ? req.file.filename : "public/default.jpg";
     const thumbnailPath = req.file
       ? req.file.thumbnailPath
-      : "uploads/default.png";
+      : "public/default.jpg";
     console.log(username, email, password, address);
     console.log(filename);
     console.log(thumbnailPath);
