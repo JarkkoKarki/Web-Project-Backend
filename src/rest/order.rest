@@ -1,7 +1,12 @@
-### GET orders
+### GET orders (Needs admin or employee role)
 GET http://localhost:3000/api/orders
 Content-Type: application/json
 
+
+### GET user's orders  (needs token)
+GET http://localhost:3000/api/orders/myorders
+Content-Type: application/json
+Authorization: Bearer "TOKEN"
 
 ### POST order
 POST http://localhost:3000/api/orders

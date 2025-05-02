@@ -5,7 +5,7 @@ import {authenticateToken, checkUserOwnership} from "../middlewares/middlewares.
 
 const orderRouter = express.Router();
 
-orderRouter.route("/").get(getOrders).post(authenticateToken, postOrder);
+orderRouter.route("/").get(authenticateToken, getOrders).post(authenticateToken, postOrder);
 
 orderRouter.route("/:id").delete().put().get();
 

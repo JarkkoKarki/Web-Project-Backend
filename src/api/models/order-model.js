@@ -2,10 +2,47 @@ import promisePool from "../../utils/database.js";
 
 
 const listAllOrders = async () => {
-    const [rows] = await promisePool.query(`
-    SELECT * FROM orders`);
-    return rows
-}
+    const connection = await promisePool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        const [rows] = await promisePool.query(`
+        SELECT * FROM orders
+        `);
+
+        const orders = [];
+
+        for (const order of rows) {
+            const [productRows] = await connection.query(`
+                SELECT op.product_id,
+                op.quantity,
+                p.name,
+                p.description,
+                FROM order_products op
+                JOIN products p ON op.product_id = p.id
+                WHERE op.order_id = ?`,
+                [order.id]);
+
+            orders.push({
+                order_id: order.id,
+                order_date: order.order_date,
+                status: order.status,
+                products: productRows
+            });
+        }
+
+        await connection.commit();
+
+        return orders.length > 0 ? orders : [];
+
+    } catch (e) {
+        await connection.rollback();
+        console.error("Error getting all orders:", e);
+        throw e;
+    } finally {
+        connection.release();
+    }
+};
 
 const listAllMyOrders = async (user) => {
     const connection = await promisePool.getConnection();
@@ -76,9 +113,9 @@ const addOrder = async (order, user) => {
 
         const [result] = await connection.execute(`
         INSERT INTO orders 
-        (user_id, total_price)
+        (user_id, user_address total_price)
         VALUES (?, ?)`,
-        [user.user_id, total_price]);
+        [user.user_id, user.address, total_price]);
 
         const orderId = result.insertId;
 

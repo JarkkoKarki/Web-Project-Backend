@@ -2,6 +2,10 @@ import {addOrder, listAllMyOrders, listAllOrders} from "../models/order-model.js
 
 
 const getOrders = async (req, res) => {
+    const user = res.locals.user
+    if (user.role !== 'admin'  ||  user.role !== 'employee'  )  {
+        return res.status(401).json({ message: "Unauthorized: user not authenticated" });
+    }
     const result = await listAllOrders();
     if (result) {
         res.json(result)
@@ -17,9 +21,9 @@ const getMyOrders = async(req, res) => {
     const user = res.locals.user
     const result = await listAllMyOrders(user);
     if (result) {
-        res.json(result)
+        res.json(result || [])
     } else {
-        res.sendStatus(404);
+        res.json(404);
     }
 }
 
