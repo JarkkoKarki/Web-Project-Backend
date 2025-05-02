@@ -22,6 +22,7 @@ const authUser = async (req, res) => {
         username: user.username,
         address: user.address,
         role: user.role,
+        filename: user.filename || "uploads/default.jpg",
       },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
