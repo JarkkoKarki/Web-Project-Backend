@@ -83,7 +83,6 @@ const putUser = async (req, res) => {
       password: hashedPassword,
       address,
       filename,
-      thumbnailPath,
       first_name,
       last_name,
       phone,
