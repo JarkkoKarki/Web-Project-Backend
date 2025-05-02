@@ -107,8 +107,6 @@ const putUser = async (req, res) => {
       res.status(200).json({
         message: "User updated successfully",
         filename,
-        filepath,
-        thumbnailPath,
         user: result,
       });
     } else {
