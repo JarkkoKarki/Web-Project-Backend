@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { addUserAdmin, login } from "../models/user-model.js";
-import { add } from "lodash";
 
 const authUser = async (req, res) => {
   try {
@@ -28,16 +27,7 @@ const authUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({
-      user: {
-        id: user.id,
-        username: user.username,
-        address: user.address,
-        role: user.role,
-        thumbnailPath: user.filename || "uploads/default.jpg",
-      },
-      token,
-    });
+    res.status(200).json({ user, token });
   } catch (error) {
     console.error("Error in authUser:", error);
     res.status(500).json({ error: "Internal Server Error" });
