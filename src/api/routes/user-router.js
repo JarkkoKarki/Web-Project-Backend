@@ -30,6 +30,6 @@ userRouter
     createThumbnail,
     putUser
   )
-  .delete(authenticateToken, checkUserOwnership, checkAdmin, deleteUser);
+  .delete(authenticateToken, checkUserOwnership, deleteUser);
 
 export default userRouter;
