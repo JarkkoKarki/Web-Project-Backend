@@ -71,7 +71,6 @@ const putUser = async (req, res) => {
       req.body;
     const userId = req.params.id;
     const filename = req.file ? req.file.filename : "uploads/default.png";
-    const filepath = req.file ? req.file.path : "uploads/default.png";
     const thumbnailPath = req.file
       ? req.file.thumbnailPath
       : "uploads/default.png";
@@ -84,7 +83,6 @@ const putUser = async (req, res) => {
       password: hashedPassword,
       address,
       filename,
-      filepath,
       thumbnailPath,
       first_name,
       last_name,
