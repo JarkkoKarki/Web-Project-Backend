@@ -13,7 +13,7 @@ const listAllMyOrders = async (user) => {
         await connection.beginTransaction();
 
         const [orderResults] = await promisePool.query(`
-        SELECT order_date, status, total_price
+        SELECT *
         FROM orders
         WHERE user_id = ?`,
         [user.user_id]);
