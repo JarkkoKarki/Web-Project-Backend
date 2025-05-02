@@ -70,7 +70,7 @@ const putUser = async (req, res) => {
     const { username, email, password, address, first_name, last_name, phone } =
       req.body;
     const userId = req.params.id;
-    const filename = req.file ? req.file.filename : "uploads/default.png";
+    const filename = req.file ? req.file.thumbnailPath : "uploads/default.png";
     const thumbnailPath = req.file
       ? req.file.thumbnailPath
       : "uploads/default.png";
