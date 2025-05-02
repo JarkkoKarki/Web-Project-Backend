@@ -24,8 +24,9 @@ const listAllOrders = async () => {
                 [order.id]);
 
             orders.push({
-                order_id: order.id,
-                order_date: order.order_date,
+                orderId: order.id,
+                deliveryAddress: order.address,
+                orderDate: order.order_date,
                 status: order.status,
                 products: productRows
             });
@@ -72,13 +73,12 @@ const listAllMyOrders = async (user) => {
             [order.id]
             );
 
-            console.log("Products found:", productRows);
-
             orders.push({
-                order_id: order.id,
-                order_date: order.order_date,
+                orderId: order.id,
+                address: order.address,
+                orderDate: order.order_date,
                 status: order.status,
-                total_price: order.total_price,
+                totalPrice: order.total_price,
                 products: productRows
             });
         }
