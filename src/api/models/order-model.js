@@ -21,7 +21,7 @@ const listAllMyOrders = async (user) => {
         const orders = []
 
         for (const order of orderResults) {
-            const products = await connection.query(`
+            const [productRows] = await connection.query(`
             SELECT op.product_id,
             op.quantity,
             p.name,
@@ -38,7 +38,7 @@ const listAllMyOrders = async (user) => {
                 order_date: order.order_date,
                 status: order.status,
                 total_price: order.total_price,
-                products: products
+                products: productRows
             });
         }
 
