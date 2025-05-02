@@ -1,4 +1,4 @@
-import {addOrder, listAllOrders} from "../models/order-model.js";
+import {addOrder, listAllMyOrders, listAllOrders} from "../models/order-model.js";
 
 
 const getOrders = async (req, res) => {
@@ -10,6 +10,20 @@ const getOrders = async (req, res) => {
     }
 }
 
+const getMyOrders = async(req, res) => {
+    if (!res.locals.user) {
+        return res.status(401).json({ message: "Unauthorized: user not authenticated" });
+    }
+    const user = res.locals.user
+    const result = await listAllMyOrders(user);
+    if (result) {
+        res.json(result)
+    } else {
+        res.sendStatus(404);
+    }
+}
+
+
 const postOrder = async (req, res) => {
     const user = res.locals.user
     const result = await addOrder(req.body, user);
@@ -20,4 +34,4 @@ const postOrder = async (req, res) => {
     }
 }
 
-export {postOrder, getOrders};
+export {postOrder, getOrders, getMyOrders};
