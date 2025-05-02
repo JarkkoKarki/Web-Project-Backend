@@ -139,3 +139,4 @@ dist
 
 uploads/*
 !uploads/.gitkeep
+!uploads/default.jpg
