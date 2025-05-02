@@ -20,6 +20,8 @@ const listAllMyOrders = async (user) => {
 
         const orders = []
 
+        console.log("Orders found:", orderResults);
+
         for (const order of orderResults) {
             const [productRows] = await connection.query(`
             SELECT op.product_id,
@@ -30,11 +32,13 @@ const listAllMyOrders = async (user) => {
             FROM order_products op
             JOIN products p ON op.product_id = p.id
             WHERE op.order_id = ?`,
-            [order.order_id]
+            [order.id]
             );
 
+            console.log("Products found:", productRows);
+
             orders.push({
-                order_id: order.order_id,
+                order_id: order.id,
                 order_date: order.order_date,
                 status: order.status,
                 total_price: order.total_price,
