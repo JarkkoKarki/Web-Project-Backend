@@ -161,7 +161,7 @@ const modifyOrder = async (order, id) => {
          [order, id]
     );
     console.log(result);
-    if (result[0].affectedRows === 0) {
+    if (result.length === 0) {
         return false
     }
     return result[0];
