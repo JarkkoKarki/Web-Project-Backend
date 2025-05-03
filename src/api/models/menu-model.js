@@ -107,14 +107,14 @@ const listAllProducts = async (lang = "en") => {
 const findProductById = async (id) => {
   const [rows] = await promisePool.query(
     `
+
         SELECT p.*, d.diet, c.category
         FROM products p
         LEFT JOIN product_categories pc ON p.id = pc.product_id
         LEFT JOIN categories c ON pc.category_id = c.id
         LEFT JOIN product_diets pd ON p.id = pd.product_id
         LEFT JOIN diets d ON pd.diet_id = d.id
-        WHERE p.id = ?
-        `,
+        WHERE p.id = ?`,
     [id]
   );
   console.log("row", rows);
