@@ -22,7 +22,7 @@ export const createCheckoutSession = async (req, res) => {
 
       lineItems.push({
         price_data: {
-          currency: "usd",
+          currency: "eur",
           product_data: {
             name: productDetails.name_en,
             description: productDetails.desc_en || "No description available", // jos ei oo ni ei oo
