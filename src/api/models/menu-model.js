@@ -223,7 +223,7 @@ const modifyProduct = async  (product, id) => {
 
         await connection.execute(`
             UPDATE products
-            SET name = ?,  description = ?, price = ?,  filename = ?
+            SET name_fi = ?, name_en = ?, desc_fi = ?, desc_en = ?,price = ?,  filename = ?
             WHERE id = ?`,
             [updatedNameFi,  updatedNameEn,updatedDescFi,
                 updatedDescEn,  updatedPrice, updatedFilename, id]
