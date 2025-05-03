@@ -157,7 +157,7 @@ const addProduct = async (product) => {
         
         INSERT INTO products
         (name_fi,name_en, desc_fi, desc_en, price, filename)
-        VALUES (?, ?, ?, ?)`,
+        VALUES (?, ?, ?, ?,?,?)`,
         [name_fi,name_en, desc_fi,
             desc_en, price, filename]
         );
