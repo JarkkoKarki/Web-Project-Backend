@@ -7,6 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const createCheckoutSession = async (req, res) => {
   try {
     const { productIds } = req.body;
+    console.log(req.body, " req body");
     console.log(productIds);
 
     if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
@@ -14,6 +15,7 @@ export const createCheckoutSession = async (req, res) => {
     }
 
     const lineItems = [];
+
     for (const id of productIds) {
       const product = await findProductById(id);
       if (!product) continue;
