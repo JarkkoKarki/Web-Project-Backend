@@ -11,13 +11,14 @@ import {checkAdmin, createThumbnail, upload} from "../middlewares/middlewares.js
 
 const menuRouter = express.Router();
 
-menuRouter.route("/").get(getProductByCategory).post
-    (checkAdmin,
+menuRouter.route("/:lang").get(getProductByCategory)
+
+menuRouter.route("/").post(checkAdmin,
     upload.single('file'),
     createThumbnail,
     postProduct);
 
-menuRouter.route("/products").get(getProduct);
+menuRouter.route("/products/:lang").get(getProduct);
 
 menuRouter.route("/:id").get(getProductById)
     .delete(checkAdmin, deleteProduct)

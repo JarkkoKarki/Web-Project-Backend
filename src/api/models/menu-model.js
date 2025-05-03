@@ -1,7 +1,7 @@
 import promisePool from "../../utils/database.js";
 
 //Get all products listed by categories
-const listAllProductsByCategory = async () => {
+const listAllProductsByCategory = async (lang = 'en') => {
     const [rows] = await promisePool.query(`
 
         SELECT p.*, d.diet, c.category
@@ -33,8 +33,8 @@ const listAllProductsByCategory = async () => {
         if (!existingProduct) {
             existingProduct = {
                 id: row.id,
-                name: row.name,
-                description: row.description,
+                name: lang === 'fi' ? row.name_fi : row.name_en,
+                description: lang === 'fi' ? row.desc_fi : row.desc_en,
                 price: row.price,
                 filename: row.filename,
                 diets: []
@@ -53,7 +53,7 @@ const listAllProductsByCategory = async () => {
 };
 
 //Get all products listed by categories
-const listAllProducts = async () => {
+const listAllProducts = async (lang = 'en') => {
     const [rows] = await promisePool.query(`
 
         SELECT p.*, d.diet, c.category
@@ -78,8 +78,8 @@ const listAllProducts = async () => {
         if (!existingProduct) {
             existingProduct = {
                 id: row.id,
-                name: row.name,
-                description: row.description,
+                name: lang === 'fi' ? row.name_fi : row.name_en,
+                description: lang === 'fi' ? row.desc_fi : row.desc_en,
                 price: row.price,
                 filename: row.filename,
                 categories: [],
