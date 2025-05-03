@@ -19,14 +19,14 @@ export const createCheckoutSession = async (req, res) => {
 
       lineItems.push({
         price_data: {
-          currency: "usd",
+          currency: "eur",
           product_data: {
             name: product.name,
             description: product.description,
           },
           unit_amount: Math.round(product.price * 100),
         },
-        quantity: 1,
+        quantity: product.quantity,
       });
       console.log("lineItems", lineItems);
     }
