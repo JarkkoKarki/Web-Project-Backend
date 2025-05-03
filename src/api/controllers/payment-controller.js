@@ -14,9 +14,9 @@ export const createCheckoutSession = async (req, res) => {
     }
     console.log(products, " prducts");
     const lineItems = [];
-    for (const id of products) {
-      console.log(id);
-      const product = await findProductById(product.id); // haetaan productit
+    for (const product of products) {
+      const productDetails = await findProductById(product.id); // haetaan productit
+      console.log(product.id, " product.id");
       if (!productDetails) continue;
 
       lineItems.push({
