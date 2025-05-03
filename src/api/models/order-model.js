@@ -121,7 +121,7 @@ const addOrder = async (order, user) => {
         const [result] = await connection.execute(`
         INSERT INTO orders 
         (user_id, user_address total_price)
-        VALUES (?, ?)`,
+        VALUES (?, ?, ?)`,
         [user.user_id, user.address, total_price]);
 
         //Get the table id from previous query
