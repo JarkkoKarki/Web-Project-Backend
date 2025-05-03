@@ -11,15 +11,23 @@ import {checkAdmin, createThumbnail, upload} from "../middlewares/middlewares.js
 
 const menuRouter = express.Router();
 
-menuRouter.route("/:lang").get(getProductByCategory)
+// GET /api/menu/bycategory/:lang
+menuRouter.route("/bycategory/:lang").get(getProductByCategory)
 
+// GET /api/menu/products/:lang
+menuRouter.route("/products/:lang").get(getProduct);
+
+// GET /api/menu/products/:id/
+menuRouter.get("/products/:id/", getProductById);
+
+// POST /api/menu/products
 menuRouter.route("/").post(checkAdmin,
     upload.single('file'),
     createThumbnail,
     postProduct);
 
-menuRouter.route("/products/:lang").get(getProduct);
-
+// PUT /api/menu/products/:id
+// DELETE /api/menu/products/:id
 menuRouter.route("/:id").get(getProductById)
     .delete(checkAdmin, deleteProduct)
     .put(checkAdmin, upload.single('file'),

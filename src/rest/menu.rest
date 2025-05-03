@@ -1,10 +1,14 @@
 ###GET products by category
-GET http://127.0.0.1:3000/api/menu
+GET http://127.0.0.1:3000/api/menu/bycategory/fi
+Content-Type: application/json
+
+###GET products
+GET http://127.0.0.1:3000/api/menu/products/fi
 Content-Type: application/json
 
 
 ###GET product by id and its diets and category
-GET http://127.0.0.1:3000/api/menu/1
+GET http://127.0.0.1:3000/api/menu/product/1
 Content-Type: application/json
 
 
