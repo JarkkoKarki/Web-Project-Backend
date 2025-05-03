@@ -9,12 +9,14 @@ export const createCheckoutSession = async (req, res) => {
     const { products } = req.body; // array -> jossa { id, quantity }
 
     if (!products || !Array.isArray(products) || products.length === 0) {
+      console.log(res);
       return res.status(400).json({ error: "No products provided" });
     }
 
     const lineItems = [];
-    for (const product of products) {
-      const productDetails = await findProductById(product.id); // haetaan productit
+    for (const id of products) {
+      console.log(id);
+      const product = await findProductById(product.id); // haetaan productit
       if (!productDetails) continue;
 
       lineItems.push({
