@@ -1,10 +1,10 @@
-import {addOrder, listAllMyOrders, listAllOrders} from "../models/order-model.js";
+import {addOrder, listAllMyOrders, listAllOrders, modifyOrder} from "../models/order-model.js";
 
 
 const getOrders = async (req, res) => {
     const user = res.locals.user
-    if (user.role !== 'admin'  ||  user.role !== 'employee'  )  {
-        return res.status(401).json({ message: "Unauthorized: user not authenticated" });
+    if (user.role !== 'admin' || user.role !== 'employee') {
+        return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
     const result = await listAllOrders();
     if (result) {
@@ -14,14 +14,14 @@ const getOrders = async (req, res) => {
     }
 }
 
-const getMyOrders = async(req, res) => {
+const getMyOrders = async (req, res) => {
     if (!res.locals.user) {
-        return res.status(401).json({ message: "Unauthorized: user not authenticated" });
+        return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
     const user = res.locals.user
     const result = await listAllMyOrders(user);
     if (result) {
-        res.json(result ||  [])
+        res.json(result || [])
     } else {
         res.json(404);
     }
@@ -32,10 +32,25 @@ const postOrder = async (req, res) => {
     const user = res.locals.user
     const result = await addOrder(req.body, user);
     if (result) {
-        res.status(201).json({ message: 'Order created', orderId: result.orderId });
+        res.status(201).json({message: 'Order created', orderId: result.orderId});
     } else {
-        res.status(404).json({ error: 'Failed to add order' });
+        res.status(404).json({error: 'Failed to add order'});
     }
 }
 
-export {postOrder, getOrders, getMyOrders};
+const putOrder = async (req, res) => {
+    const user = res.locals.user
+    if (user.role !== 'admin' || user.role !== 'employee') {
+        return res.status(401).json({message: "Unauthorized: user not authenticated"});
+    }
+    const order = req.body;
+    const orderId = req.params.id
+    const result = await modifyOrder(order, orderId);
+    if (result) {
+        res.status(201).json({message: 'Order modify successfully', orderId: result.orderId});
+    } else {
+        res.status(404).json({error: 'Failed to modify order'});
+    }
+}
+
+export {postOrder, getOrders, getMyOrders, putOrder};
