@@ -1,7 +1,7 @@
 import promisePool from "../../utils/database.js";
 
 //List all orders and also products
-const listAllOrders = async () => {
+const listAllOrders = async (lang = 'en') => {
     const connection = await promisePool.getConnection();
     try {
         await connection.beginTransaction();
@@ -16,8 +16,8 @@ const listAllOrders = async () => {
             const [productRows] = await connection.query(`
                 SELECT op.product_id,
                 op.quantity,
-                p.name,
-                p.description
+                p.name_${lang} AS name,
+                p.desc_${lang} AS description,
                 FROM order_products op
                 JOIN products p ON op.product_id = p.id
                 WHERE op.order_id = ?`,
@@ -47,7 +47,7 @@ const listAllOrders = async () => {
 };
 
 //Gets all orders by user
-const listAllMyOrders = async (user) => {
+const listAllMyOrders = async (user, lang) => {
     const connection = await promisePool.getConnection();
     try {
         await connection.beginTransaction();
@@ -69,8 +69,8 @@ const listAllMyOrders = async (user) => {
             const [productRows] = await connection.query(`
             SELECT op.product_id,
             op.quantity,
-            p.name,
-            p.description,
+            p.name_${lang} AS name,
+            p.desc_${lang} AS description,
             p.price
             FROM order_products op
             JOIN products p ON op.product_id = p.id

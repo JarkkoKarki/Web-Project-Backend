@@ -5,11 +5,13 @@ import {authenticateToken, checkUserOwnership} from "../middlewares/middlewares.
 
 const orderRouter = express.Router();
 
-orderRouter.route("/").get(authenticateToken, getOrders).post(authenticateToken, postOrder);
+orderRouter.route("/:lang").get(authenticateToken, getOrders)
+
+orderRouter.route("/").post(authenticateToken, postOrder);
 
 orderRouter.route("/:id").put(authenticateToken, putOrder);
 
 //Router for users to see their orders
-orderRouter.route("/myorders").get(authenticateToken, getMyOrders);
+orderRouter.route("/myorders/:lang").get(authenticateToken, getMyOrders);
 
 export default orderRouter;

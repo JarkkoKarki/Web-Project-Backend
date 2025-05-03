@@ -6,7 +6,8 @@ const getOrders = async (req, res) => {
     if (user.role !== 'admin' && user.role !== 'employee') {
         return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
-    const result = await listAllOrders();
+    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
+    const result = await listAllOrders(lang);
     if (result) {
         res.json(result)
     } else {
@@ -19,7 +20,8 @@ const getMyOrders = async (req, res) => {
         return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
     const user = res.locals.user
-    const result = await listAllMyOrders(user);
+    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
+    const result = await listAllMyOrders(user, lang);
     if (result) {
         return res.status(200).json(result);
     } else {
