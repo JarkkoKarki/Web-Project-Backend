@@ -133,15 +133,17 @@ const findProductById = async (id) => {
       diets.push(row.diet);
     }
   });
-  return {
-    id: rows[0].id,
-    name: rows[0].name,
-    description: rows[0].description,
-    price: rows[0].price,
-    filename: rows[0].filename,
-    categories: categories,
-    diets: diets,
-  };
+    return {
+        id: rows[0].id,
+        name_fi: rows[0].name_fi,
+        name_en: rows[0].name_en,
+        desc_fi: rows[0].desc_fi,
+        desc_en: rows[0].desc_en,
+        price: rows[0].price,
+        filename: rows[0].filename,
+        categories: categories,
+        diets: diets,
+    };
 };
 
 //Adds product to db
