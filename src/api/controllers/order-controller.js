@@ -3,7 +3,7 @@ import {addOrder, listAllMyOrders, listAllOrders, modifyOrder} from "../models/o
 
 const getOrders = async (req, res) => {
     const user = res.locals.user
-    if (user.role !== 'admin' || user.role !== 'employee') {
+    if (user.role !== 'admin' && user.role !== 'employee') {
         return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
     const result = await listAllOrders();
@@ -40,7 +40,7 @@ const postOrder = async (req, res) => {
 
 const putOrder = async (req, res) => {
     const user = res.locals.user
-    if (user.role !== 'admin' || user.role !== 'employee') {
+    if (user.role !== 'admin' && user.role !== 'employee') {
         return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
     const order = req.body;
