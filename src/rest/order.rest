@@ -16,3 +16,13 @@ Content-Type: application/json
   "listOfProducts": [4,4,4,6,7,8,8,8],
   "total_price": 999
 }
+
+
+###Put order (To modify the status of the order)
+PUT http://localhost:3000/api/orders
+Content-Type: application/json
+Authorization: Bearer "TOKEN"
+
+{
+ "status": "preparing"
+}

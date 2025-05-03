@@ -21,9 +21,9 @@ const getMyOrders = async (req, res) => {
     const user = res.locals.user
     const result = await listAllMyOrders(user);
     if (result) {
-        res.json(result || [])
+        return res.status(200).json(result);
     } else {
-        res.json(404);
+        return res.status(200).json([]);
     }
 }
 
