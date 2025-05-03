@@ -120,7 +120,7 @@ const addOrder = async (order, user) => {
         //Add values to the order table
         const [result] = await connection.execute(`
         INSERT INTO orders 
-        (user_id, user_address total_price)
+        (user_id, user_address, total_price)
         VALUES (?, ?, ?)`,
         [user.user_id, user.address, total_price]);
 
