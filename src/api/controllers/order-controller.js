@@ -47,7 +47,7 @@ const putOrder = async (req, res) => {
     const orderId = req.params.id
     const result = await modifyOrder(order, orderId);
     if (result) {
-        res.status(201).json({message: 'Order modify successfully', orderId: result.orderId});
+        res.status(201).json({message: 'Order modify successfully'});
     } else {
         res.status(404).json({error: 'Failed to modify order'});
     }
