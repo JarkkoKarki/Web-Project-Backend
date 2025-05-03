@@ -12,7 +12,7 @@ export const createCheckoutSession = async (req, res) => {
       console.log(res);
       return res.status(400).json({ error: "No products provided" });
     }
-
+    console.log(products, " prducts");
     const lineItems = [];
     for (const id of products) {
       console.log(id);
