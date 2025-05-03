@@ -146,7 +146,7 @@ const findProductById = async (id) => {
 
 //Adds product to db
 const addProduct = async (product) => {
-    const {name, description, price, filename,
+    const {name_fi,name_en, desc_fi,desc_en, price, filename,
         categories=[], diets=[]} = product;
     const connection = await promisePool.getConnection();
     try {
@@ -156,9 +156,10 @@ const addProduct = async (product) => {
         const [productResult] = await connection.execute(`
         
         INSERT INTO products
-        (name, description, price, filename)
+        (name_fi,name_en, desc_fi, desc_en, price, filename)
         VALUES (?, ?, ?, ?)`,
-        [name,  description,  price, filename]
+        [name_fi,name_en, desc_fi,
+            desc_en, price, filename]
         );
 
         const productId = productResult.insertId;
@@ -194,7 +195,7 @@ const addProduct = async (product) => {
 };
 
 const modifyProduct = async  (product, id) => {
-    const {name, description, price, filename,
+    const {name_fi, name_en, desc_fi, desc_en, price, filename,
         categories=[], diets=[]} = product;
     const connection = await promisePool.getConnection();
     try {
@@ -213,8 +214,10 @@ const modifyProduct = async  (product, id) => {
         const original = productRows[0];
 
         // Check if the values are empty. If empty replace them with the old product values
-        const updatedName = name || original.name
-        const updatedDescription = description || original.description
+        const updatedNameFi = name_fi || original.name_fi
+        const updatedNameEn = name_en || original.name_en
+        const updatedDescFi = desc_fi || original.desc_fi
+        const updatedDescEn = desc_en || original.desc_en
         const updatedPrice = price || original.price
         const updatedFilename = filename || original.filename
 
@@ -222,7 +225,8 @@ const modifyProduct = async  (product, id) => {
             UPDATE products
             SET name = ?,  description = ?, price = ?,  filename = ?
             WHERE id = ?`,
-            [updatedName,  updatedDescription,  updatedPrice, updatedFilename, id]
+            [updatedNameFi,  updatedNameEn,updatedDescFi,
+                updatedDescEn,  updatedPrice, updatedFilename, id]
         );
 
         await connection.execute(`
