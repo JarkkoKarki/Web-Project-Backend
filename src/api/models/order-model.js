@@ -17,7 +17,7 @@ const listAllOrders = async (lang = 'en') => {
                 SELECT op.product_id,
                 op.quantity,
                 p.name_${lang} AS name,
-                p.desc_${lang} AS description,
+                p.desc_${lang} AS description
                 FROM order_products op
                 JOIN products p ON op.product_id = p.id
                 WHERE op.order_id = ?`,
