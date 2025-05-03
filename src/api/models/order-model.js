@@ -17,7 +17,7 @@ const listAllOrders = async () => {
                 SELECT op.product_id,
                 op.quantity,
                 p.name,
-                p.description,
+                p.description
                 FROM order_products op
                 JOIN products p ON op.product_id = p.id
                 WHERE op.order_id = ?`,
