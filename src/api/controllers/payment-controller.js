@@ -17,15 +17,15 @@ export const createCheckoutSession = async (req, res) => {
     for (const product of products) {
       const productDetails = await findProductById(product.id); // haetaan productit
       console.log(product.id, " product.id");
+      console.log(productDetails, " DETAILS");
       if (!productDetails) continue;
 
       lineItems.push({
         price_data: {
-          currency: "usd",
+          currency: "eur",
           product_data: {
-            name: productDetails.name,
-            description:
-              productDetails.description || "No description available", // jos ei oo ni ei oo
+            name: productDetails.name_en,
+            description: productDetails.desc_en || "No description available", // jos ei oo ni ei oo
           },
           unit_amount: Math.round(productDetails.price * 100), // centeissä hinta
         },
