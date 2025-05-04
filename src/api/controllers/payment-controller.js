@@ -41,10 +41,10 @@ export const createCheckoutSession = async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `http://localhost:5173/payment/success/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `http://localhost:5173/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `http://localhost:5173/payment/success/payment/cancel`,
     });
-    res.json({ url: session.url });
+    res.json({ url: session.url, ...session });
   } catch (err) {
     console.error("Stripe error:", err);
     res.status(500).json({ error: "Payment failed" });
