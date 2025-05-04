@@ -69,6 +69,7 @@ export const authenticateToken = (req, res, next) => {
   if (!token) {
     const error = new Error("Unauthorized: No token provided");
     error.status = 401;
+    console.log(" authenticatokenia kutsuttu", error);
     return next(error);
   }
 

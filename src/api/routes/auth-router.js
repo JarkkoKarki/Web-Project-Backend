@@ -12,6 +12,9 @@ authRouter.get("/me", authenticateToken, async (req, res) => {
     const userId = res.locals.user.user_id;
     const user = await findUserById(userId);
 
+    console.log("AUTHROUTER - ", userId);
+    console.log("debuggia - ", user);
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
