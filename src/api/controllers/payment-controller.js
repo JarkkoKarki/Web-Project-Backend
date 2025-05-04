@@ -14,13 +14,25 @@ export const createCheckoutSession = async (req, res) => {
       return res.status(400).json({ error: "No products provided" });
     }
 
+    const invalidProducts = products.filter((product) => !product.id);
+    if (invalidProducts.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "One or more products have invalid IDs" });
+    }
+
+    if (!user || !user.user_id || !user.address) {
+      return res.status(400).json({ error: "User information is incomplete" });
+    }
+
     const lineItems = [];
     let totalPrice = 0;
 
     for (const product of products) {
       const productDetails = await findProductById(product.id);
+
       if (!productDetails) {
-        console.log(`Product not found: ${product.id}`);
+        console.warn(`Product with ID ${product.id} not found, skipping.`);
         continue;
       }
 
@@ -44,6 +56,7 @@ export const createCheckoutSession = async (req, res) => {
       return res.status(400).json({ error: "No valid products found" });
     }
 
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -65,19 +78,6 @@ export const createCheckoutSession = async (req, res) => {
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
     console.error("Stripe error:", err);
-
-    if (err.type === "StripeCardError") {
-      return res.status(400).json({ error: `Card error: ${err.message}` });
-    }
-    if (err.type === "StripeInvalidRequestError") {
-      return res.status(400).json({ error: `Invalid request: ${err.message}` });
-    }
-    if (err.type === "StripeAPIError") {
-      return res
-        .status(500)
-        .json({ error: `Stripe API error: ${err.message}` });
-    }
-
-    res.status(500).json({ error: "Payment failed", details: err.message });
+    res.status(500).json({ error: "Payment failed: " + err.message });
   }
 };
