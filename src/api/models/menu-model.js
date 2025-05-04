@@ -16,44 +16,39 @@ const listAllProductsBothLanguages = async () => {
     return false;
   }
 
-  const productsByCategory = {};
+    const products = [];
 
-  rows.forEach((row) => {
-    // Use "Uncategorized" if no category exists
-    const category = row.category || "Uncategorized";
+    rows.forEach((row) => {
+        // Find if product already exists in the list
+        let existingProduct = products.find((p) => p.id === row.id);
 
-    // Initialize category array if it doesn't exist
-    if (!productsByCategory[category]) {
-      productsByCategory[category] = [];
-    }
-    // Check if the product already exists in the category
-    let existingProduct = productsByCategory[category].find(
-      (p) => p.id === row.id
-    );
+        // If the product doesn't exist, create a new product object
+        if (!existingProduct) {
+            existingProduct = {
+                id: row.id,
+                name_fi: row.name_fi,
+                name_en: row.name_en,
+                desc_fi: row.desc_fi,
+                desc_en: row.desc_en,
+                price: row.price,
+                filename: row.filename,
+                categories: [],
+                diets: [],
+            };
+            products.push(existingProduct);
+        }
 
-    // If the product doesn't exist, create a new product object
-    if (!existingProduct) {
-      existingProduct = {
-        id: row.id,
-        name_fi: row.name_fi,
-        name_en: row.name_en,
-        desc_fi: row.desc_fi,
-        desc_en: row.desc_en,
-        price: row.price,
-        filename: row.filename,
-        diets: [],
-      };
-      productsByCategory[category].push(existingProduct);
-    }
-    // Add diet to the product if it doesn't already exist
-    if (row.diet && !existingProduct.diets.includes(row.diet)) {
-      existingProduct.diets.push(row.diet);
-    }
-  });
-  return Object.entries(productsByCategory).map(([category, items]) => ({
-    category,
-    items,
-  }));
+        // Add category to the product if it doesn't already exist
+        if (row.category && !existingProduct.categories.includes(row.category)) {
+            existingProduct.categories.push(row.category);
+        }
+
+        // Add diet to the product if it doesn't already exist
+        if (row.diet && !existingProduct.diets.includes(row.diet)) {
+            existingProduct.diets.push(row.diet);
+        }
+    });
+    return products;
 };
 
 //Get all products listed by categories

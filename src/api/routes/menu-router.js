@@ -11,7 +11,7 @@ import {checkAdmin, createThumbnail, upload} from "../middlewares/middlewares.js
 
 const menuRouter = express.Router();
 
-// GET /api/menu/
+// GET /api/menu/ to get both languages fi and en
 menuRouter.route("/").get(getProductsBothLanguages)
 
 // GET /api/menu/products/:lang
