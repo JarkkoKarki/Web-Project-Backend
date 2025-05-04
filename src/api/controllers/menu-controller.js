@@ -9,12 +9,14 @@ import {
 
 
 const getProductByCategory = async (req, res) => {
-    const result = await listAllProductsByCategory();
+    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
+    const result = await listAllProductsByCategory(lang);
     res.json(result);
 };
 
 const getProduct = async (req, res) => {
-    const result = await listAllProducts();
+    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
+    const result = await listAllProducts(lang);
     res.json(result);
 };
 

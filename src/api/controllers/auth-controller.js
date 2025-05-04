@@ -17,7 +17,13 @@ const authUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { user_id: user.id, username: user.username, address: user.address, role: user.role },
+      {
+        user_id: user.id,
+        username: user.username,
+        address: user.address,
+        role: user.role,
+        filename: user.filename || "uploads/default.jpg",
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );

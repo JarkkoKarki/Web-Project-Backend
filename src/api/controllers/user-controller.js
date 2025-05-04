@@ -25,10 +25,10 @@ const postUser = async (req, res) => {
   try {
     const { username, email, password, address, first_name, last_name, phone } =
       req.body;
-    const filename = req.file ? req.file.filename : "public/default.jpg";
+    const filename = req.file ? req.file.filename : "uploads/default.jpg";
     const thumbnailPath = req.file
       ? req.file.thumbnailPath
-      : "public/default.jpg";
+      : "uploads/default.jpg";
     console.log(username, email, password, address);
     console.log(filename);
     console.log(thumbnailPath);
@@ -70,7 +70,7 @@ const putUser = async (req, res) => {
     const { username, email, password, address, first_name, last_name, phone } =
       req.body;
     const userId = req.params.id;
-    const filename = req.file ? req.file.filename : "uploads/default.png";
+    const filename = req.file ? req.file.thumbnailPath : "uploads/default.png";
     const thumbnailPath = req.file
       ? req.file.thumbnailPath
       : "uploads/default.png";
@@ -82,7 +82,7 @@ const putUser = async (req, res) => {
       email,
       password: hashedPassword,
       address,
-      filename: thumbnailPath,
+      filename,
       first_name,
       last_name,
       phone,
@@ -104,7 +104,11 @@ const putUser = async (req, res) => {
     const result = await modifyUser(updateData, userId);
 
     if (result) {
-      res.status(200).json({ message: "User updated successfully" });
+      res.status(200).json({
+        message: "User updated successfully",
+        filename,
+        user: result,
+      });
     } else {
       res.status(404).json({ error: "User not found" });
     }

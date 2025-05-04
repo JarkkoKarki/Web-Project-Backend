@@ -1,12 +1,13 @@
-import {addOrder, listAllMyOrders, listAllOrders} from "../models/order-model.js";
+import {addOrder, listAllMyOrders, listAllOrders, modifyOrder} from "../models/order-model.js";
 
 
 const getOrders = async (req, res) => {
     const user = res.locals.user
-    if (user.role !== 'admin'  ||  user.role !== 'employee'  )  {
-        return res.status(401).json({ message: "Unauthorized: user not authenticated" });
+    if (user.role !== 'admin' && user.role !== 'employee') {
+        return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
-    const result = await listAllOrders();
+    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
+    const result = await listAllOrders(lang);
     if (result) {
         res.json(result)
     } else {
@@ -14,16 +15,17 @@ const getOrders = async (req, res) => {
     }
 }
 
-const getMyOrders = async(req, res) => {
+const getMyOrders = async (req, res) => {
     if (!res.locals.user) {
-        return res.status(401).json({ message: "Unauthorized: user not authenticated" });
+        return res.status(401).json({message: "Unauthorized: user not authenticated"});
     }
     const user = res.locals.user
-    const result = await listAllMyOrders(user);
+    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
+    const result = await listAllMyOrders(user, lang);
     if (result) {
-        res.json(result ||  [])
+        return res.status(200).json(result);
     } else {
-        res.json(404);
+        return res.status(200).json([]);
     }
 }
 
@@ -32,10 +34,25 @@ const postOrder = async (req, res) => {
     const user = res.locals.user
     const result = await addOrder(req.body, user);
     if (result) {
-        res.status(201).json({ message: 'Order created', orderId: result.orderId });
+        res.status(201).json({message: 'Order created', orderId: result.orderId});
     } else {
-        res.status(404).json({ error: 'Failed to add order' });
+        res.status(404).json({error: 'Failed to add order'});
     }
 }
 
-export {postOrder, getOrders, getMyOrders};
+const putOrder = async (req, res) => {
+    const user = res.locals.user
+    if (user.role !== 'admin' && user.role !== 'employee') {
+        return res.status(401).json({message: "Unauthorized: user not authenticated"});
+    }
+    const order = req.body;
+    const orderId = req.params.id
+    const result = await modifyOrder(order, orderId);
+    if (result) {
+        res.status(201).json({message: 'Order modify successfully'});
+    } else {
+        res.status(404).json({error: 'Failed to modify order'});
+    }
+}
+
+export {postOrder, getOrders, getMyOrders, putOrder};

@@ -1,10 +1,14 @@
 ###GET products by category
-GET http://127.0.0.1:3000/api/menu
+GET http://127.0.0.1:3000/api/menu/bycategory/fi
+Content-Type: application/json
+
+###GET products
+GET http://127.0.0.1:3000/api/menu/products/fi
 Content-Type: application/json
 
 
 ###GET product by id and its diets and category
-GET http://127.0.0.1:3000/api/menu/1
+GET http://127.0.0.1:3000/api/menu/product/1
 Content-Type: application/json
 
 
@@ -16,7 +20,7 @@ Content-Type: application/json
   "name": "prööt",
   "description": "döner kebab ateria",
   "price": 17.50,
-  "picture": "Ruoka2",
+  "file": "Ruoka2",
   "categories": [1,3],
   "diets": [6, 7]
 }
@@ -29,7 +33,7 @@ Content-Type: application/json
   "name": "kissa",
   "description": "kissa ateria",
   "price": 17.50,
-  "picture": "Ruoka5",
+  "file": "Ruoka5",
   "categories": [1,2,3,4],
   "diets": [1, 2,3]
 }

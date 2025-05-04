@@ -6,29 +6,31 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req, res) => {
   try {
-    const { productIds } = req.body;
+    const { products } = req.body; // array -> jossa { id, quantity }
 
-    if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+    if (!products || !Array.isArray(products) || products.length === 0) {
+      console.log(res);
       return res.status(400).json({ error: "No products provided" });
     }
-
+    console.log(products, " prducts");
     const lineItems = [];
-    for (const id of productIds) {
-      const product = await findProductById(id);
-      if (!product) continue;
+    for (const product of products) {
+      const productDetails = await findProductById(product.id); // haetaan productit
+      console.log(product.id, " product.id");
+      console.log(productDetails, " DETAILS");
+      if (!productDetails) continue;
 
       lineItems.push({
         price_data: {
-          currency: "usd",
+          currency: "eur",
           product_data: {
-            name: product.name,
-            description: product.description,
+            name: productDetails.name_en,
+            description: productDetails.desc_en || "No description available", // jos ei oo ni ei oo
           },
-          unit_amount: Math.round(product.price * 100),
+          unit_amount: Math.round(productDetails.price * 100), // centeissä hinta
         },
-        quantity: 1,
+        quantity: product.quantity || 1, // määrä
       });
-      console.log("lineItems", lineItems);
     }
 
     if (lineItems.length === 0) {
