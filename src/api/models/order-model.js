@@ -107,16 +107,16 @@ const listAllMyOrders = async (user, lang) => {
   }
 };
 
-const addOrder = async (order, user, sessionId) => {
+const addOrder = async (order, user, sessionId = null) => {
   const { total_price, products = [] } = order;
   const connection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();
 
+    // Ensure required fields are not undefined or null
     const userId = user.user_id ?? null;
     const address = user.address ?? null;
     const price = total_price ?? null;
-    const session = sessionId ?? null;
 
     // Log the fields to identify missing data
     console.log(
@@ -127,36 +127,33 @@ const addOrder = async (order, user, sessionId) => {
       "price:",
       price,
       "session:",
-      session
+      sessionId
     );
 
     // Check if any of these values are null or undefined
-    if (
-      userId === null ||
-      address === null ||
-      price === null ||
-      session === null
-    ) {
+    if (userId === null || address === null || price === null) {
       throw new Error("Missing required fields for order.");
     }
 
-    // Add values to the order table, including the session_id
+    // Add values to the order table, including the session_id (can be null)
     const [result] = await connection.execute(
       `
-          INSERT INTO orders 
-          (user_id, user_address, total_price, session_id)
-          VALUES (?, ?, ?, ?)
-        `,
-      [userId, address, price, session]
+        INSERT INTO orders 
+        (user_id, user_address, total_price, session_id)
+        VALUES (?, ?, ?, ?)
+      `,
+      [userId, address, price, sessionId]
     );
 
     const orderId = result.insertId;
+
+    // Insert values into the order_products table
     for (const [productId, quantity] of Object.entries(productCounts)) {
       await connection.execute(
         `
-            INSERT INTO order_products (order_id, product_id, quantity)
-            VALUES (?, ?, ?)
-          `,
+          INSERT INTO order_products (order_id, product_id, quantity)
+          VALUES (?, ?, ?)
+        `,
         [orderId, parseInt(productId), quantity]
       );
     }
