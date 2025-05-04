@@ -93,14 +93,7 @@ const listAllMyOrders = async (user, lang) => {
         orderDate: order.order_date,
         status: order.status,
         totalPrice: order.total_price,
-        products: productRows.map((product) => ({
-          productId: product.product_id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          quantity: product.quantity,
-          categories: product.categories ? product.categories.split(",") : [],
-        })),
+        products: productRows,
       });
     }
 
