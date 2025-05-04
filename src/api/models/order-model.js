@@ -107,68 +107,52 @@ const listAllMyOrders = async (user, lang) => {
   }
 };
 
-const addOrder = async (order, user, sessionId = null) => {
-  const { total_price, products = [] } = order;
+const addOrder = async (order, user) => {
+  const { user_id, user_address, total_price, products, session_id } = order;
+
+  if (!user_id) {
+    throw new Error("Missing user ID for order.");
+  }
+  if (!user_address) {
+    throw new Error("Missing user address for order.");
+  }
+  if (!total_price) {
+    throw new Error("Missing total price for order.");
+  }
+  if (!products || products.length === 0) {
+    throw new Error("No products provided for order.");
+  }
+
   const connection = await promisePool.getConnection();
+  await connection.beginTransaction();
+
   try {
-    await connection.beginTransaction();
-
-    // Ensure required fields are not undefined or null
-    const userId = user.user_id ?? null;
-    const address = user.address ?? null;
-    const price = total_price ?? null;
-
-    // Log the fields to identify missing data
-    console.log(
-      "userId:",
-      userId,
-      "address:",
-      address,
-      "price:",
-      price,
-      "session:",
-      sessionId
+    const [result] = await connection.query(
+      "INSERT INTO orders (user_id, user_address, total_price, session_id) VALUES (?, ?, ?, ?)",
+      [user_id, user_address, total_price, session_id || null]
     );
-    if (userId === null || address === null || price === null) {
-      throw new Error("Missing required fields for order.");
+
+    if (result.affectedRows === 0) {
+      throw new Error("Order insertion failed, no rows affected.");
     }
-
-    const productCounts = products.reduce((acc, product) => {
-      acc[product.id] = product.quantity;
-      return acc;
-    }, {});
-    const [result] = await connection.execute(
-      `
-        INSERT INTO orders 
-        (user_id, user_address, total_price, session_id)
-        VALUES (?, ?, ?, ?)
-      `,
-      [userId, address, price, sessionId]
-    );
 
     const orderId = result.insertId;
 
-    // Insert values into the order_products table
-    for (const [productId, quantity] of Object.entries(productCounts)) {
-      await connection.execute(
-        `
-          INSERT INTO order_products (order_id, product_id, quantity)
-          VALUES (?, ?, ?)
-        `,
-        [orderId, parseInt(productId), quantity]
-      );
-    }
+    const productValues = products.map((product) => [
+      orderId,
+      product.id,
+      product.quantity,
+    ]);
+    await connection.query(
+      "INSERT INTO order_products (order_id, product_id, quantity) VALUES ?",
+      [productValues]
+    );
 
     await connection.commit();
-
-    if (result.affectedRows === 0) {
-      return false;
-    }
     return { orderId };
-  } catch (e) {
+  } catch (error) {
     await connection.rollback();
-    console.error("Error Adding Order:", e);
-    throw e;
+    throw new Error(`Error creating order: ${error.message}`);
   } finally {
     connection.release();
   }
