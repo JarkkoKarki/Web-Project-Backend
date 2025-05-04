@@ -69,19 +69,14 @@ const listAllMyOrders = async (user, lang) => {
     for (const order of orderResults) {
       const [productRows] = await connection.query(
         `
-            SELECT 
-              op.product_id,
-              op.quantity,
-              p.name_${lang} AS name,
-              p.desc_${lang} AS description,
-              p.price,
-              GROUP_CONCAT(c.category_${lang}) AS categories
+            SELECT op.product_id,
+                   op.quantity,
+                   p.name_${lang} AS name,
+                   p.desc_${lang} AS description,
+                   p.price
             FROM order_products op
             JOIN products p ON op.product_id = p.id
-            LEFT JOIN product_categories pc ON p.id = pc.product_id
-            LEFT JOIN categories c ON pc.category_id = c.id
             WHERE op.order_id = ?
-            GROUP BY op.product_id
           `,
         [order.id]
       );
