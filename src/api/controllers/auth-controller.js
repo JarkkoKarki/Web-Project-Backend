@@ -20,15 +20,35 @@ const authUser = async (req, res) => {
       {
         user_id: user.id,
         username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
         address: user.address,
+        phone: user.phone,
         role: user.role,
         filename: user.filename || "uploads/default.jpg",
+        created_at: user.created_at,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ user, token });
+    // palautetaan kaikki paitsi salasana jos status 200
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        address: user.address,
+        phone: user.phone,
+        role: user.role,
+        filename: user.filename || "uploads/default.jpg",
+        created_at: user.created_at,
+      },
+    });
   } catch (error) {
     console.error("Error in authUser:", error);
     res.status(500).json({ error: "Internal Server Error" });
