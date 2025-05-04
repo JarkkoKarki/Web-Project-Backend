@@ -107,7 +107,7 @@ const listAllMyOrders = async (user, lang) => {
   }
 };
 
-const addOrder = async (order, user) => {
+const addOrder = async (order) => {
   const { user_id, user_address, total_price, products, session_id } = order;
 
   if (!user_id) {
