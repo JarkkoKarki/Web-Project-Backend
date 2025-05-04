@@ -1,24 +1,31 @@
 import Stripe from "stripe";
 import { findProductById } from "../models/menu-model.js";
+import { addOrder } from "../models/order-model.js";
 import dotenv from "dotenv";
 dotenv.config();
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req, res) => {
   try {
-    const { products } = req.body; // array -> jossa { id, quantity }
+    const { products, user } = req.body;
+    if (!user || !user.user_id) {
+      return res.status(400).json({ error: "User not authenticated" });
+    }
 
     if (!products || !Array.isArray(products) || products.length === 0) {
-      console.log(res);
       return res.status(400).json({ error: "No products provided" });
     }
-    console.log(products, " prducts");
+
     const lineItems = [];
+    let totalPrice = 0;
+
     for (const product of products) {
-      const productDetails = await findProductById(product.id); // haetaan productit
-      console.log(product.id, " product.id");
-      console.log(productDetails, " DETAILS");
+      const productDetails = await findProductById(product.id);
       if (!productDetails) continue;
+
+      const productTotalPrice = productDetails.price * product.quantity;
+      totalPrice += productTotalPrice;
 
       lineItems.push({
         price_data: {
@@ -36,15 +43,24 @@ export const createCheckoutSession = async (req, res) => {
     if (lineItems.length === 0) {
       return res.status(400).json({ error: "No valid products found" });
     }
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
       success_url: `http://localhost:5173/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/payment/success/payment/cancel`,
+      cancel_url: `http://localhost:5173/payment/cancel`,
     });
-    res.json({ url: session.url, ...session });
+    const order = {
+      user_id: user.user_id,
+      user_address: user.address,
+      total_price: totalPrice,
+      products: products.map((product) => product.id),
+      session_id: session.id,
+    };
+
+    const { orderId } = await addOrder(order, user);
+
+    res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
     console.error("Stripe error:", err);
     res.status(500).json({ error: "Payment failed" });
