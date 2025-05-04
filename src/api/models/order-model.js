@@ -113,11 +113,22 @@ const addOrder = async (order, user, sessionId) => {
   try {
     await connection.beginTransaction();
 
-    // Ensure required fields are not undefined or null
     const userId = user.user_id ?? null;
     const address = user.address ?? null;
     const price = total_price ?? null;
     const session = sessionId ?? null;
+
+    // Log the fields to identify missing data
+    console.log(
+      "userId:",
+      userId,
+      "address:",
+      address,
+      "price:",
+      price,
+      "session:",
+      session
+    );
 
     // Check if any of these values are null or undefined
     if (
@@ -140,8 +151,6 @@ const addOrder = async (order, user, sessionId) => {
     );
 
     const orderId = result.insertId;
-
-    // Insert values into the order_products table
     for (const [productId, quantity] of Object.entries(productCounts)) {
       await connection.execute(
         `
