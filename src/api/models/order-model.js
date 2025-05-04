@@ -113,10 +113,20 @@ const addOrder = async (order, user, sessionId) => {
   try {
     await connection.beginTransaction();
 
-    // check how many same product id's appear on the products list
-    const productCounts = {};
-    for (const productId of products) {
-      productCounts[productId] = (productCounts[productId] || 0) + 1;
+    // Ensure required fields are not undefined or null
+    const userId = user.user_id ?? null;
+    const address = user.address ?? null;
+    const price = total_price ?? null;
+    const session = sessionId ?? null;
+
+    // Check if any of these values are null or undefined
+    if (
+      userId === null ||
+      address === null ||
+      price === null ||
+      session === null
+    ) {
+      throw new Error("Missing required fields for order.");
     }
 
     // Add values to the order table, including the session_id
@@ -126,10 +136,9 @@ const addOrder = async (order, user, sessionId) => {
           (user_id, user_address, total_price, session_id)
           VALUES (?, ?, ?, ?)
         `,
-      [user.user_id, user.address, total_price, sessionId] // sessionId is now added to the query
+      [userId, address, price, session]
     );
 
-    // Get the table id from previous query
     const orderId = result.insertId;
 
     // Insert values into the order_products table
