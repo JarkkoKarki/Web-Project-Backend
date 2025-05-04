@@ -69,14 +69,19 @@ const listAllMyOrders = async (user, lang) => {
     for (const order of orderResults) {
       const [productRows] = await connection.query(
         `
-            SELECT op.product_id,
-                   op.quantity,
-                   p.name_${lang} AS name,
-                   p.desc_${lang} AS description,
-                   p.price
+            SELECT 
+              op.product_id,
+              op.quantity,
+              p.name_${lang} AS name,
+              p.desc_${lang} AS description,
+              p.price,
+              GROUP_CONCAT(c.category_${lang}) AS categories
             FROM order_products op
             JOIN products p ON op.product_id = p.id
+            LEFT JOIN product_categories pc ON p.id = pc.product_id
+            LEFT JOIN categories c ON pc.category_id = c.id
             WHERE op.order_id = ?
+            GROUP BY op.product_id
           `,
         [order.id]
       );
@@ -88,7 +93,14 @@ const listAllMyOrders = async (user, lang) => {
         orderDate: order.order_date,
         status: order.status,
         totalPrice: order.total_price,
-        products: productRows,
+        products: productRows.map((product) => ({
+          productId: product.product_id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          quantity: product.quantity,
+          categories: product.categories ? product.categories.split(",") : [],
+        })),
       });
     }
 
