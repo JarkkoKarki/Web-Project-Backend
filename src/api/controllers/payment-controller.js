@@ -19,7 +19,10 @@ export const createCheckoutSession = async (req, res) => {
 
     for (const product of products) {
       const productDetails = await findProductById(product.id);
-      if (!productDetails) continue;
+      if (!productDetails) {
+        console.log(`Product not found: ${product.id}`);
+        continue;
+      }
 
       const productTotalPrice = productDetails.price * product.quantity;
       totalPrice += productTotalPrice;
@@ -29,17 +32,18 @@ export const createCheckoutSession = async (req, res) => {
           currency: "eur",
           product_data: {
             name: productDetails.name_en,
-            description: productDetails.desc_en || "No description available", // jos ei oo ni ei oo
+            description: productDetails.desc_en || "No description available",
           },
-          unit_amount: Math.round(productDetails.price * 100), // centeissä hinta
+          unit_amount: Math.round(productDetails.price * 100),
         },
-        quantity: product.quantity || 1, // määrä
+        quantity: product.quantity || 1,
       });
     }
 
     if (lineItems.length === 0) {
       return res.status(400).json({ error: "No valid products found" });
     }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -47,6 +51,7 @@ export const createCheckoutSession = async (req, res) => {
       success_url: `http://localhost:5173/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `http://localhost:5173/payment/cancel`,
     });
+
     const order = {
       user_id: user.user_id,
       user_address: user.address,
@@ -60,6 +65,19 @@ export const createCheckoutSession = async (req, res) => {
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
     console.error("Stripe error:", err);
-    res.status(500).json({ error: "Payment failed" });
+
+    if (err.type === "StripeCardError") {
+      return res.status(400).json({ error: `Card error: ${err.message}` });
+    }
+    if (err.type === "StripeInvalidRequestError") {
+      return res.status(400).json({ error: `Invalid request: ${err.message}` });
+    }
+    if (err.type === "StripeAPIError") {
+      return res
+        .status(500)
+        .json({ error: `Stripe API error: ${err.message}` });
+    }
+
+    res.status(500).json({ error: "Payment failed", details: err.message });
   }
 };

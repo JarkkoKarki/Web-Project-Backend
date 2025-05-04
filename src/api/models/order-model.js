@@ -129,20 +129,14 @@ const addOrder = async (order, user, sessionId = null) => {
       "session:",
       sessionId
     );
-
-    // Check if any of these values are null or undefined
     if (userId === null || address === null || price === null) {
       throw new Error("Missing required fields for order.");
     }
 
-    // Define productCounts based on the received data (products could be an array)
     const productCounts = products.reduce((acc, product) => {
-      // Assuming each product is an object with an id and quantity
       acc[product.id] = product.quantity;
       return acc;
     }, {});
-
-    // Add values to the order table, including the session_id (can be null)
     const [result] = await connection.execute(
       `
         INSERT INTO orders 
