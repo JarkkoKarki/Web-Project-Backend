@@ -138,11 +138,14 @@ const addOrder = async (order, user) => {
 
     const orderId = result.insertId;
 
-    const productValues = products.map((product) => [
-      orderId,
-      product.id,
-      product.quantity,
-    ]);
+    const productValues = products
+      .filter((product) => product.id !== null)
+      .map((product) => [orderId, product.id, product.quantity]);
+
+    if (productValues.length === 0) {
+      throw new Error("No valid products to insert.");
+    }
+
     await connection.query(
       "INSERT INTO order_products (order_id, product_id, quantity) VALUES ?",
       [productValues]
