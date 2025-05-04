@@ -27,6 +27,7 @@ export const createCheckoutSession = async (req, res) => {
 
     const lineItems = [];
     let totalPrice = 0;
+    const orderProducts = [];
 
     for (const product of products) {
       const productDetails = await findProductById(product.id);
@@ -50,13 +51,19 @@ export const createCheckoutSession = async (req, res) => {
         },
         quantity: product.quantity || 1,
       });
+
+      orderProducts.push({
+        id: productDetails.id,
+        name: productDetails.name_en,
+        quantity: product.quantity,
+        price: productDetails.price,
+      });
     }
 
     if (lineItems.length === 0) {
       return res.status(400).json({ error: "No valid products found" });
     }
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -69,7 +76,7 @@ export const createCheckoutSession = async (req, res) => {
       user_id: user.user_id,
       user_address: user.address,
       total_price: totalPrice,
-      products: products.map((product) => product.id),
+      products: orderProducts,
       session_id: session.id,
     };
 

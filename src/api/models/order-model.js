@@ -123,6 +123,16 @@ const addOrder = async (order, user) => {
     throw new Error("No products provided for order.");
   }
 
+  // Ensure all products have a valid ID
+  const invalidProducts = products.filter(
+    (product) => !product.id || !product.quantity
+  );
+  if (invalidProducts.length > 0) {
+    throw new Error(
+      "One or more products are missing valid IDs or quantities."
+    );
+  }
+
   const connection = await promisePool.getConnection();
   await connection.beginTransaction();
 
@@ -138,9 +148,11 @@ const addOrder = async (order, user) => {
 
     const orderId = result.insertId;
 
-    const productValues = products
-      .filter((product) => product.id !== null)
-      .map((product) => [orderId, product.id, product.quantity]);
+    const productValues = products.map((product) => [
+      orderId,
+      product.id,
+      product.quantity,
+    ]);
 
     if (productValues.length === 0) {
       throw new Error("No valid products to insert.");
@@ -161,7 +173,6 @@ const addOrder = async (order, user) => {
   }
 };
 
-//For changing order status
 const modifyOrder = async (order, id) => {
   const [result] = await promisePool.query(
     `UPDATE orders 
