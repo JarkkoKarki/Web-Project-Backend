@@ -9,9 +9,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const createCheckoutSession = async (req, res) => {
   try {
     const { products, user } = req.body;
-    if (!user || !user.user_id) {
-      return res.status(400).json({ error: "User not authenticated" });
-    }
 
     if (!products || !Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ error: "No products provided" });
