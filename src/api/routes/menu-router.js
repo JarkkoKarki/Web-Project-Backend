@@ -5,14 +5,14 @@ import {
     postProduct,
     getProductById,
     deleteProduct,
-    getProductByCategory,
+    getProductsBothLanguages,
 } from "../controllers/menu-controller.js";
 import {checkAdmin, createThumbnail, upload} from "../middlewares/middlewares.js";
 
 const menuRouter = express.Router();
 
-// GET /api/menu/bycategory/:lang
-menuRouter.route("/bycategory/:lang").get(getProductByCategory)
+// GET /api/menu/
+menuRouter.route("/").get(getProductsBothLanguages)
 
 // GET /api/menu/products/:lang
 menuRouter.route("/products/:lang").get(getProduct);

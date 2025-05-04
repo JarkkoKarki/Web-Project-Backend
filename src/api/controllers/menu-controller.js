@@ -2,15 +2,14 @@ import {
     addProduct,
     findProductById,
     listAllProducts,
-    listAllProductsByCategory,
+    listAllProductsBothLanguages,
     modifyProduct,
     removeProduct
 } from "../models/menu-model.js";
 
 
-const getProductByCategory = async (req, res) => {
-    const lang = req.params.lang === 'fi' ? 'fi' : 'en';
-    const result = await listAllProductsByCategory(lang);
+const getProductsBothLanguages = async (req, res) => {
+    const result = await listAllProductsBothLanguages();
     res.json(result);
 };
 
@@ -45,20 +44,19 @@ const postProduct = async (req, res) => {
         }
     } catch (error) {
         console.error("Error in postProduct:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({error: "Internal Server Error"});
     }
 };
 
 const putProduct = async (req, res) => {
     try {
-        if (req.file)  {
+        if (req.file) {
             req.body.filename = req.file?.thumbnailPath || "uploads/default.png";
         }
         const result = await modifyProduct(req.body, req.params.id);
-        if  (result) {
+        if (result) {
             res.status(200).json(result);
-        }
-        else {
+        } else {
             res.status(404).json({message: "Product not found"})
         }
     } catch (error) {
@@ -77,7 +75,7 @@ const deleteProduct = async (req, res) => {
 };
 
 export {
-    getProductByCategory,
+    getProductsBothLanguages,
     getProduct,
     postProduct,
     putProduct,

@@ -1,7 +1,7 @@
 import promisePool from "../../utils/database.js";
 
 //Get all products listed by categories
-const listAllProductsByCategory = async (lang = "en") => {
+const listAllProductsBothLanguages = async () => {
   const [rows] = await promisePool.query(`
 
         SELECT p.*, d.diet, c.category
@@ -35,8 +35,10 @@ const listAllProductsByCategory = async (lang = "en") => {
     if (!existingProduct) {
       existingProduct = {
         id: row.id,
-        name: lang === "fi" ? row.name_fi : row.name_en,
-        description: lang === "fi" ? row.desc_fi : row.desc_en,
+        name_fi: row.name_fi,
+        name_en: row.name_en,
+        desc_fi: row.desc_fi,
+        desc_en: row.desc_en,
         price: row.price,
         filename: row.filename,
         diets: [],
@@ -357,7 +359,7 @@ const removeProduct = async (id) => {
 };
 
 export {
-  listAllProductsByCategory,
+  listAllProductsBothLanguages,
   listAllProducts,
   addProduct,
   modifyProduct,
