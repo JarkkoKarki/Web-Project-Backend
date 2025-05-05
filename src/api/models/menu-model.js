@@ -11,44 +11,44 @@ const listAllProductsBothLanguages = async () => {
                  LEFT JOIN product_diets pd ON p.id = pd.product_id
                  LEFT JOIN diets d ON pd.diet_id = d.id
     `);
-  console.log("row", rows);
+  // console.log("row", rows);
   if (rows.length === 0) {
     return false;
   }
 
-    const products = [];
+  const products = [];
 
-    rows.forEach((row) => {
-        // Find if product already exists in the list
-        let existingProduct = products.find((p) => p.id === row.id);
+  rows.forEach((row) => {
+    // Find if product already exists in the list
+    let existingProduct = products.find((p) => p.id === row.id);
 
-        // If the product doesn't exist, create a new product object
-        if (!existingProduct) {
-            existingProduct = {
-                id: row.id,
-                name_fi: row.name_fi,
-                name_en: row.name_en,
-                desc_fi: row.desc_fi,
-                desc_en: row.desc_en,
-                price: row.price,
-                filename: row.filename,
-                categories: [],
-                diets: [],
-            };
-            products.push(existingProduct);
-        }
+    // If the product doesn't exist, create a new product object
+    if (!existingProduct) {
+      existingProduct = {
+        id: row.id,
+        name_fi: row.name_fi,
+        name_en: row.name_en,
+        desc_fi: row.desc_fi,
+        desc_en: row.desc_en,
+        price: row.price,
+        filename: row.filename,
+        categories: [],
+        diets: [],
+      };
+      products.push(existingProduct);
+    }
 
-        // Add category to the product if it doesn't already exist
-        if (row.category && !existingProduct.categories.includes(row.category)) {
-            existingProduct.categories.push(row.category);
-        }
+    // Add category to the product if it doesn't already exist
+    if (row.category && !existingProduct.categories.includes(row.category)) {
+      existingProduct.categories.push(row.category);
+    }
 
-        // Add diet to the product if it doesn't already exist
-        if (row.diet && !existingProduct.diets.includes(row.diet)) {
-            existingProduct.diets.push(row.diet);
-        }
-    });
-    return products;
+    // Add diet to the product if it doesn't already exist
+    if (row.diet && !existingProduct.diets.includes(row.diet)) {
+      existingProduct.diets.push(row.diet);
+    }
+  });
+  return products;
 };
 
 //Get all products listed by categories
@@ -62,7 +62,7 @@ const listAllProducts = async (lang = "en") => {
                  LEFT JOIN product_diets pd ON p.id = pd.product_id
                  LEFT JOIN diets d ON pd.diet_id = d.id
     `);
-  console.log("row", rows);
+  // console.log("row", rows);
   if (rows.length === 0) {
     return false;
   }
@@ -114,7 +114,7 @@ const findProductById = async (id) => {
         WHERE p.id = ?`,
     [id]
   );
-  console.log("row", rows);
+  // console.log("row", rows);
   if (rows.length === 0) {
     return false;
   }
@@ -130,17 +130,17 @@ const findProductById = async (id) => {
       diets.push(row.diet);
     }
   });
-    return {
-        id: rows[0].id,
-        name_fi: rows[0].name_fi,
-        name_en: rows[0].name_en,
-        desc_fi: rows[0].desc_fi,
-        desc_en: rows[0].desc_en,
-        price: rows[0].price,
-        filename: rows[0].filename,
-        categories: categories,
-        diets: diets,
-    };
+  return {
+    id: rows[0].id,
+    name_fi: rows[0].name_fi,
+    name_en: rows[0].name_en,
+    desc_fi: rows[0].desc_fi,
+    desc_en: rows[0].desc_en,
+    price: rows[0].price,
+    filename: rows[0].filename,
+    categories: categories,
+    diets: diets,
+  };
 };
 
 //Adds product to db

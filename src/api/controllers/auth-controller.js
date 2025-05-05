@@ -5,8 +5,9 @@ import { addUserAdmin, login } from "../models/user-model.js";
 const authUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-
+    console.log(req.body, " authuser debug");
     const user = await login(username);
+    console.log(user, " user");
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
