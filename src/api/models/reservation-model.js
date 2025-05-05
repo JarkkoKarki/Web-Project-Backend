@@ -52,4 +52,29 @@ const listAllReservations = async () => {
   }
 };
 
-export { addReservation, listAllReservations };
+const checkFreeTables = async (peopleCount, reservationDate) => {
+  const query = `
+    SELECT t.id, t.table_size
+    FROM table t
+    WHERE t.table_size >= ?
+      AND t.id NOT IN (
+        SELECT r.table_id
+        FROM reservations r
+        WHERE r.reservation_date = ?
+      )
+    ORDER BY t.table_size ASC
+    LIMIT 1;
+  `;
+
+  const values = [peopleCount, reservationDate];
+
+  try {
+    const [rows] = await promisePool.execute(query, values);
+    return rows.length > 0 ? rows[0] : null; // Return the first available table or null if none
+  } catch (error) {
+    console.error("Error checking free tables:", error);
+    throw error;
+  }
+};
+
+export { addReservation, listAllReservations, checkFreeTables };

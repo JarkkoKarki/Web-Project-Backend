@@ -1,6 +1,7 @@
 import {
   listAllReservations,
   addReservation,
+  checkFreeTables,
 } from "../models/reservation-model.js";
 
 const getReservations = async (req, res) => {
@@ -27,6 +28,14 @@ const postReservation = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Check for available tables
+    const availableTable = await checkFreeTables(peopleCount, Date);
+    if (!availableTable) {
+      return res.status(400).json({
+        error: "No available tables for the selected date and people count",
+      });
+    }
+
     const reservationData = {
       reservation_date: Date,
       reservation_time: Time,
@@ -36,6 +45,7 @@ const postReservation = async (req, res) => {
       people_count: peopleCount,
       phone: user_id ? null : phone,
       user_id: user_id || null,
+      table_id: availableTable.id,
     };
 
     const result = await addReservation(reservationData);
