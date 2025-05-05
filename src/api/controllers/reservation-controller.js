@@ -2,6 +2,7 @@ import {
   listAllReservations,
   addReservation,
   checkFreeTables,
+  listReservationsByUserId,
 } from "../models/reservation-model.js";
 
 const getReservations = async (req, res) => {
@@ -56,4 +57,27 @@ const postReservation = async (req, res) => {
   }
 };
 
-export { postReservation, getReservations };
+const getReservationsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const reservations = await listReservationsByUserId(userId);
+
+    if (reservations.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No reservations found for this user" });
+    }
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error("Error in getReservationsByUserId:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { postReservation, getReservations, getReservationsByUserId };

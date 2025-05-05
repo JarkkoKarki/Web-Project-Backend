@@ -77,4 +77,25 @@ const checkFreeTables = async (peopleCount, reservationDate) => {
   }
 };
 
-export { addReservation, listAllReservations, checkFreeTables };
+const listReservationsByUserId = async (userId) => {
+  const query = `
+    SELECT *
+    FROM reservations
+    WHERE user_id = ?
+  `;
+
+  try {
+    const [rows] = await promisePool.execute(query, [userId]);
+    return rows;
+  } catch (error) {
+    console.log("Error fetching reservations by user ID:", error);
+    throw error;
+  }
+};
+
+export {
+  addReservation,
+  listAllReservations,
+  checkFreeTables,
+  listReservationsByUserId,
+};
