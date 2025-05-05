@@ -26,8 +26,9 @@ const postReservation = async (req, res) => {
     // Check for available tables
     const availableTable = await checkFreeTables(peopleCount, Date);
     if (!availableTable) {
-      return res.status(400).json({
-        error: "No available tables for the selected date and people count",
+      return res.status(200).json({
+        message: "No available tables for the selected date and people count",
+        available: false,
       });
     }
 
