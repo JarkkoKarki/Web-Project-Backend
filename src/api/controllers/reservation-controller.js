@@ -66,6 +66,7 @@ const getReservationsByUserId = async (req, res) => {
     }
 
     const reservations = await listReservationsByUserId(userId);
+    console.log(reservations);
 
     if (reservations.length === 0) {
       return res
