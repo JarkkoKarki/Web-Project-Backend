@@ -19,19 +19,13 @@ const postReservation = async (req, res) => {
     const { Date, Time, comments, email, name, peopleCount, phone, user_id } =
       req.body;
 
-    if (
-      !Date ||
-      !Time ||
-      !peopleCount ||
-      (!user_id && (!email || !name || !phone))
-    ) {
+    if (!Date || !Time || !peopleCount || !email || !name || !phone) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Check for available tables
     const availableTable = await checkFreeTables(peopleCount, Date);
     if (!availableTable) {
-      console.log("DEBUG -  NO AVAILABLE TABLES");
       return res.status(400).json({
         error: "No available tables for the selected date and people count",
       });
@@ -41,11 +35,11 @@ const postReservation = async (req, res) => {
       reservation_date: Date,
       reservation_time: Time,
       comments,
-      email: user_id ? null : email,
-      name: user_id ? null : name,
+      email,
+      name,
       people_count: peopleCount,
-      phone: user_id ? null : phone,
-      user_id: user_id || null,
+      phone,
+      user_id: user_id || null, // Include user_id if provided, otherwise null
       table_id: availableTable.id,
     };
 
