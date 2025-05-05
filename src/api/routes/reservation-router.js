@@ -11,6 +11,6 @@ reservationRouter.route("/").get(getReservations);
 
 reservationRouter.route("/reserve").post(postReservation);
 
-reservationRouter.get("/:id", getReservationsByUserId);
+reservationRouter.route("/:id").get(getReservationsByUserId);
 
 export default reservationRouter;
