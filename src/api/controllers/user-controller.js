@@ -85,13 +85,21 @@ const putUser = async (req, res) => {
     const updateData = {
       username: username || currentUser.username,
       email: email || currentUser.email,
-      password: password ? bcrypt.hashSync(password, 10) : currentUser.password,
       address: address || currentUser.address,
       filename: req.file ? req.file.thumbnailPath : currentUser.filename,
       first_name: first_name || currentUser.first_name,
       last_name: last_name || currentUser.last_name,
       phone: phone || currentUser.phone,
     };
+
+    if (password) {
+      console.log(password, "Plain text password before hashing");
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      console.log(hashedPassword, "Hashed password before saving to database");
+      updateData.password = hashedPassword;
+    } else {
+      updateData.password = currentUser.password;
+    }
 
     console.log(updateData, " PUTUSER UPDATEDATA");
 
