@@ -29,6 +29,9 @@ const listAllOrders = async (lang = "en") => {
         orderId: order.id,
         sessionId: order.session_id, // Include session_id in the response
         address: order.user_address,
+        email: order.user_email,
+        phone: order.user_phone,
+        additionalInfo: order.additional_info,
         deliveryAddress: order.address,
         orderDate: order.order_date,
         status: order.status,
@@ -85,6 +88,9 @@ const listAllMyOrders = async (user, lang) => {
         orderId: order.id,
         sessionId: order.session_id, // Include session_id here as well
         address: order.user_address,
+        email: order.user_email,
+        phone: order.user_phone,
+        additionalInfo: order.additional_info,
         orderDate: order.order_date,
         status: order.status,
         totalPrice: order.total_price,
