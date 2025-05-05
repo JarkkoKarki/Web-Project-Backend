@@ -14,6 +14,7 @@ const authUser = async (req, res) => {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(isPasswordValid, " ispasswordValid");
     if (!isPasswordValid) {
       console.log(" salasana ei validi", isPasswordValid);
       return res.status(401).json({ error: "Invalid username or password" });
