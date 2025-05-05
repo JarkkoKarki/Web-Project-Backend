@@ -9,11 +9,13 @@ const authUser = async (req, res) => {
     const user = await login(username);
     console.log(user, " user");
     if (!user) {
+      console.log(user);
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log(" salasana ei validi", isPasswordValid);
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
