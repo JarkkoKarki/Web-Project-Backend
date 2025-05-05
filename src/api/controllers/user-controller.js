@@ -7,6 +7,7 @@ import {
 } from "../models/user-model.js";
 
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const getUser = async (req, res) => {
   res.json(await listAllUsers());
@@ -70,50 +71,72 @@ const putUser = async (req, res) => {
     const { username, email, password, address, first_name, last_name, phone } =
       req.body;
     const userId = req.params.id;
-    const filename = req.file ? req.file.thumbnailPath : "uploads/default.png";
-    const thumbnailPath = req.file
-      ? req.file.thumbnailPath
-      : "uploads/default.png";
 
-    const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
+    console.log("putUSER KUTSUTTU");
+    console.log(req.body);
 
+    // Fetch current user data
+    const currentUser = await findUserById(userId);
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Prepare update data by keeping existing values if not provided
     const updateData = {
-      username,
-      email,
-      password: hashedPassword,
-      address,
-      filename,
-      first_name,
-      last_name,
-      phone,
+      username: username || currentUser.username,
+      email: email || currentUser.email,
+      address: address || currentUser.address,
+      filename: req.file ? req.file.thumbnailPath : currentUser.filename,
+      first_name: first_name || currentUser.first_name,
+      last_name: last_name || currentUser.last_name,
+      phone: phone || currentUser.phone,
     };
 
-    Object.keys(updateData).forEach((key) => {
-      if (updateData[key] === undefined) {
-        updateData[key] = null;
-      }
-      if (updateData[key] === null) {
-        delete updateData[key];
-      }
-    });
-
-    if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ error: "No valid fields to update" });
+    if (password) {
+      console.log(password, "Plain text password before hashing");
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      console.log(hashedPassword, "Hashed password before saving to database");
+      updateData.password = hashedPassword;
+    } else {
+      updateData.password = currentUser.password;
     }
+
+    console.log(updateData, " PUTUSER UPDATEDATA");
 
     const result = await modifyUser(updateData, userId);
 
     if (result) {
+      // Fetch updated user data
+      const updatedUser = await findUserById(userId);
+
+      // Generate a new token with updated user data
+      const token = jwt.sign(
+        {
+          user_id: updatedUser.id,
+          username: updatedUser.username,
+          first_name: updatedUser.first_name,
+          last_name: updatedUser.last_name,
+          email: updatedUser.email,
+          address: updatedUser.address,
+          phone: updatedUser.phone,
+          role: updatedUser.role,
+          filename: updatedUser.filename || "uploads/default.jpg",
+          created_at: updatedUser.created_at,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
       res.status(200).json({
         message: "User updated successfully",
-        filename,
-        user: result,
+        token,
+        user: updatedUser,
       });
     } else {
       res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    console.error("Error in putUser:", error);
+    console.log("Error in putUser:", error);
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });

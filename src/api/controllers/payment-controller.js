@@ -78,6 +78,9 @@ export const createCheckoutSession = async (req, res) => {
       total_price: totalPrice,
       products: orderProducts,
       session_id: session.id,
+      user_email: user.email,
+      user_phone: user.phone,
+      additional_info: user.additional_info,
     };
 
     const { orderId } = await addOrder(order, user);

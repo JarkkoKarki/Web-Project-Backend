@@ -14,13 +14,13 @@ const listAllOrders = async (lang = "en") => {
     for (const order of rows) {
       const [productRows] = await connection.query(
         `
-            SELECT op.product_id,
-                   op.quantity,
-                   p.name_${lang} AS name,
-                   p.desc_${lang} AS description
-            FROM order_products op
-            JOIN products p ON op.product_id = p.id
-            WHERE op.order_id = ?
+          SELECT op.product_id,
+                 op.quantity,
+                 op.name_${lang} AS name,
+                 op.desc_${lang} AS description,
+                 op.price
+          FROM order_products op
+          WHERE op.order_id = ?
           `,
         [order.id]
       );
@@ -33,6 +33,7 @@ const listAllOrders = async (lang = "en") => {
         phone: order.user_phone,
         additionalInfo: order.additional_info,
         deliveryAddress: order.address,
+        total_price: order.total_price,
         orderDate: order.order_date,
         status: order.status,
         products: productRows,
@@ -72,14 +73,13 @@ const listAllMyOrders = async (user, lang) => {
     for (const order of orderResults) {
       const [productRows] = await connection.query(
         `
-            SELECT op.product_id,
-                   op.quantity,
-                   p.name_${lang} AS name,
-                   p.desc_${lang} AS description,
-                   p.price
-            FROM order_products op
-            JOIN products p ON op.product_id = p.id
-            WHERE op.order_id = ?
+          SELECT op.product_id,
+                 op.quantity,
+                 op.name_${lang} AS name,
+                 op.desc_${lang} AS description,
+                op.price
+          FROM order_products op
+          WHERE op.order_id = ?
           `,
         [order.id]
       );
@@ -114,7 +114,16 @@ const listAllMyOrders = async (user, lang) => {
 };
 
 const addOrder = async (order) => {
-  const { user_id, user_address, total_price, products, session_id } = order;
+  const {
+    user_id,
+    user_address,
+    total_price,
+    products,
+    session_id,
+    user_email,
+    user_phone,
+    additional_info,
+  } = order;
 
   if (!user_id) {
     throw new Error("Missing user ID for order.");
@@ -129,7 +138,6 @@ const addOrder = async (order) => {
     throw new Error("No products provided for order.");
   }
 
-  // Ensure all products have a valid ID
   const invalidProducts = products.filter(
     (product) => !product.id || !product.quantity
   );
@@ -144,8 +152,16 @@ const addOrder = async (order) => {
 
   try {
     const [result] = await connection.query(
-      "INSERT INTO orders (user_id, user_address, total_price, session_id) VALUES (?, ?, ?, ?)",
-      [user_id, user_address, total_price, session_id || null]
+      "INSERT INTO orders (user_id, user_address, total_price, session_id, user_email, user_phone, additional_info) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        user_id,
+        user_address,
+        total_price,
+        session_id || null,
+        user_email || null,
+        user_phone || null,
+        additional_info || null,
+      ]
     );
 
     if (result.affectedRows === 0) {
@@ -154,21 +170,40 @@ const addOrder = async (order) => {
 
     const orderId = result.insertId;
 
-    const productValues = products.map((product) => [
-      orderId,
-      product.id,
-      product.quantity,
-    ]);
+    const productIds = products.map((p) => p.id);
+    const [dbProducts] = await connection.query(
+      `SELECT id, name_fi, name_en, desc_fi, desc_en, price FROM products WHERE id IN (?)`,
+      [productIds]
+    );
 
-    if (productValues.length === 0) {
+    const productMap = new Map(dbProducts.map((p) => [p.id, p]));
+
+    const orderProductValues = products.map((p) => {
+      const dbProd = productMap.get(p.id);
+      if (!dbProd)
+        throw new Error(`Product with ID ${p.id} not found in database.`);
+      return [
+        orderId,
+        p.id,
+        p.quantity,
+        dbProd.name_fi,
+        dbProd.name_en,
+        dbProd.desc_fi,
+        dbProd.desc_en,
+        dbProd.price,
+      ];
+    });
+
+    if (orderProductValues.length === 0) {
       throw new Error("No valid products to insert.");
     }
 
     await connection.query(
-      "INSERT INTO order_products (order_id, product_id, quantity) VALUES ?",
-      [productValues]
+      `INSERT INTO order_products 
+        (order_id, product_id, quantity, name_fi, name_en, desc_fi, desc_en, price)
+       VALUES ?`,
+      [orderProductValues]
     );
-
     await connection.commit();
     return { orderId };
   } catch (error) {

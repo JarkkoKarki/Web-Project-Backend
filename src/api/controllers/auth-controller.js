@@ -5,14 +5,21 @@ import { addUserAdmin, login } from "../models/user-model.js";
 const authUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-
+    console.log(req.body, " authuser debug");
     const user = await login(username);
+    console.log(user, " user");
     if (!user) {
+      console.log(user);
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
+    console.log(password, " password");
+    console.log(user.password, " USERpassword");
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(isPasswordValid, " ispasswordValid");
     if (!isPasswordValid) {
+      console.log(" salasana ei validi", isPasswordValid);
       return res.status(401).json({ error: "Invalid username or password" });
     }
 

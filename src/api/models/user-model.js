@@ -125,6 +125,8 @@ const addUserAdmin = async (postData) => {
 
 const modifyUser = async (updateData, userId) => {
   try {
+    console.log("MODIFY USER KUTSUTTU");
+    console.log(updateData);
     delete updateData.role;
 
     const fields = Object.keys(updateData)
@@ -135,12 +137,15 @@ const modifyUser = async (updateData, userId) => {
     const sql = `UPDATE users SET ${fields} WHERE id = ?`;
     const [result] = await promisePool.execute(sql, [...values, userId]);
 
+    console.log("Update result:", result);
+
     return result.affectedRows > 0;
   } catch (error) {
-    console.error("Error in modifyUser:", error);
+    console.log("Error in modifyUser:", error);
     throw error;
   }
 };
+
 const removeUser = async (id) => {
   try {
     const sql = `DELETE FROM users WHERE id = ?`;
