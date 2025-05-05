@@ -82,6 +82,7 @@ const putUser = async (req, res) => {
 
     const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
 
+    console.log(password);
     const updateData = {
       username,
       email,
@@ -92,6 +93,7 @@ const putUser = async (req, res) => {
       last_name,
       phone,
     };
+    console.log(updateData, " PUTUSER UPDATEDATA");
 
     Object.keys(updateData).forEach((key) => {
       if (updateData[key] === undefined) {
