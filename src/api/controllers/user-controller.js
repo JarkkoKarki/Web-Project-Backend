@@ -7,7 +7,6 @@ import {
 } from "../models/user-model.js";
 
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const getUser = async (req, res) => {
   res.json(await listAllUsers());
@@ -71,45 +70,29 @@ const putUser = async (req, res) => {
     const { username, email, password, address, first_name, last_name, phone } =
       req.body;
     const userId = req.params.id;
-    const filename = req.file ? req.file.thumbnailPath : "uploads/default.png";
-    const thumbnailPath = req.file
-      ? req.file.thumbnailPath
-      : "uploads/default.png";
 
     console.log("putUSER KUTSUTTU");
     console.log(req.body);
-    console.log(filename);
-    console.log(thumbnailPath);
 
-    const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
-
-    console.log(password);
-    const updateData = {
-      username,
-      email,
-      password: hashedPassword,
-      address,
-      filename,
-      first_name,
-      last_name,
-      phone,
-    };
-    console.log(updateData, " PUTUSER UPDATEDATA");
-
-    Object.keys(updateData).forEach((key) => {
-      if (updateData[key] === undefined) {
-        updateData[key] = null;
-      }
-      if (updateData[key] === null) {
-        delete updateData[key];
-      }
-    });
-
-    console.log(updateData, " PUTUSER UPDATEDATA paska spiraalin jälkee");
-
-    if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ error: "No valid fields to update" });
+    // Fetch current user data
+    const currentUser = await findUserById(userId);
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    // Prepare update data by keeping existing values if not provided
+    const updateData = {
+      username: username || currentUser.username,
+      email: email || currentUser.email,
+      password: password ? bcrypt.hashSync(password, 10) : currentUser.password,
+      address: address || currentUser.address,
+      filename: req.file ? req.file.thumbnailPath : currentUser.filename,
+      first_name: first_name || currentUser.first_name,
+      last_name: last_name || currentUser.last_name,
+      phone: phone || currentUser.phone,
+    };
+
+    console.log(updateData, " PUTUSER UPDATEDATA");
 
     const result = await modifyUser(updateData, userId);
 
