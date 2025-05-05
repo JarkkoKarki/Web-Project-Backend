@@ -132,7 +132,6 @@ const addOrder = async (order) => {
     throw new Error("No products provided for order.");
   }
 
-  // Ensure all products have a valid ID
   const invalidProducts = products.filter(
     (product) => !product.id || !product.quantity
   );
@@ -147,7 +146,7 @@ const addOrder = async (order) => {
 
   try {
     const [result] = await connection.query(
-      "INSERT INTO orders (user_id, user_address, total_price, session_id, user_email, user_phone, additional_info ) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO orders (user_id, user_address, total_price, session_id, user_email, user_phone, additional_info) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         user_id,
         user_address,
@@ -193,7 +192,6 @@ const addOrder = async (order) => {
       throw new Error("No valid products to insert.");
     }
 
-    // Insert into order_products
     await connection.query(
       `INSERT INTO order_products 
         (order_id, product_id, quantity, name_fi, name_en, desc_fi, desc_en, price)
