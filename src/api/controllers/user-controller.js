@@ -105,6 +105,8 @@ const putUser = async (req, res) => {
       }
     });
 
+    console.log(updateData, " PUTUSER UPDATEDATA paska spiraalin jälkee");
+
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: "No valid fields to update" });
     }
