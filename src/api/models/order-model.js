@@ -116,7 +116,7 @@ const addOrder = async (order) => {
     session_id,
     user_email,
     user_phone,
-    user_additional,
+    additional_info,
   } = order;
 
   if (!user_id) {
@@ -147,7 +147,7 @@ const addOrder = async (order) => {
 
   try {
     const [result] = await connection.query(
-      "INSERT INTO orders (user_id, user_address, total_price, session_id, user_email, user_phone, user_additional ) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO orders (user_id, user_address, total_price, session_id, user_email, user_phone, additional_info ) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         user_id,
         user_address,
@@ -155,7 +155,7 @@ const addOrder = async (order) => {
         session_id || null,
         user_email || null,
         user_phone || null,
-        user_additional || null,
+        additional_info || null,
       ]
     );
 
