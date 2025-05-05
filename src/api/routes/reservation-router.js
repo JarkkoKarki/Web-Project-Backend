@@ -2,7 +2,7 @@ import express from "express";
 import {
   postReservation,
   getReservations,
-} from "../controllers/reservation-controller";
+} from "../controllers/reservation-controller.js";
 
 const reservationRouter = express.Router();
 
