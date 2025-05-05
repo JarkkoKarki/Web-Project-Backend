@@ -4,13 +4,14 @@ Content-Type: application/json
 
 
 ### GET user's orders  (needs token)
-GET http://localhost:3000/api/orders/myorders
+GET http://localhost:3000/api/orders/myorders/en
 Content-Type: application/json
-Authorization: Bearer "TOKEN"
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMzAsInVzZXJuYW1lIjoidGVzdGlwZW5hIiwiZmlyc3RfbmFtZSI6IlBlbnR0aSIsImxhc3RfbmFtZSI6IkhpZWtrYXZ1b3JpIiwiZW1haWwiOiJ0ZXN0aXhkQG1ldHJvcG9saWEuZmlhc2QiLCJhZGRyZXNzIjoibWFsbWluIGFzc2EiLCJwaG9uZSI6NTA0MzgxMDQ5LCJyb2xlIjoidXNlciIsImZpbGVuYW1lIjoidXBsb2Fkcy8xZjJjOGY4MDU5MzhjMmI4YmVlYmI5OGM2Njc4NWRkY190aHVtYi5qcGciLCJjcmVhdGVkX2F0IjoiMjAyNS0wNS0wMlQyMToxNDoyMC4wMDBaIiwiaWF0IjoxNzQ2Mzk0NzMyLCJleHAiOjE3NDYzOTgzMzJ9.xOBWz-cbhqq0QRMzYdC8xUanKUt_8APbZlvCcTOQavQ
 
 ### POST order
 POST http://localhost:3000/api/orders
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMzAsInVzZXJuYW1lIjoidGVzdGlwZW5hIiwiZmlyc3RfbmFtZSI6IlBlbnR0aSIsImxhc3RfbmFtZSI6IkhpZWtrYXZ1b3JpIiwiZW1haWwiOiJ0ZXN0aXhkQG1ldHJvcG9saWEuZmlhc2QiLCJhZGRyZXNzIjoibWFsbWluIGFzc2EiLCJwaG9uZSI6NTA0MzgxMDQ5LCJyb2xlIjoidXNlciIsImZpbGVuYW1lIjoidXBsb2Fkcy8xZjJjOGY4MDU5MzhjMmI4YmVlYmI5OGM2Njc4NWRkY190aHVtYi5qcGciLCJjcmVhdGVkX2F0IjoiMjAyNS0wNS0wMlQyMToxNDoyMC4wMDBaIiwiaWF0IjoxNzQ2MzgzOTc0LCJleHAiOjE3NDYzODc1NzR9.J0edTZj8Slos1OOCQ__B7tFboIg53BjkJog_h_EfCwk
 
 {
   "listOfProducts": [4,4,4,6,7,8,8,8],
@@ -26,3 +27,4 @@ Authorization: Bearer "TOKEN"
 {
  "status": "preparing"
 }
+
