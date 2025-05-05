@@ -50,7 +50,7 @@ const postReservation = async (req, res) => {
       reservationId: result.insertId,
     });
   } catch (error) {
-    console.error("Error in postReservation:", error);
+    console.log("Error in postReservation:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

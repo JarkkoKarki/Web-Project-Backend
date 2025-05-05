@@ -35,7 +35,7 @@ const addReservation = async (reservationData) => {
     const [result] = await promisePool.execute(query, values);
     return result;
   } catch (error) {
-    console.error("Error adding reservation:", error);
+    console.log("Error adding reservation:", error);
     throw error;
   }
 };
@@ -47,7 +47,7 @@ const listAllReservations = async () => {
     const [rows] = await promisePool.execute(query);
     return rows;
   } catch (error) {
-    console.error("Error fetching reservations:", error);
+    console.log("Error fetching reservations:", error);
     throw error;
   }
 };
@@ -72,7 +72,7 @@ const checkFreeTables = async (peopleCount, reservationDate) => {
     const [rows] = await promisePool.execute(query, values);
     return rows.length > 0 ? rows[0] : null; // Return the first available table or null if none
   } catch (error) {
-    console.error("Error checking free tables:", error);
+    console.log("Error checking free tables:", error);
     throw error;
   }
 };
