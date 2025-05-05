@@ -14,6 +14,7 @@ const authUser = async (req, res) => {
     }
 
     console.log(password, " password");
+    console.log(user.password, " USERpassword");
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     console.log(isPasswordValid, " ispasswordValid");
