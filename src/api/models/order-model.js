@@ -17,7 +17,7 @@ const listAllOrders = async (lang = "en") => {
           SELECT op.product_id,
                  op.quantity,
                  op.name_${lang} AS name,
-                 op.desc_${lang} AS description
+                 op.desc_${lang} AS description,
                  op.price
           FROM order_products op
           WHERE op.order_id = ?
@@ -72,7 +72,7 @@ const listAllMyOrders = async (user, lang) => {
           SELECT op.product_id,
                  op.quantity,
                  op.name_${lang} AS name,
-                 op.desc_${lang} AS description
+                 op.desc_${lang} AS description,
                 op.price
           FROM order_products op
           WHERE op.order_id = ?
