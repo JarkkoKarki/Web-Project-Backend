@@ -18,6 +18,7 @@ const listAllOrders = async (lang = "en") => {
                  op.quantity,
                  op.name_${lang} AS name,
                  op.desc_${lang} AS description
+                 op.price
           FROM order_products op
           WHERE op.order_id = ?
           `,
@@ -72,6 +73,7 @@ const listAllMyOrders = async (user, lang) => {
                  op.quantity,
                  op.name_${lang} AS name,
                  op.desc_${lang} AS description
+                op.price
           FROM order_products op
           WHERE op.order_id = ?
           `,
@@ -147,7 +149,7 @@ const addOrder = async (order) => {
 
     const productIds = products.map((p) => p.id);
     const [dbProducts] = await connection.query(
-        `SELECT id, name_fi, name_en, desc_fi, desc_en FROM products WHERE id IN (?)`,
+        `SELECT id, name_fi, name_en, desc_fi, desc_en, price FROM products WHERE id IN (?)`,
         [productIds]
     );
 
@@ -164,6 +166,7 @@ const addOrder = async (order) => {
         dbProd.name_en,
         dbProd.desc_fi,
         dbProd.desc_en,
+        dbProd.price
       ];
     })
 
@@ -174,7 +177,7 @@ const addOrder = async (order) => {
     // Insert into order_products
     await connection.query(
         `INSERT INTO order_products 
-        (order_id, product_id, quantity, name_fi, name_en, desc_fi, desc_en)
+        (order_id, product_id, quantity, name_fi, name_en, desc_fi, desc_en, price)
        VALUES ?`,
         [orderProductValues]
     )
