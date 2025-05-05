@@ -55,7 +55,7 @@ const listAllReservations = async () => {
 const checkFreeTables = async (peopleCount, reservationDate) => {
   const query = `
     SELECT t.id, t.table_size
-    FROM table t
+    FROM \`table\` t
     WHERE t.table_size >= ?
       AND t.id NOT IN (
         SELECT r.table_id
