@@ -125,6 +125,9 @@ const addUserAdmin = async (postData) => {
 
 const modifyUser = async (updateData, userId) => {
   try {
+    console.log("MODIFY USER KUTSUTTU");
+    console.log(result);
+    console.log(updateData);
     delete updateData.role;
 
     const fields = Object.keys(updateData)
@@ -137,7 +140,7 @@ const modifyUser = async (updateData, userId) => {
 
     return result.affectedRows > 0;
   } catch (error) {
-    console.error("Error in modifyUser:", error);
+    console.log("Error in modifyUser:", error);
     throw error;
   }
 };

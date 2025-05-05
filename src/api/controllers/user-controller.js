@@ -75,6 +75,11 @@ const putUser = async (req, res) => {
       ? req.file.thumbnailPath
       : "uploads/default.png";
 
+    console.log("putUSER KUTSUTTU");
+    console.log(req.body);
+    console.log(filename);
+    console.log(thumbnailPath);
+
     const hashedPassword = password ? bcrypt.hashSync(password, 10) : null;
 
     const updateData = {
@@ -113,7 +118,7 @@ const putUser = async (req, res) => {
       res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    console.error("Error in putUser:", error);
+    console.log("Error in putUser:", error);
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
