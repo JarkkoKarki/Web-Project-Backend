@@ -80,7 +80,7 @@ export const createCheckoutSession = async (req, res) => {
       session_id: session.id,
       user_email: user.email,
       user_phone: user.phone,
-      additional_info: user.additional,
+      additional_info: user.additional_info,
     };
 
     const { orderId } = await addOrder(order, user);
