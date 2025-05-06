@@ -108,7 +108,7 @@ const deleteReservationById = async (req, res) => {
 const deleteReservationByUserId = async (req, res) => {
   try {
     const reservationId = req.params.id;
-    const userId = req.user.user_id;
+    const userId = req.user.id;
 
     if (!reservationId) {
       return res.status(400).json({ error: "Reservation ID is required" });
