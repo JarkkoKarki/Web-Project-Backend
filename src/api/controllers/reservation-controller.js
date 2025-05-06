@@ -69,12 +69,7 @@ const getReservationsByUserId = async (req, res) => {
     const reservations = await listReservationsByUserId(userId);
     console.log(reservations);
 
-    if (reservations.length === 0) {
-      return res
-        .status(200)
-        .json({ message: "No reservations found for this user" });
-    }
-
+    // ei palautetakkaan 200 jos ei löydy käyttäjälle tietoo
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Error in getReservationsByUserId:", error);
