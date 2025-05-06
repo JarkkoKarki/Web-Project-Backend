@@ -5,6 +5,11 @@ import multer from "multer";
 import fs from "fs";
 dotenv.config();
 
+/**
+ * Middleware for file uploads using Multer.
+ * Validates that only JPEG and PNG files are uploaded and limits file size to 10 MB.
+ */
+
 export const upload = multer({
   dest: "uploads/",
   limits: {
@@ -19,10 +24,24 @@ export const upload = multer({
   },
 });
 
+/**
+ * Middleware for handling multiple file uploads, specifically for profile pictures and other files.
+ * Allows maximum 1 profile picture and 1 file.
+ */
+
 export const uploadFields = upload.fields([
   { name: "profilePicture", maxCount: 1 },
   { name: "file", maxCount: 1 },
 ]);
+
+/**
+ * Creates a thumbnail (100x100) of the uploaded image and deletes the original file.
+ * Updates the `req.file` object with the new thumbnail path.
+ *
+ * @param {Object} req - The request object containing the uploaded file.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
 
 export const createThumbnail = async (req, res, next) => {
   try {
@@ -70,6 +89,15 @@ export const createThumbnail = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Creates a larger menu thumbnail (400x400) of the uploaded image and deletes the original file.
+ * Updates the `req.file` object with the new thumbnail path.
+ *
+ * @param {Object} req - The request object containing the uploaded file.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
 
 export const createMenuThumbnail = async (req, res, next) => {
   try {
@@ -119,6 +147,16 @@ export const createMenuThumbnail = async (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to authenticate the user's token.
+ * Verifies JWT token from the Authorization header.
+ *
+ * @param {Object} req - The request object containing the Authorization header.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} - Throws error if the token is invalid or missing.
+ */
+
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -147,6 +185,16 @@ export const authenticateToken = (req, res, next) => {
   });
 };
 
+/**
+ * Middleware to check if the logged-in user is authorized to access a resource.
+ * Verifies if the user ID in the request matches the logged-in user's ID or if the user is an admin.
+ *
+ * @param {Object} req - The request object containing the user ID to check.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} - Throws an error if the user is not authorized.
+ */
+
 export const checkUserOwnership = (req, res, next) => {
   try {
     const userId = parseInt(req.params.id, 10);
@@ -172,6 +220,16 @@ export const checkUserOwnership = (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to check if the logged-in user has an admin role.
+ * Verifies the user's role from the JWT token.
+ *
+ * @param {Object} req - The request object containing the Authorization header.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} - Throws an error if the user is not an admin or if the token is invalid.
+ */
+
 export const checkAdmin = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -194,11 +252,28 @@ export const checkAdmin = (req, res, next) => {
   }
 };
 
+/**
+ * Middleware for handling 404 errors when a route is not found.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+
 export const notFoundHandler = (req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);
   error.status = 404;
   next(error);
 };
+
+/**
+ * Global error handler middleware for handling errors.
+ *
+ * @param {Object} err - The error object.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
 
 export const errorHandler = (err, req, res, next) => {
   res.status(err.status || 500).json({

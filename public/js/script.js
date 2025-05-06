@@ -8,8 +8,17 @@ import {
   htmlContentMenu,
   htmlContentUser,
 } from "/app/js/utils/htmlComponents.js";
+/**
+ * Attaches event listeners to buttons based on the button configuration.
+ * Triggers an API call and renders the response dynamically.
+ */
 
 buttonConfigs.forEach(({ id, method, endpoint, type, needsIdOptions }) => {
+  /**
+   * Handle click events for the button.
+   * Makes an API request when a button is clicked.
+   * @param {Event} event - The event triggered by clicking the button.
+   */
   const button = document.getElementById(id);
   if (!button) return;
 
@@ -33,6 +42,11 @@ buttonConfigs.forEach(({ id, method, endpoint, type, needsIdOptions }) => {
   });
 });
 
+/**
+ * Event listener that runs when the DOM content is fully loaded.
+ * Retrieves the test request data from localStorage and dynamically updates the UI.
+ */
+
 window.addEventListener("DOMContentLoaded", async () => {
   const testerDiv = document.getElementById("tester");
   if (!testerDiv) return;
@@ -46,6 +60,11 @@ window.addEventListener("DOMContentLoaded", async () => {
   const { method, endpoint } = data;
 
   if (["id", "put", "delete"].includes(data.type)) {
+    /**
+     * Fetches data from the endpoint and renders the response dynamically based on the type of request.
+     * @param {string} endpoint - The API endpoint to fetch data from.
+     * @param {string} method - The HTTP method used for the request (GET, PUT, DELETE).
+     */
     const result = await fetch(endpoint, { method: "GET" });
     const jsonResponse = await result.json();
     let htmlData = null;

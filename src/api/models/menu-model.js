@@ -1,5 +1,12 @@
 import promisePool from "../../utils/database.js";
 
+/**
+ * Retrieves all products listed by categories and diets in both languages (English and Finnish).
+ * This function also merges the categories and diets into the product object.
+ *
+ * @returns {Array|false} - An array of products, each including categories and diets, or `false` if no products are found.
+ */
+
 //Get all products listed by categories
 const listAllProductsBothLanguages = async () => {
   const [rows] = await promisePool.query(`
@@ -44,24 +51,34 @@ const listAllProductsBothLanguages = async () => {
     }
 
     // Add category to the product if it doesn't already exist
-    if (row.c_id && !existingProduct.categories.some(c => c.id === row.c_id)) {
+    if (
+      row.c_id &&
+      !existingProduct.categories.some((c) => c.id === row.c_id)
+    ) {
       existingProduct.categories.push({
         id: row.c_id,
-        name: row.c_category
+        name: row.c_category,
       });
     }
 
     // Add diet to the product if it doesn't already exist
-    if (row.d_id && !existingProduct.diets.some(d => d.id === row.d_id)) {
+    if (row.d_id && !existingProduct.diets.some((d) => d.id === row.d_id)) {
       existingProduct.diets.push({
         id: row.d_id,
-        name: row.d_diet
+        name: row.d_diet,
       });
     }
   });
-  console.log(products)
+  console.log(products);
   return products;
 };
+
+/**
+ * Retrieves all products listed by categories and diets in a specified language (default is English).
+ *
+ * @param {string} lang - The language to fetch product names and descriptions in ('en' or 'fi').
+ * @returns {Array|false} - An array of products, each including categories and diets, or `false` if no products are found.
+ */
 
 //Get all products listed by categories
 const listAllProducts = async (lang = "en") => {
@@ -112,6 +129,13 @@ const listAllProducts = async (lang = "en") => {
   return products;
 };
 
+/**
+ * Finds a product by its ID, along with its associated categories and diets.
+ *
+ * @param {number} id - The ID of the product to fetch.
+ * @returns {Object|false} - The product object with its categories and diets, or `false` if no product is found.
+ */
+
 //Finding product by id and its categories and diets
 const findProductById = async (id) => {
   const [rows] = await promisePool.query(
@@ -154,6 +178,14 @@ const findProductById = async (id) => {
     diets: diets,
   };
 };
+
+/**
+ * Adds a new product to the database along with its categories and diets.
+ *
+ * @param {Object} product - The product object to add, including name, description, price, etc.
+ * @returns {Object} - An object containing the success status and the inserted product's ID.
+ * @throws {Error} - Throws an error if any part of the insertion fails.
+ */
 
 //Adds product to db
 const addProduct = async (product) => {
@@ -216,6 +248,15 @@ const addProduct = async (product) => {
     connection.release();
   }
 };
+
+/**
+ * Modifies an existing product by its ID, updating its details and associated categories/diets.
+ *
+ * @param {Object} product - The product object containing the fields to update.
+ * @param {number} id - The ID of the product to modify.
+ * @returns {Object|false} - The updated product if successful, or `false` if no product was modified.
+ * @throws {Error} - Throws an error if the product is not found or modification fails.
+ */
 
 const modifyProduct = async (product, id) => {
   const {
@@ -324,6 +365,14 @@ const modifyProduct = async (product, id) => {
     connection.release();
   }
 };
+
+/**
+ * Removes a product and its associated categories and diets from the database.
+ *
+ * @param {number} id - The ID of the product to remove.
+ * @returns {boolean} - `true` if the product was successfully removed, or `false` if no product was deleted.
+ * @throws {Error} - Throws an error if the removal process fails.
+ */
 
 // Removing product and its relations to product_category & product_diet tables
 const removeProduct = async (id) => {

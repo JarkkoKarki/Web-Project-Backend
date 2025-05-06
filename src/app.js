@@ -18,15 +18,51 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api", api);
 
+/**
+ * @api {get} / Root Page
+ * @apiName RootPage
+ * @apiGroup Pages
+ * @apiDescription Serves the main documentation HTML file.
+ *
+ * @apiSuccessExample {html} Success:
+ *     HTTP/1.1 200 OK
+ *     Content-Type: text/html
+ *     <html>...</html>
+ */
+
 app.get("/", (req, res) => {
   const htmlFilePath = path.join(__dirname, "../public/html/document.html");
   res.sendFile(htmlFilePath);
 });
 
+/**
+ * @api {get} /test Test Page
+ * @apiName TestPage
+ * @apiGroup Pages
+ * @apiDescription Serves the test HTML file.
+ *
+ * @apiSuccessExample {html} Success:
+ *     HTTP/1.1 200 OK
+ *     Content-Type: text/html
+ *     <html>...</html>
+ */
+
 app.get("/test", (req, res) => {
   const htmlFilePath = path.join(__dirname, "../public/html/test.html");
   res.sendFile(htmlFilePath);
 });
+
+/**
+ * @api {get} /payments Payments Page
+ * @apiName PaymentsPage
+ * @apiGroup Pages
+ * @apiDescription Serves the payment HTML file.
+ *
+ * @apiSuccessExample {html} Success:
+ *     HTTP/1.1 200 OK
+ *     Content-Type: text/html
+ *     <html>...</html>
+ */
 
 app.get("/payments", (req, res) => {
   const htmlFilePath = path.join(__dirname, "../public/html/payment.html");

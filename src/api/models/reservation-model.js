@@ -1,5 +1,23 @@
 import promisePool from "../../utils/database.js";
 
+/**
+ * Adds a reservation to the database.
+ *
+ * @param {Object} reservationData - Data for the new reservation.
+ * @param {number} reservationData.user_id - The ID of the user making the reservation.
+ * @param {number} reservationData.table_id - The ID of the table being reserved.
+ * @param {string} reservationData.reservation_date - The date of the reservation (format: YYYY-MM-DD).
+ * @param {string} reservationData.reservation_time - The time of the reservation (format: HH:MM).
+ * @param {string} [reservationData.comments] - Optional comments for the reservation.
+ * @param {string} [reservationData.email] - Optional email of the person making the reservation.
+ * @param {string} [reservationData.name] - Optional name of the person making the reservation.
+ * @param {number} reservationData.people_count - The number of people for the reservation.
+ * @param {string} [reservationData.phone] - Optional phone number of the person making the reservation.
+ *
+ * @returns {Object} - The result of the SQL query, including information about the inserted row.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
 const addReservation = async (reservationData) => {
   const {
     user_id,
@@ -40,6 +58,13 @@ const addReservation = async (reservationData) => {
   }
 };
 
+/**
+ * Lists all reservations in the database.
+ *
+ * @returns {Array} - An array of reservation records.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
 const listAllReservations = async () => {
   const query = "SELECT * FROM reservations";
 
@@ -51,6 +76,16 @@ const listAllReservations = async () => {
     throw error;
   }
 };
+
+/**
+ * Checks for available tables based on the number of people and reservation date.
+ *
+ * @param {number} peopleCount - The number of people for the reservation.
+ * @param {string} reservationDate - The date of the reservation (format: YYYY-MM-DD).
+ *
+ * @returns {Object|null} - The first available table, or null if no table is available.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
 
 const checkFreeTables = async (peopleCount, reservationDate) => {
   const query = `
@@ -77,6 +112,15 @@ const checkFreeTables = async (peopleCount, reservationDate) => {
   }
 };
 
+/**
+ * Lists all reservations made by a specific user.
+ *
+ * @param {number} userId - The ID of the user whose reservations to fetch.
+ *
+ * @returns {Array} - An array of reservations made by the specified user.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
 const listReservationsByUserId = async (userId) => {
   const query = `
     SELECT *
@@ -92,6 +136,15 @@ const listReservationsByUserId = async (userId) => {
     throw error;
   }
 };
+
+/**
+ * Deletes a reservation from the database.
+ *
+ * @param {number} reservationId - The ID of the reservation to delete.
+ *
+ * @returns {boolean} - Returns true if the reservation was deleted, otherwise false.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
 
 const deleteReservation = async (reservationId) => {
   const query = `

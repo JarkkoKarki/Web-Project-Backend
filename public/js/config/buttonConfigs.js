@@ -1,3 +1,15 @@
+/**
+ * An array of button configuration objects that define API requests to be made.
+ * Each object represents a button and contains the necessary details to execute the request.
+ *
+ * @type {Array<Object>}
+ * @property {string} id - The ID of the button element.
+ * @property {string} method - The HTTP method to be used for the API request (e.g., GET, POST, PUT, DELETE).
+ * @property {string} endpoint - The URL of the API endpoint.
+ * @property {string} type - The type of API request being made (e.g., 'id', 'all', 'post', 'put', 'delete').
+ * @property {boolean} [needsIdOptions] - A flag indicating if the request needs ID options to be populated in the UI (optional).
+ */
+
 export const buttonConfigs = [
   {
     id: "get-userId",

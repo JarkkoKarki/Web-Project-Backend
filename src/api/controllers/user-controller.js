@@ -9,9 +9,24 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+/**
+ * Fetches all users from the database.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+
 const getUser = async (req, res) => {
   res.json(await listAllUsers());
 };
+
+/**
+ * Fetches a user by their ID from the database.
+ *
+ * @param {Object} req - The request object containing the user ID in `req.params.id`.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The user object if found, or 404 if the user does not exist.
+ */
 
 const getUserById = async (req, res) => {
   const user = await findUserById(req.params.id);
@@ -21,6 +36,15 @@ const getUserById = async (req, res) => {
     res.sendStatus(404);
   }
 };
+
+/**
+ * Creates a new user in the database.
+ *
+ * @param {Object} req - The request object containing the new user's data in `req.body`.
+ * @param {Object} res - The response object.
+ * @returns {Object} - A JSON response indicating the success of the user creation, including the user ID.
+ * @throws {Error} - If the required fields are missing or if there is an internal server error.
+ */
 
 const postUser = async (req, res) => {
   try {
@@ -65,6 +89,15 @@ const postUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+/**
+ * Updates an existing user's information in the database.
+ *
+ * @param {Object} req - The request object containing the user's new data in `req.body` and the user ID in `req.params.id`.
+ * @param {Object} res - The response object.
+ * @returns {Object} - A JSON response with the updated user and a new JWT token if successful.
+ * @throws {Error} - If the user is not found or there is an internal error.
+ */
 
 const putUser = async (req, res) => {
   try {
@@ -142,6 +175,15 @@ const putUser = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
+
+/**
+ * Deletes a user from the database.
+ *
+ * @param {Object} req - The request object containing the user ID in `req.params.id`.
+ * @param {Object} res - The response object.
+ * @returns {Object} - A JSON response indicating the success or failure of the deletion.
+ * @throws {Error} - If the deletion fails.
+ */
 
 const deleteUser = async (req, res) => {
   const result = await removeUser(req.params.id);

@@ -1,6 +1,14 @@
 import { fetchRouteData, fetchLegsData } from "../models/route-model.js";
 import polyline from "@mapbox/polyline";
 
+/**
+ * Controller to fetch route data between two sets of coordinates.
+ *
+ * @param {Object} req - The request object containing the parameters.
+ * @param {Object} res - The response object to send the response.
+ * @returns {Object} - A JSON response containing the route data, or an error message if parameters are missing or there is a failure.
+ */
+
 export const getRouteController = async (req, res) => {
   const { olat, olng, lat, lng } = req.params;
 
@@ -18,6 +26,15 @@ export const getRouteController = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch route data" });
   }
 };
+
+/**
+ * Controller to fetch and decode legs data for a route between two sets of coordinates.
+ *
+ * @param {Object} req - The request object containing the parameters.
+ * @param {Object} res - The response object to send the response.
+ * @returns {Object} - A JSON response containing the decoded legs data, or an error message if parameters are missing or there is a failure.
+ */
+
 export const getLegsController = async (req, res) => {
   const { olat, olng, lat, lng } = req.params;
 

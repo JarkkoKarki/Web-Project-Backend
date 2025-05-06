@@ -1,3 +1,15 @@
+/**
+ * Generates the HTML structure for a user-related API test form based on the provided parameters.
+ *
+ * @param {Object} param - The parameters for rendering the content.
+ * @param {string} param.method - The HTTP method (e.g., GET, PUT, POST, DELETE) to be used for the API request.
+ * @param {string} param.endpoint - The API endpoint URL to be tested.
+ * @param {Object} param.data - The test data that specifies additional information like the type of request.
+ * @param {string} param.data.type - The type of the request (e.g., 'id', 'put', 'delete').
+ *
+ * @returns {string} The generated HTML string for the user-related API test form.
+ */
+
 export const htmlContentUser = ({ method, endpoint, data }) => {
   if (data.type === "id" || data.type === "put" || data.type === "delete") {
     return `
@@ -70,6 +82,18 @@ export const htmlContentUser = ({ method, endpoint, data }) => {
         `;
   }
 };
+
+/**
+ * Generates the HTML structure for a menu-related API test form based on the provided parameters.
+ *
+ * @param {Object} param - The parameters for rendering the content.
+ * @param {string} param.method - The HTTP method (e.g., GET, PUT, POST, DELETE) to be used for the API request.
+ * @param {string} param.endpoint - The API endpoint URL to be tested.
+ * @param {Object} param.data - The test data that specifies additional information like the type of request.
+ * @param {string} param.data.type - The type of the request (e.g., 'id', 'put', 'delete').
+ *
+ * @returns {string} The generated HTML string for the menu-related API test form.
+ */
 
 export const htmlContentMenu = ({ method, endpoint, data }) => {
   if (data.type === "id" || data.type === "put" || data.type === "delete") {

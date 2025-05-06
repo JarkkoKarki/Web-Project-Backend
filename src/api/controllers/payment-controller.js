@@ -6,6 +6,28 @@ dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+/**
+ * Creates a Stripe Checkout session for a list of products.
+ *
+ * This function handles the creation of a checkout session using the Stripe API,
+ * including product validation, calculating the total price, and creating an order.
+ * It also ensures the user information is valid before proceeding with the payment session.
+ *
+ * @async
+ * @param {Object} req - The request object containing the list of products and user details.
+ * @param {Object} req.body - The body of the request, containing:
+ *  - {Array} products - The list of products to be purchased, each with an ID and quantity.
+ *  - {Object} user - The user object containing the user's details:
+ *    - {String} user_id - The unique ID of the user.
+ *    - {String} address - The address of the user.
+ *    - {String} email - The user's email address.
+ *    - {String} phone - The user's phone number.
+ *    - {String} additional_info - Any additional user information.
+ * @param {Object} res - The response object to send the result.
+ * @returns {Object} - A JSON response containing the URL to the checkout session.
+ * @throws {Error} - If an error occurs during the process, an error message is returned.
+ */
+
 export const createCheckoutSession = async (req, res) => {
   try {
     const { products, user } = req.body;

@@ -1,10 +1,47 @@
 import promisePool from "../../utils/database.js";
 
+/**
+ * @module userModel
+ * @description Functions for interacting with the users table in the database.
+ *
+ * This module defines the following functions:
+ * - listAllUsers: Retrieves all users from the database.
+ * - addUser: Adds a new user to the database.
+ * - login: Retrieves a user by their username for authentication.
+ * - findUserById: Retrieves a user by their ID.
+ * - addUserAdmin: Adds a new admin user to the database.
+ * - modifyUser: Modifies an existing user's information.
+ * - removeUser: Deletes a user by their ID.
+ */
+
+/**
+ * @function listAllUsers
+ * @description Retrieves all users from the database.
+ * @returns {Array} - An array of all users in the database.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
 const listAllUsers = async () => {
   const [rows] = await promisePool.execute("SELECT * FROM users");
   console.log("rows", rows);
   return rows;
 };
+
+/**
+ * @function addUser
+ * @description Adds a new user to the database.
+ * @param {object} userData - The user data to be added.
+ * @param {string} userData.first_name - The user's first name.
+ * @param {string} userData.last_name - The user's last name.
+ * @param {string} userData.username - The user's username.
+ * @param {string} userData.email - The user's email.
+ * @param {string} userData.password - The user's password.
+ * @param {string} [userData.filename] - The user's profile picture filename.
+ * @param {string} [userData.address] - The user's address.
+ * @param {string} [userData.phone] - The user's phone number.
+ * @returns {object|false} - Returns an object with user_id on success, or false if user could not be added.
+ * @throws {Error} - Throws an error if the query fails.
+ */
 
 const addUser = async ({
   first_name = null,
@@ -51,6 +88,14 @@ const addUser = async ({
   }
 };
 
+/**
+ * @function login
+ * @description Retrieves a user from the database based on their username for authentication.
+ * @param {string} username - The username of the user to be authenticated.
+ * @returns {object|false} - Returns the user object if found, or false if no user is found.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
 const login = async (username) => {
   const sql = `SELECT * FROM users WHERE username = ?`;
   const [rows] = await promisePool.execute(sql, [username]);
@@ -64,6 +109,14 @@ const login = async (username) => {
   return rows[0];
 };
 
+/**
+ * @function findUserById
+ * @description Retrieves a user from the database by their ID.
+ * @param {number} id - The ID of the user to retrieve.
+ * @returns {object|false} - Returns the user object if found, or false if no user is found.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
 const findUserById = async (id) => {
   const [rows] = await promisePool.execute("SELECT * FROM users WHERE id = ?", [
     id,
@@ -74,6 +127,14 @@ const findUserById = async (id) => {
   }
   return rows[0];
 };
+
+/**
+ * @function addUserAdmin
+ * @description Adds a new admin user to the database.
+ * @param {object} postData - The admin user data to be added.
+ * @returns {object|false} - Returns an object with user_id on success, or false if user could not be added.
+ * @throws {Error} - Throws an error if the query fails.
+ */
 
 const addUserAdmin = async (postData) => {
   try {
@@ -123,6 +184,15 @@ const addUserAdmin = async (postData) => {
   }
 };
 
+/**
+ * @function modifyUser
+ * @description Updates a user's data in the database.
+ * @param {object} updateData - The fields to update in the user record.
+ * @param {number} userId - The ID of the user to be updated.
+ * @returns {boolean} - Returns true if the update was successful, otherwise false.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
 const modifyUser = async (updateData, userId) => {
   try {
     console.log("MODIFY USER KUTSUTTU");
@@ -145,6 +215,14 @@ const modifyUser = async (updateData, userId) => {
     throw error;
   }
 };
+
+/**
+ * @function removeUser
+ * @description Deletes a user from the database by their ID.
+ * @param {number} id - The ID of the user to delete.
+ * @returns {object} - A success or error message indicating the result of the operation.
+ * @throws {Error} - Throws an error if the query fails.
+ */
 
 const removeUser = async (id) => {
   try {

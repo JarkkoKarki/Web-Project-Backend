@@ -2,6 +2,22 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { addUserAdmin, login } from "../models/user-model.js";
 
+/**
+ * Authenticates a user by verifying their username and password.
+ *
+ * This function checks if the provided username exists in the database, then compares the
+ * password with the stored hashed password using bcrypt. If successful, a JWT token is
+ * generated and returned for authentication.
+ *
+ * @async
+ * @param {Object} req - The request object containing user credentials.
+ * @param {string} req.body.username - The username of the user trying to authenticate.
+ * @param {string} req.body.password - The password of the user trying to authenticate.
+ * @param {Object} res - The response object to send the success or error message.
+ * @returns {Object} - A JSON response containing the JWT token and user details, or an error message.
+ * @throws {Error} - If there is an issue during authentication or password comparison.
+ */
+
 const authUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -61,6 +77,27 @@ const authUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+/**
+ * Registers a new user with admin privileges.
+ *
+ * This function takes the user details from the request body, hashes the password using
+ * bcrypt, and stores the new user in the database. A default profile image is set if none is provided.
+ *
+ * @async
+ * @param {Object} req - The request object containing the user registration details.
+ * @param {string} req.body.username - The username of the new user.
+ * @param {string} req.body.email - The email of the new user.
+ * @param {string} req.body.password - The password of the new user.
+ * @param {string} req.body.address - The address of the new user.
+ * @param {string} req.body.role - The role of the new user (e.g., 'admin', 'employee').
+ * @param {string} req.body.phone - The phone number of the new user.
+ * @param {string} req.body.first_name - The first name of the new user.
+ * @param {string} req.body.last_name - The last name of the new user.
+ * @param {Object} res - The response object to send the success or error message.
+ * @returns {Object} - A JSON response containing the success message, or an error message.
+ * @throws {Error} - If there is an issue during user registration or hashing the password.
+ */
 
 const postUserAdmin = async (req, res) => {
   try {

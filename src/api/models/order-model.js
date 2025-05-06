@@ -1,5 +1,14 @@
 import promisePool from "../../utils/database.js";
 
+/**
+ * Fetches all orders from the database along with their associated products.
+ * The product names and descriptions are retrieved in the specified language.
+ *
+ * @param {string} [lang="en"] - The language for product names and descriptions.
+ * @returns {Array} - A list of all orders, each containing products and other details.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
 const listAllOrders = async (lang = "en") => {
   const connection = await promisePool.getConnection();
   try {
@@ -51,6 +60,16 @@ const listAllOrders = async (lang = "en") => {
     connection.release();
   }
 };
+
+/**
+ * Fetches all orders for a specific user, identified by `user.user_id`,
+ * along with their associated products. Product names and descriptions are retrieved in the specified language.
+ *
+ * @param {Object} user - The user object containing `user_id` property.
+ * @param {string} lang - The language for product names and descriptions.
+ * @returns {Array|false} - An array of orders for the user or `false` if no orders are found.
+ * @throws {Error} - Throws an error if the database operation fails.
+ */
 
 const listAllMyOrders = async (user, lang) => {
   const connection = await promisePool.getConnection();
@@ -112,6 +131,22 @@ const listAllMyOrders = async (user, lang) => {
     connection.release();
   }
 };
+
+/**
+ * Adds a new order to the database, including the order details and the associated products.
+ *
+ * @param {Object} order - The order object containing the following properties:
+ *   - `user_id`: The ID of the user placing the order.
+ *   - `user_address`: The address for the order.
+ *   - `total_price`: The total price of the order.
+ *   - `products`: Array of products with `id` and `quantity`.
+ *   - `session_id`: The session ID for the order.
+ *   - `user_email`: The email of the user placing the order.
+ *   - `user_phone`: The phone number of the user.
+ *   - `additional_info`: Any additional information for the order.
+ * @returns {Object} - Returns an object with `orderId` if the order is successfully created.
+ * @throws {Error} - Throws an error if required fields are missing or there is an issue with the database operation.
+ */
 
 const addOrder = async (order) => {
   const {
@@ -214,6 +249,15 @@ const addOrder = async (order) => {
   }
 };
 
+/**
+ * Updates the details of an existing order identified by `id`.
+ *
+ * @param {Object} order - The order object containing fields to be updated.
+ * @param {number} id - The ID of the order to modify.
+ * @returns {Object|false} - The updated result if successful, or `false` if no rows were affected.
+ * @throws {Error} - Throws an error if the database operation fails.
+ */
+
 const modifyOrder = async (order, id) => {
   const [result] = await promisePool.query(
     `UPDATE orders 
@@ -227,6 +271,15 @@ const modifyOrder = async (order, id) => {
   }
   return result;
 };
+
+/**
+ * Updates the session ID of an existing order identified by `orderId`.
+ *
+ * @param {number} orderId - The ID of the order.
+ * @param {string} sessionId - The new session ID to set for the order.
+ * @returns {boolean} - `true` if the session ID was updated successfully, `false` if no rows were affected.
+ * @throws {Error} - Throws an error if the database operation fails.
+ */
 
 const updateOrderSessionId = async (orderId, sessionId) => {
   const connection = await promisePool.getConnection();
