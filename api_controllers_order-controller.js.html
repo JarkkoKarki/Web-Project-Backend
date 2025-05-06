@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/controllers/order-controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/controllers/order-controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  addOrder,
+  listAllMyOrders,
+  listAllOrders,
+  modifyOrder,
+} from "../models/order-model.js";
+
+/**
+ * Retrieves a list of all orders.
+ * This function is only accessible by admin or employee users.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the lang parameter to determine the language.
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} lang - The language for the response ('fi' or 'en').
+ * @param {Object} res - The response object to send the result back to the client.
+ * @returns {Object} - A JSON response containing the list of all orders.
+ * @throws {Error} - If the user is not authorized or if an error occurs while fetching orders.
+ */
+
+const getOrders = async (req, res) => {
+  const user = res.locals.user;
+  if (user.role !== "admin" &amp;&amp; user.role !== "employee") {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: user not authenticated" });
+  }
+  const lang = req.params.lang === "fi" ? "fi" : "en";
+  const result = await listAllOrders(lang);
+  if (result) {
+    res.json(result);
+  } else {
+    res.sendStatus(404);
+  }
+};
+
+/**
+ * Retrieves the list of orders placed by the currently authenticated user.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the lang parameter to determine the language.
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} lang - The language for the response ('fi' or 'en').
+ * @param {Object} res - The response object to send the result back to the client.
+ * @returns {Object} - A JSON response containing the list of orders made by the authenticated user.
+ * @throws {Error} - If the user is not authenticated or if an error occurs while fetching the orders.
+ */
+
+const getMyOrders = async (req, res) => {
+  if (!res.locals.user) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: user not authenticated" });
+  }
+  const user = res.locals.user;
+  const lang = req.params.lang === "fi" ? "fi" : "en";
+  const result = await listAllMyOrders(user, lang);
+  if (result) {
+    return res.status(200).json(result);
+  } else {
+    return res.status(200).json([]);
+  }
+};
+
+/**
+ * Creates a new order.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the order details in the body.
+ * @param {Object} req.body - The body of the request, containing the order information:
+ *  - {Object} order - The details of the order (products, quantity, etc.).
+ * @param {Object} res - The response object to send the result back to the client.
+ * @returns {Object} - A JSON response containing a message and the created order ID.
+ * @throws {Error} - If there is an error while creating the order.
+ */
+
+const postOrder = async (req, res) => {
+  const user = res.locals.user;
+  const result = await addOrder(req.body, user);
+  if (result) {
+    res.status(201).json({ message: "Order created", orderId: result.orderId });
+  } else {
+    res.status(404).json({ error: "Failed to add order" });
+  }
+};
+
+/**
+ * Modifies an existing order.
+ * This function is only accessible by admin or employee users.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the order details and the order ID in the body and params.
+ * @param {Object} req.body - The body of the request, containing the modified order information:
+ *  - {Object} order - The modified details of the order (e.g., status change).
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} id - The ID of the order to be modified.
+ * @param {Object} res - The response object to send the result back to the client.
+ * @returns {Object} - A JSON response containing a success message.
+ * @throws {Error} - If the user is not authorized or if an error occurs while modifying the order.
+ */
+
+const putOrder = async (req, res) => {
+  const user = res.locals.user;
+  if (user.role !== "admin" &amp;&amp; user.role !== "employee") {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: user not authenticated" });
+  }
+  const order = req.body;
+  const orderId = req.params.id;
+  const result = await modifyOrder(order, orderId);
+  if (result) {
+    res.status(201).json({ message: "Order modify successfully" });
+  } else {
+    res.status(404).json({ error: "Failed to modify order" });
+  }
+};
+
+export { postOrder, getOrders, getMyOrders, putOrder };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

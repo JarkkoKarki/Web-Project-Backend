@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/controllers/auth-controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/controllers/auth-controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { addUserAdmin, login } from "../models/user-model.js";
+
+/**
+ * Authenticates a user by verifying their username and password.
+ *
+ * This function checks if the provided username exists in the database, then compares the
+ * password with the stored hashed password using bcrypt. If successful, a JWT token is
+ * generated and returned for authentication.
+ *
+ * @async
+ * @param {Object} req - The request object containing user credentials.
+ * @param {string} req.body.username - The username of the user trying to authenticate.
+ * @param {string} req.body.password - The password of the user trying to authenticate.
+ * @param {Object} res - The response object to send the success or error message.
+ * @returns {Object} - A JSON response containing the JWT token and user details, or an error message.
+ * @throws {Error} - If there is an issue during authentication or password comparison.
+ */
+
+const authUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    console.log(req.body, " authuser debug");
+    const user = await login(username);
+    console.log(user, " user");
+    if (!user) {
+      console.log(user);
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    console.log(password, " password");
+    console.log(user.password, " USERpassword");
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(isPasswordValid, " ispasswordValid");
+    if (!isPasswordValid) {
+      console.log(" salasana ei validi", isPasswordValid);
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    const token = jwt.sign(
+      {
+        user_id: user.id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        address: user.address,
+        phone: user.phone,
+        role: user.role,
+        filename: user.filename || "uploads/default.jpg",
+        created_at: user.created_at,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // palautetaan kaikki paitsi salasana jos status 200
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        address: user.address,
+        phone: user.phone,
+        role: user.role,
+        filename: user.filename || "uploads/default.jpg",
+        created_at: user.created_at,
+      },
+    });
+  } catch (error) {
+    console.error("Error in authUser:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Registers a new user with admin privileges.
+ *
+ * This function takes the user details from the request body, hashes the password using
+ * bcrypt, and stores the new user in the database. A default profile image is set if none is provided.
+ *
+ * @async
+ * @param {Object} req - The request object containing the user registration details.
+ * @param {string} req.body.username - The username of the new user.
+ * @param {string} req.body.email - The email of the new user.
+ * @param {string} req.body.password - The password of the new user.
+ * @param {string} req.body.address - The address of the new user.
+ * @param {string} req.body.role - The role of the new user (e.g., 'admin', 'employee').
+ * @param {string} req.body.phone - The phone number of the new user.
+ * @param {string} req.body.first_name - The first name of the new user.
+ * @param {string} req.body.last_name - The last name of the new user.
+ * @param {Object} res - The response object to send the success or error message.
+ * @returns {Object} - A JSON response containing the success message, or an error message.
+ * @throws {Error} - If there is an issue during user registration or hashing the password.
+ */
+
+const postUserAdmin = async (req, res) => {
+  try {
+    const {
+      username,
+      email,
+      password,
+      address,
+      role,
+      phone,
+      first_name,
+      last_name,
+    } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const postData = {
+      username,
+      email,
+      password: hashedPassword,
+      filename: "uploads/defaul.png",
+      address,
+      role,
+      phone,
+      first_name,
+      last_name,
+    };
+
+    Object.keys(postData).forEach(
+      (key) => postData[key] === null &amp;&amp; delete postData[key]
+    );
+
+    const result = await addUserAdmin(postData);
+
+    if (result &amp;&amp; result.user_id) {
+      res.status(201).json({ message: "User registered successfully" });
+    } else {
+      res.status(400).json({ error: "Failed to register user" });
+    }
+  } catch (error) {
+    console.error("Error in registerUser:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+export { authUser, postUserAdmin };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

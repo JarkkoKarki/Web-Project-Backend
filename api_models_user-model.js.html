@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/models/user-model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/models/user-model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import promisePool from "../../utils/database.js";
+
+/**
+ * @module userModel
+ * @description Functions for interacting with the users table in the database.
+ *
+ * This module defines the following functions:
+ * - listAllUsers: Retrieves all users from the database.
+ * - addUser: Adds a new user to the database.
+ * - login: Retrieves a user by their username for authentication.
+ * - findUserById: Retrieves a user by their ID.
+ * - addUserAdmin: Adds a new admin user to the database.
+ * - modifyUser: Modifies an existing user's information.
+ * - removeUser: Deletes a user by their ID.
+ */
+
+/**
+ * @function listAllUsers
+ * @description Retrieves all users from the database.
+ * @returns {Array} - An array of all users in the database.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const listAllUsers = async () => {
+  const [rows] = await promisePool.execute("SELECT * FROM users");
+  console.log("rows", rows);
+  return rows;
+};
+
+/**
+ * @function addUser
+ * @description Adds a new user to the database.
+ * @param {object} userData - The user data to be added.
+ * @param {string} userData.first_name - The user's first name.
+ * @param {string} userData.last_name - The user's last name.
+ * @param {string} userData.username - The user's username.
+ * @param {string} userData.email - The user's email.
+ * @param {string} userData.password - The user's password.
+ * @param {string} [userData.filename] - The user's profile picture filename.
+ * @param {string} [userData.address] - The user's address.
+ * @param {string} [userData.phone] - The user's phone number.
+ * @returns {object|false} - Returns an object with user_id on success, or false if user could not be added.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const addUser = async ({
+  first_name = null,
+  last_name = null,
+  username,
+  email,
+  password,
+  filename = null,
+  address = null,
+  phone = null,
+}) => {
+  const role = "user";
+  try {
+    const [existingUser] = await promisePool.execute(
+      "SELECT * FROM users WHERE username = ? OR email = ?",
+      [username, email]
+    );
+
+    if (existingUser.length > 0) {
+      console.log("User already exists:", existingUser);
+      return { error: "Username or email already exists" };
+    }
+    const [result] = await promisePool.execute(
+      `INSERT INTO users (first_name, last_name, username, email, password, filename, address, phone, role) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        first_name,
+        last_name,
+        username,
+        email,
+        password,
+        filename,
+        address,
+        phone,
+        role,
+      ]
+    );
+    console.log("Insert result:", result);
+
+    return result.affectedRows > 0 ? { user_id: result.insertId } : false;
+  } catch (error) {
+    console.error("Error in addUser:", error);
+    throw error;
+  }
+};
+
+/**
+ * @function login
+ * @description Retrieves a user from the database based on their username for authentication.
+ * @param {string} username - The username of the user to be authenticated.
+ * @returns {object|false} - Returns the user object if found, or false if no user is found.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const login = async (username) => {
+  const sql = `SELECT * FROM users WHERE username = ?`;
+  const [rows] = await promisePool.execute(sql, [username]);
+
+  console.log("Login query result:", rows);
+
+  if (rows.length === 0) {
+    return false;
+  }
+
+  return rows[0];
+};
+
+/**
+ * @function findUserById
+ * @description Retrieves a user from the database by their ID.
+ * @param {number} id - The ID of the user to retrieve.
+ * @returns {object|false} - Returns the user object if found, or false if no user is found.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const findUserById = async (id) => {
+  const [rows] = await promisePool.execute("SELECT * FROM users WHERE id = ?", [
+    id,
+  ]);
+  console.log("rows", rows);
+  if (rows.length === 0) {
+    return false;
+  }
+  return rows[0];
+};
+
+/**
+ * @function addUserAdmin
+ * @description Adds a new admin user to the database.
+ * @param {object} postData - The admin user data to be added.
+ * @returns {object|false} - Returns an object with user_id on success, or false if user could not be added.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const addUserAdmin = async (postData) => {
+  try {
+    const {
+      username,
+      email,
+      password,
+      filename,
+      address = null,
+      role,
+      phone = null,
+      first_name = null,
+      last_name = null,
+    } = postData;
+
+    const [existingUser] = await promisePool.execute(
+      "SELECT * FROM users WHERE username = ? OR email = ?",
+      [username, email]
+    );
+
+    if (existingUser.length > 0) {
+      console.log("User already exists:", existingUser);
+      return { error: "Username or email already exists" };
+    }
+
+    const [result] = await promisePool.execute(
+      "INSERT INTO users (username, email, password, filename, address, role, phone, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        username,
+        email,
+        password,
+        filename,
+        address,
+        role,
+        phone,
+        first_name,
+        last_name,
+      ]
+    );
+
+    console.log("Insert result:", result);
+
+    return result.affectedRows > 0 ? { user_id: result.insertId } : false;
+  } catch (error) {
+    console.error("Error in addUserAdmin:", error);
+    return false;
+  }
+};
+
+/**
+ * @function modifyUser
+ * @description Updates a user's data in the database.
+ * @param {object} updateData - The fields to update in the user record.
+ * @param {number} userId - The ID of the user to be updated.
+ * @returns {boolean} - Returns true if the update was successful, otherwise false.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const modifyUser = async (updateData, userId) => {
+  try {
+    console.log("MODIFY USER KUTSUTTU");
+    console.log(updateData);
+    delete updateData.role;
+
+    const fields = Object.keys(updateData)
+      .map((key) => `${key} = ?`)
+      .join(", ");
+    const values = Object.values(updateData);
+
+    const sql = `UPDATE users SET ${fields} WHERE id = ?`;
+    const [result] = await promisePool.execute(sql, [...values, userId]);
+
+    console.log("Update result:", result);
+
+    return result.affectedRows > 0;
+  } catch (error) {
+    console.log("Error in modifyUser:", error);
+    throw error;
+  }
+};
+
+/**
+ * @function removeUser
+ * @description Deletes a user from the database by their ID.
+ * @param {number} id - The ID of the user to delete.
+ * @returns {object} - A success or error message indicating the result of the operation.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+
+const removeUser = async (id) => {
+  try {
+    const sql = `DELETE FROM users WHERE id = ?`;
+    const values = [id];
+
+    console.log("SQL Query:", sql);
+    console.log("Values:", values);
+
+    const [result] = await promisePool.execute(sql, values);
+
+    console.log("Delete result:", result);
+
+    if (result.affectedRows === 0) {
+      return { message: "User not found" };
+    }
+
+    return { message: "User deleted successfully" };
+  } catch (error) {
+    console.error("Error in removeUser:", error);
+    throw error;
+  }
+};
+
+export {
+  listAllUsers,
+  findUserById,
+  addUser,
+  addUserAdmin,
+  modifyUser,
+  removeUser,
+  login,
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/models/reservation-model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/models/reservation-model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import promisePool from "../../utils/database.js";
+
+/**
+ * Adds a reservation to the database.
+ *
+ * @param {Object} reservationData - Data for the new reservation.
+ * @param {number} reservationData.user_id - The ID of the user making the reservation.
+ * @param {number} reservationData.table_id - The ID of the table being reserved.
+ * @param {string} reservationData.reservation_date - The date of the reservation (format: YYYY-MM-DD).
+ * @param {string} reservationData.reservation_time - The time of the reservation (format: HH:MM).
+ * @param {string} [reservationData.comments] - Optional comments for the reservation.
+ * @param {string} [reservationData.email] - Optional email of the person making the reservation.
+ * @param {string} [reservationData.name] - Optional name of the person making the reservation.
+ * @param {number} reservationData.people_count - The number of people for the reservation.
+ * @param {string} [reservationData.phone] - Optional phone number of the person making the reservation.
+ *
+ * @returns {Object} - The result of the SQL query, including information about the inserted row.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
+const addReservation = async (reservationData) => {
+  const {
+    user_id,
+    table_id,
+    reservation_date,
+    reservation_time,
+    comments,
+    email,
+    name,
+    people_count,
+    phone,
+  } = reservationData;
+
+  const query = `
+    INSERT INTO reservations (
+      user_id, table_id, reservation_date, reservation_time, comments, email, name, people_count, phone
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [
+    user_id || null,
+    table_id || null,
+    reservation_date,
+    reservation_time,
+    comments || null,
+    email || null,
+    name || null,
+    people_count,
+    phone || null,
+  ];
+
+  try {
+    const [result] = await promisePool.execute(query, values);
+    return result;
+  } catch (error) {
+    console.log("Error adding reservation:", error);
+    throw error;
+  }
+};
+
+/**
+ * Lists all reservations in the database.
+ *
+ * @returns {Array} - An array of reservation records.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
+const listAllReservations = async () => {
+  const query = "SELECT * FROM reservations";
+
+  try {
+    const [rows] = await promisePool.execute(query);
+    return rows;
+  } catch (error) {
+    console.log("Error fetching reservations:", error);
+    throw error;
+  }
+};
+
+/**
+ * Checks for available tables based on the number of people and reservation date.
+ *
+ * @param {number} peopleCount - The number of people for the reservation.
+ * @param {string} reservationDate - The date of the reservation (format: YYYY-MM-DD).
+ *
+ * @returns {Object|null} - The first available table, or null if no table is available.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
+const checkFreeTables = async (peopleCount, reservationDate) => {
+  const query = `
+    SELECT t.id, t.table_size
+    FROM tables t
+    WHERE t.table_size >= ?
+      AND t.id NOT IN (
+        SELECT r.table_id
+        FROM reservations r
+        WHERE r.reservation_date = ?
+      )
+    ORDER BY t.table_size ASC
+    LIMIT 1;
+  `;
+
+  const values = [peopleCount, reservationDate];
+
+  try {
+    const [rows] = await promisePool.execute(query, values);
+    return rows.length > 0 ? rows[0] : null; // Return the first available table or null if none
+  } catch (error) {
+    console.log("Error checking free tables:", error);
+    throw error;
+  }
+};
+
+/**
+ * Lists all reservations made by a specific user.
+ *
+ * @param {number} userId - The ID of the user whose reservations to fetch.
+ *
+ * @returns {Array} - An array of reservations made by the specified user.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
+const listReservationsByUserId = async (userId) => {
+  const query = `
+    SELECT *
+    FROM reservations
+    WHERE user_id = ?
+  `;
+
+  try {
+    const [rows] = await promisePool.execute(query, [userId]);
+    return rows;
+  } catch (error) {
+    console.log("Error fetching reservations by user ID:", error);
+    throw error;
+  }
+};
+
+/**
+ * Deletes a reservation from the database.
+ *
+ * @param {number} reservationId - The ID of the reservation to delete.
+ *
+ * @returns {boolean} - Returns true if the reservation was deleted, otherwise false.
+ * @throws {Error} - Throws an error if there is a failure during the database operation.
+ */
+
+const deleteReservation = async (reservationId) => {
+  const query = `
+    DELETE FROM reservations
+    WHERE id = ?
+  `;
+
+  try {
+    const [result] = await promisePool.execute(query, [reservationId]);
+    return result.affectedRows > 0; // Return true if a row was deleted, otherwise false
+  } catch (error) {
+    console.log("Error deleting reservation:", error);
+    throw error;
+  }
+};
+
+export {
+  addReservation,
+  listAllReservations,
+  checkFreeTables,
+  listReservationsByUserId,
+  deleteReservation,
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/controllers/menu-controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/controllers/menu-controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  addProduct,
+  findProductById,
+  listAllProducts,
+  listAllProductsBothLanguages,
+  modifyProduct,
+  removeProduct,
+} from "../models/menu-model.js";
+
+/**
+ * Retrieves a list of all products in both languages (Finnish and English).
+ *
+ * @async
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send the list of products.
+ * @returns {Object} - A JSON response containing all products in both languages.
+ * @throws {Error} - If an error occurs while fetching the products.
+ */
+
+const getProductsBothLanguages = async (req, res) => {
+  const result = await listAllProductsBothLanguages();
+  res.json(result);
+};
+
+/**
+ * Retrieves a list of all products in a specific language.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the language parameter.
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} lang - The language of the products ('fi' or 'en').
+ * @param {Object} res - The response object to send the list of products.
+ * @returns {Object} - A JSON response containing all products in the specified language.
+ * @throws {Error} - If an error occurs while fetching the products.
+ */
+
+const getProduct = async (req, res) => {
+  const lang = req.params.lang === "fi" ? "fi" : "en";
+  const result = await listAllProducts(lang);
+  res.json(result);
+};
+
+/**
+ * Retrieves the details of a product by its ID.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the product ID in the parameters.
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} id - The ID of the product to retrieve.
+ * @param {Object} res - The response object to send the product details.
+ * @returns {Object} - A JSON response containing the product details.
+ * @throws {Error} - If the product is not found or an error occurs while fetching it.
+ */
+
+const getProductById = async (req, res) => {
+  const result = await findProductById(req.params.id);
+  if (result) {
+    res.json(result);
+  } else {
+    res.sendStatus(404);
+  }
+};
+
+/**
+ * Adds a new product to the menu.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the product data in the body.
+ * @param {Object} req.body - The body of the request, containing the product details:
+ *  - {string} name - The name of the product.
+ *  - {string} description - The description of the product.
+ *  - {number} price - The price of the product.
+ *  - {string} filename - The filename of the product image.
+ * @param {Object} req.file - The uploaded file (image) for the product.
+ * @param {Object} res - The response object to send the success message.
+ * @returns {Object} - A JSON response containing a success message and the result of adding the product.
+ * @throws {Error} - If an error occurs while adding the product.
+ */
+
+const postProduct = async (req, res) => {
+  try {
+    console.log(req.filename);
+    req.body.filename = req.file?.thumbnailPath || "uploads/default.png";
+    console.log(req.body.filename);
+    const result = await addProduct(req.body);
+    if (result) {
+      res.status(201).json({
+        message: "Product added successfully",
+        result,
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.error("Error in postProduct:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Modifies the details of an existing product.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the product data and the product ID in the body and parameters.
+ * @param {Object} req.body - The body of the request, containing the modified product details.
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} id - The ID of the product to modify.
+ * @param {Object} req.file - The uploaded file (image) for the modified product.
+ * @param {Object} res - The response object to send the success or failure message.
+ * @returns {Object} - A JSON response containing the modified product details or an error message.
+ * @throws {Error} - If an error occurs while modifying the product.
+ */
+
+const putProduct = async (req, res) => {
+  try {
+    if (req.file) {
+      req.body.filename = req.file?.thumbnailPath || "uploads/default.png";
+    }
+    const result = await modifyProduct(req.body, req.params.id);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    console.error("Error in putProduct:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Deletes a product from the menu by its ID.
+ *
+ * @async
+ * @param {Object} req - The request object, containing the product ID in the parameters.
+ * @param {Object} req.params - The parameters of the request, including:
+ *  - {string} id - The ID of the product to delete.
+ * @param {Object} res - The response object to send the success or failure message.
+ * @returns {Object} - A JSON response containing a success message or an error.
+ * @throws {Error} - If the product is not found or an error occurs while deleting it.
+ */
+
+const deleteProduct = async (req, res) => {
+  const result = await removeProduct(req.params.id);
+  if (result) {
+    res.status(200).json({ message: "Product deleted successfully" });
+  } else {
+    res.sendStatus(404);
+  }
+};
+
+export {
+  getProductsBothLanguages,
+  getProduct,
+  postProduct,
+  putProduct,
+  getProductById,
+  deleteProduct,
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

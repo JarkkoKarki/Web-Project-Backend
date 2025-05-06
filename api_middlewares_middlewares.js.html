@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/middlewares/middlewares.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/middlewares/middlewares.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import sharp from "sharp";
+import multer from "multer";
+import fs from "fs";
+dotenv.config();
+
+/**
+ * Middleware for file uploads using Multer.
+ * Validates that only JPEG and PNG files are uploaded and limits file size to 10 MB.
+ */
+
+export const upload = multer({
+  dest: "uploads/",
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Only .jpeg and .png files are allowed"), false);
+    }
+  },
+});
+
+/**
+ * Middleware for handling multiple file uploads, specifically for profile pictures and other files.
+ * Allows maximum 1 profile picture and 1 file.
+ */
+
+export const uploadFields = upload.fields([
+  { name: "profilePicture", maxCount: 1 },
+  { name: "file", maxCount: 1 },
+]);
+
+/**
+ * Creates a thumbnail (100x100) of the uploaded image and deletes the original file.
+ * Updates the `req.file` object with the new thumbnail path.
+ *
+ * @param {Object} req - The request object containing the uploaded file.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+
+export const createThumbnail = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      console.log("No file uploaded, skipping thumbnail creation.");
+      return next();
+    }
+
+    if (
+      req.file.mimetype !== "image/jpeg" &amp;&amp;
+      req.file.mimetype !== "image/png"
+    ) {
+      const error = new Error("Unsupported file format");
+      error.status = 400;
+      return next(error);
+    }
+
+    console.log("Uploaded file details:", req.file);
+
+    let extension = "jpg";
+    if (req.file.mimetype === "image/png") {
+      extension = "png";
+    }
+
+    const thumbnailPath = `${req.file.path}_thumb.${extension}`;
+    await sharp(req.file.path).resize(100, 100).toFile(thumbnailPath);
+
+    console.log("Thumbnail created at:", thumbnailPath);
+
+    // poistetaan vanha kuva
+    fs.unlink(req.file.path, (err) => {
+      if (err) {
+        console.error("Error deleting original file:", err);
+      } else {
+        console.log("Original file deleted:", req.file.path);
+      }
+    });
+
+    req.file.thumbnailPath = thumbnailPath;
+    // päivitetään tiedostosijainti
+    req.file.path = thumbnailPath;
+    next();
+  } catch (error) {
+    console.error("Error in createThumbnail:", error);
+    next(error);
+  }
+};
+
+/**
+ * Creates a larger menu thumbnail (400x400) of the uploaded image and deletes the original file.
+ * Updates the `req.file` object with the new thumbnail path.
+ *
+ * @param {Object} req - The request object containing the uploaded file.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+
+export const createMenuThumbnail = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      console.log("No file uploaded, skipping thumbnail creation.");
+      return next();
+    }
+
+    if (
+      req.file.mimetype !== "image/jpeg" &amp;&amp;
+      req.file.mimetype !== "image/png"
+    ) {
+      const error = new Error("Unsupported file format");
+      error.status = 400;
+      return next(error);
+    }
+
+    console.log("Uploaded file details:", req.file);
+
+    let extension = "jpg";
+    if (req.file.mimetype === "image/png") {
+      extension = "png";
+    }
+
+    const thumbnailPath = `${req.file.path}_thumb.${extension}`;
+
+    await sharp(req.file.path).resize(400, 400).toFile(thumbnailPath);
+
+    console.log("Menu thumbnail created at:", thumbnailPath);
+
+    // poistetaan vanha kuva
+    fs.unlink(req.file.path, (err) => {
+      if (err) {
+        console.error("Error deleting original file:", err);
+      } else {
+        console.log("Original file deleted:", req.file.path);
+      }
+    });
+
+    req.file.thumbnailPath = thumbnailPath;
+    // päivitetään tiedostosijainti
+    req.file.path = thumbnailPath;
+    next();
+  } catch (error) {
+    console.error("Error in createMenuThumbnail:", error);
+    next(error);
+  }
+};
+
+/**
+ * Middleware to authenticate the user's token.
+ * Verifies JWT token from the Authorization header.
+ *
+ * @param {Object} req - The request object containing the Authorization header.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} - Throws error if the token is invalid or missing.
+ */
+
+export const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader &amp;&amp; authHeader.split(" ")[1];
+
+  console.log("Authorization Header:", authHeader);
+  console.log("Token:", token);
+
+  if (!token) {
+    const error = new Error("Unauthorized: No token provided");
+    error.status = 401;
+    console.log(" authenticatokenia kutsuttu", error);
+    return next(error);
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      console.log("JWT Verification Error:", err);
+      const error = new Error("Forbidden: Invalid token");
+      error.status = 403;
+      return next(error);
+    }
+
+    res.locals.user = user;
+    console.log("Decoded User:", user);
+    next();
+  });
+};
+
+/**
+ * Middleware to check if the logged-in user is authorized to access a resource.
+ * Verifies if the user ID in the request matches the logged-in user's ID or if the user is an admin.
+ *
+ * @param {Object} req - The request object containing the user ID to check.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} - Throws an error if the user is not authorized.
+ */
+
+export const checkUserOwnership = (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id, 10);
+    const loggedInUserId = res.locals.user?.user_id;
+    const { role } = res.locals.user || {};
+
+    if (!loggedInUserId) {
+      const error = new Error("User not authenticated");
+      error.status = 401;
+      return next(error);
+    }
+
+    if (userId !== loggedInUserId &amp;&amp; role !== "admin") {
+      const error = new Error("You are not authorized to access this resource");
+      error.status = 403;
+      return next(error);
+    }
+
+    next();
+  } catch (error) {
+    console.error("Error in checkUserOwnership:", error);
+    next(error);
+  }
+};
+
+/**
+ * Middleware to check if the logged-in user has an admin role.
+ * Verifies the user's role from the JWT token.
+ *
+ * @param {Object} req - The request object containing the Authorization header.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {Error} - Throws an error if the user is not an admin or if the token is invalid.
+ */
+
+export const checkAdmin = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.role !== "admin") {
+      return res.status(403).json({ error: "Forbidden: Admins only" });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Error in checkAdmin middleware:", error);
+    res.status(403).json({ error: "Forbidden: Invalid token" });
+  }
+};
+
+/**
+ * Middleware for handling 404 errors when a route is not found.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+
+export const notFoundHandler = (req, res, next) => {
+  const error = new Error(`Not Found - ${req.originalUrl}`);
+  error.status = 404;
+  next(error);
+};
+
+/**
+ * Global error handler middleware for handling errors.
+ *
+ * @param {Object} err - The error object.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+
+export const errorHandler = (err, req, res, next) => {
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message,
+      status: err.status || 500,
+    },
+  });
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

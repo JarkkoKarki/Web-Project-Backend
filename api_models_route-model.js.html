@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/models/route-model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/models/route-model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable no-undef */
+import { fetchData } from "../../utils/fetchData.js";
+import dotenv from "dotenv";
+dotenv.config();
+
+// Digitransit API key and endpoint setup
+const apiKey = process.env.DIGITRANSIT_SUBSCRIPTION_KEY;
+const DIGITRANSIT_API_URL = "https://api.digitransit.fi/routing/v2/hsl/gtfs/v1";
+
+/**
+ * Fetches route data (such as travel time, distance, and emissions) between two geographical points.
+ *
+ * This function makes a POST request to the Digitransit API to get the route details between an origin and a destination.
+ *
+ * @param {number} originLat - Latitude of the origin location.
+ * @param {number} originLng - Longitude of the origin location.
+ * @param {number} destLat - Latitude of the destination location.
+ * @param {number} destLng - Longitude of the destination location.
+ *
+ * @returns {Object} - The route data containing travel details such as duration, mode, distance, and CO2 emissions.
+ *
+ * @throws {Error} - If there is a failure in fetching data from the API.
+ */
+
+export const fetchRouteData = async (
+  originLat,
+  originLng,
+  destLat,
+  destLng
+) => {
+  const query = `
+    {
+      planConnection(
+        origin: {location: {coordinate: {latitude: ${originLat}, longitude: ${originLng}}}},
+        destination: {location: {coordinate: {latitude: ${destLat}, longitude: ${destLng}}}},
+        first: 2
+      ) {
+        pageInfo {
+          endCursor
+        }
+        edges {
+          node {
+            start
+            end
+            legs {
+              duration
+              mode
+              distance
+              start {
+                scheduledTime
+              }
+              end {
+                scheduledTime
+              }
+              realtimeState
+            }
+            emissionsPerPerson {
+              co2
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "digitransit-subscription-key": apiKey,
+    },
+    body: JSON.stringify({ query }),
+  };
+
+  try {
+    const response = await fetchData(DIGITRANSIT_API_URL, options);
+    return response.data.planConnection;
+  } catch (error) {
+    console.error("Error fetching route data:", error);
+    throw new Error("Failed to fetch route data");
+  }
+};
+
+/**
+ * Fetches detailed leg data (such as start time, end time, mode, distance, etc.) for a route between two points.
+ *
+ * This function makes a POST request to the Digitransit API to get detailed information about the individual legs of a route.
+ *
+ * @param {number} originLat - Latitude of the origin location.
+ * @param {number} originLng - Longitude of the origin location.
+ * @param {number} destLat - Latitude of the destination location.
+ * @param {number} destLng - Longitude of the destination location.
+ *
+ * @returns {Object} - The legs data containing detailed travel information such as start and end times, mode of transport, distance, and leg geometry.
+ *
+ * @throws {Error} - If there is a failure in fetching data from the API.
+ */
+
+export const fetchLegsData = async (originLat, originLng, destLat, destLng) => {
+  const query = `
+    query {
+      planConnection(
+        origin: {location: {coordinate: {latitude: ${originLat}, longitude: ${originLng}}}},
+        destination: {location: {coordinate: {latitude: ${destLat}, longitude: ${destLng}}}},
+        first: 2
+      ) {
+        pageInfo {
+          endCursor
+        }
+        edges {
+          node {
+            start
+            end
+            legs {
+              startTime
+              endTime
+              mode
+              duration
+              distance
+              legGeometry {
+                points
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "digitransit-subscription-key": apiKey,
+    },
+    body: JSON.stringify({ query }),
+  };
+
+  try {
+    const response = await fetchData(DIGITRANSIT_API_URL, options);
+    return response.data.planConnection;
+  } catch (error) {
+    console.error("Error fetching legs data:", error);
+    throw new Error("Failed to fetch legs data");
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

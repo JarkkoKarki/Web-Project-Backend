@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/models/menu-model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/models/menu-model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import promisePool from "../../utils/database.js";
+
+/**
+ * Retrieves all products listed by categories and diets in both languages (English and Finnish).
+ * This function also merges the categories and diets into the product object.
+ *
+ * @returns {Array|false} - An array of products, each including categories and diets, or `false` if no products are found.
+ */
+
+//Get all products listed by categories
+const listAllProductsBothLanguages = async () => {
+  const [rows] = await promisePool.query(`
+
+        SELECT p.*,
+               p.*,
+               d.id AS d_id,
+               d.diet AS d_diet,
+               c.id AS c_id,
+               c.category AS c_category
+        FROM products p
+                 LEFT JOIN product_categories pc ON p.id = pc.product_id
+                 LEFT JOIN categories c ON pc.category_id = c.id
+                 LEFT JOIN product_diets pd ON p.id = pd.product_id
+                 LEFT JOIN diets d ON pd.diet_id = d.id
+    `);
+  // console.log("row", rows);
+  if (rows.length === 0) {
+    return false;
+  }
+
+  const products = [];
+
+  rows.forEach((row) => {
+    // Find if product already exists in the list
+    let existingProduct = products.find((p) => p.id === row.id);
+
+    // If the product doesn't exist, create a new product object
+    if (!existingProduct) {
+      existingProduct = {
+        id: row.id,
+        name_fi: row.name_fi,
+        name_en: row.name_en,
+        desc_fi: row.desc_fi,
+        desc_en: row.desc_en,
+        price: row.price,
+        filename: row.filename,
+        categories: [],
+        diets: [],
+      };
+      products.push(existingProduct);
+    }
+
+    // Add category to the product if it doesn't already exist
+    if (
+      row.c_id &amp;&amp;
+      !existingProduct.categories.some((c) => c.id === row.c_id)
+    ) {
+      existingProduct.categories.push({
+        id: row.c_id,
+        name: row.c_category,
+      });
+    }
+
+    // Add diet to the product if it doesn't already exist
+    if (row.d_id &amp;&amp; !existingProduct.diets.some((d) => d.id === row.d_id)) {
+      existingProduct.diets.push({
+        id: row.d_id,
+        name: row.d_diet,
+      });
+    }
+  });
+  console.log(products);
+  return products;
+};
+
+/**
+ * Retrieves all products listed by categories and diets in a specified language (default is English).
+ *
+ * @param {string} lang - The language to fetch product names and descriptions in ('en' or 'fi').
+ * @returns {Array|false} - An array of products, each including categories and diets, or `false` if no products are found.
+ */
+
+//Get all products listed by categories
+const listAllProducts = async (lang = "en") => {
+  const [rows] = await promisePool.query(`
+
+        SELECT p.*, d.diet, c.category
+        FROM products p
+                 LEFT JOIN product_categories pc ON p.id = pc.product_id
+                 LEFT JOIN categories c ON pc.category_id = c.id
+                 LEFT JOIN product_diets pd ON p.id = pd.product_id
+                 LEFT JOIN diets d ON pd.diet_id = d.id
+    `);
+  // console.log("row", rows);
+  if (rows.length === 0) {
+    return false;
+  }
+
+  const products = [];
+
+  rows.forEach((row) => {
+    // Find if product already exists in the list
+    let existingProduct = products.find((p) => p.id === row.id);
+
+    // If the product doesn't exist, create a new product object
+    if (!existingProduct) {
+      existingProduct = {
+        id: row.id,
+        name: lang === "fi" ? row.name_fi : row.name_en,
+        description: lang === "fi" ? row.desc_fi : row.desc_en,
+        price: row.price,
+        filename: row.filename,
+        categories: [],
+        diets: [],
+      };
+      products.push(existingProduct);
+    }
+
+    // Add category to the product if it doesn't already exist
+    if (row.category &amp;&amp; !existingProduct.categories.includes(row.category)) {
+      existingProduct.categories.push(row.category);
+    }
+
+    // Add diet to the product if it doesn't already exist
+    if (row.diet &amp;&amp; !existingProduct.diets.includes(row.diet)) {
+      existingProduct.diets.push(row.diet);
+    }
+  });
+  return products;
+};
+
+/**
+ * Finds a product by its ID, along with its associated categories and diets.
+ *
+ * @param {number} id - The ID of the product to fetch.
+ * @returns {Object|false} - The product object with its categories and diets, or `false` if no product is found.
+ */
+
+//Finding product by id and its categories and diets
+const findProductById = async (id) => {
+  const [rows] = await promisePool.query(
+    `
+
+        SELECT p.*, d.diet, c.category
+        FROM products p
+        LEFT JOIN product_categories pc ON p.id = pc.product_id
+        LEFT JOIN categories c ON pc.category_id = c.id
+        LEFT JOIN product_diets pd ON p.id = pd.product_id
+        LEFT JOIN diets d ON pd.diet_id = d.id
+        WHERE p.id = ?`,
+    [id]
+  );
+  // console.log("row", rows);
+  if (rows.length === 0) {
+    return false;
+  }
+  const categories = [];
+  const diets = [];
+
+  //Adding multiple diets and category to a product
+  rows.forEach((row) => {
+    if (row.category &amp;&amp; !categories.includes(row.category)) {
+      categories.push(row.category);
+    }
+    if (row.diet &amp;&amp; !diets.includes(row.diet)) {
+      diets.push(row.diet);
+    }
+  });
+  return {
+    id: rows[0].id,
+    name_fi: rows[0].name_fi,
+    name_en: rows[0].name_en,
+    desc_fi: rows[0].desc_fi,
+    desc_en: rows[0].desc_en,
+    price: rows[0].price,
+    filename: rows[0].filename,
+    categories: categories,
+    diets: diets,
+  };
+};
+
+/**
+ * Adds a new product to the database along with its categories and diets.
+ *
+ * @param {Object} product - The product object to add, including name, description, price, etc.
+ * @returns {Object} - An object containing the success status and the inserted product's ID.
+ * @throws {Error} - Throws an error if any part of the insertion fails.
+ */
+
+//Adds product to db
+const addProduct = async (product) => {
+  const {
+    name_fi,
+    name_en,
+    desc_fi,
+    desc_en,
+    price,
+    filename,
+    categories = [],
+    diets = [],
+  } = product;
+  const connection = await promisePool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // Insert a new product into the products table
+    const [productResult] = await connection.execute(
+      `
+        
+        INSERT INTO products
+        (name_fi,name_en, desc_fi, desc_en, price, filename)
+        VALUES (?, ?, ?, ?,?,?)`,
+      [name_fi, name_en, desc_fi, desc_en, price, filename]
+    );
+
+    const productId = productResult.insertId;
+
+    //Insert categories into a product_categories table
+    for (const categoryId of categories) {
+      await connection.execute(
+        `
+        INSERT INTO product_categories
+        (product_id, category_id)
+        VALUES (?, ?)`,
+        [productId, categoryId]
+      );
+    }
+
+    //Insert diets into a product_diets table
+    for (const dietId of diets) {
+      await connection.execute(
+        `
+        INSERT  INTO product_diets
+        (product_id, diet_id)
+        VALUES  (?,?)`,
+        [productId, dietId]
+      );
+    }
+
+    await connection.commit();
+
+    return { success: true, productId };
+  } catch (error) {
+    await connection.rollback();
+    console.error("Error Adding product:", error);
+    throw error;
+  } finally {
+    connection.release();
+  }
+};
+
+/**
+ * Modifies an existing product by its ID, updating its details and associated categories/diets.
+ *
+ * @param {Object} product - The product object containing the fields to update.
+ * @param {number} id - The ID of the product to modify.
+ * @returns {Object|false} - The updated product if successful, or `false` if no product was modified.
+ * @throws {Error} - Throws an error if the product is not found or modification fails.
+ */
+
+const modifyProduct = async (product, id) => {
+  const {
+    name_fi,
+    name_en,
+    desc_fi,
+    desc_en,
+    price,
+    filename,
+    categories = [],
+    diets = [],
+  } = product;
+  const connection = await promisePool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const [productRows] = await connection.execute(
+      `
+        SELECT * FROM products 
+        WHERE id = ?`,
+      [id]
+    );
+
+    if (productRows.affectedRows === 0) {
+      throw new Error("Product not found");
+    }
+
+    const original = productRows[0];
+
+    // Check if the values are empty. If empty replace them with the old product values
+    const updatedNameFi = name_fi || original.name_fi;
+    const updatedNameEn = name_en || original.name_en;
+    const updatedDescFi = desc_fi || original.desc_fi;
+    const updatedDescEn = desc_en || original.desc_en;
+    const updatedPrice = price || original.price;
+    const updatedFilename = filename || original.filename;
+
+    await connection.execute(
+      `
+            UPDATE products
+            SET name_fi = ?, name_en = ?, desc_fi = ?, desc_en = ?,price = ?,  filename = ?
+            WHERE id = ?`,
+      [
+        updatedNameFi,
+        updatedNameEn,
+        updatedDescFi,
+        updatedDescEn,
+        updatedPrice,
+        updatedFilename,
+        id,
+      ]
+    );
+
+    await connection.execute(
+      `
+            DELETE FROM product_categories 
+            WHERE product_id = ?`,
+      [id]
+    );
+
+    await connection.execute(
+      `
+            DELETE FROM product_diets 
+            WHERE product_id = ?`,
+      [id]
+    );
+
+    for (const categoryId of categories) {
+      await connection.execute(
+        `
+            INSERT INTO product_categories 
+            (product_id, category_id)
+            VALUES (?,?)`,
+        [id, categoryId]
+      );
+    }
+
+    for (const dietId of diets) {
+      await connection.execute(
+        `
+            INSERT INTO product_diets 
+            (product_id, diet_id)
+            VALUES (?,?)`,
+        [id, dietId]
+      );
+    }
+
+    await connection.commit();
+
+    const [updatedProduct] = await connection.query(
+      `
+            SELECT * FROM products 
+            WHERE id = ?`,
+      [id]
+    );
+
+    if (updatedProduct[0].affectedRows === 0) {
+      return false;
+    }
+    return updatedProduct[0];
+  } catch (error) {
+    await connection.rollback();
+    console.error("Error modifying product:", error);
+    throw error;
+  } finally {
+    connection.release();
+  }
+};
+
+/**
+ * Removes a product and its associated categories and diets from the database.
+ *
+ * @param {number} id - The ID of the product to remove.
+ * @returns {boolean} - `true` if the product was successfully removed, or `false` if no product was deleted.
+ * @throws {Error} - Throws an error if the removal process fails.
+ */
+
+// Removing product and its relations to product_category &amp; product_diet tables
+const removeProduct = async (id) => {
+  const connection = await promisePool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    await connection.execute(
+      `
+                    DELETE
+                    FROM product_diets
+                    WHERE product_id = ?`,
+      [id]
+    );
+    await connection.execute(
+      `
+                    DELETE
+                    FROM product_categories
+                    WHERE product_id = ?`,
+      [id]
+    );
+    const [rows] = await connection.execute(
+      `
+                    DELETE
+                    FROM products
+                    WHERE id = ?`,
+      [id]
+    );
+    console.log("rows", rows);
+    if (rows.affectedRows === 0) {
+      return false;
+    }
+    await connection.commit();
+    return true;
+  } catch (error) {
+    await connection.rollback();
+  } finally {
+    connection.release();
+  }
+};
+
+export {
+  listAllProductsBothLanguages,
+  listAllProducts,
+  addProduct,
+  modifyProduct,
+  findProductById,
+  removeProduct,
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authRouter.html">authRouter</a></li><li><a href="module-contactRouter.html">contactRouter</a></li><li><a href="module-database.html">database</a></li><li><a href="module-menuRouter.html">menuRouter</a></li><li><a href="module-orderRouter.html">orderRouter</a></li><li><a href="module-paymentRouter.html">paymentRouter</a></li><li><a href="module-reservationRouter.html">reservationRouter</a></li><li><a href="module-routeRouter.html">routeRouter</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-userModel.html">userModel</a></li><li><a href="module-userRouter.html">userRouter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addContactMessage">addContactMessage</a></li><li><a href="global.html#addOrder">addOrder</a></li><li><a href="global.html#addProduct">addProduct</a></li><li><a href="global.html#addReservation">addReservation</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#authenticateToken">authenticateToken</a></li><li><a href="global.html#checkAdmin">checkAdmin</a></li><li><a href="global.html#checkFreeTables">checkFreeTables</a></li><li><a href="global.html#checkUserOwnership">checkUserOwnership</a></li><li><a href="global.html#createCheckoutSession">createCheckoutSession</a></li><li><a href="global.html#createMenuThumbnail">createMenuThumbnail</a></li><li><a href="global.html#createThumbnail">createThumbnail</a></li><li><a href="global.html#deleteContact">deleteContact</a></li><li><a href="global.html#deleteContactMessage">deleteContactMessage</a></li><li><a href="global.html#deleteProduct">deleteProduct</a></li><li><a href="global.html#deleteReservation">deleteReservation</a></li><li><a href="global.html#deleteReservationById">deleteReservationById</a></li><li><a href="global.html#deleteReservationByUserId">deleteReservationByUserId</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#fetchLegsData">fetchLegsData</a></li><li><a href="global.html#fetchRouteData">fetchRouteData</a></li><li><a href="global.html#findProductById">findProductById</a></li><li><a href="global.html#getAllContactMessages">getAllContactMessages</a></li><li><a href="global.html#getContacts">getContacts</a></li><li><a href="global.html#getLegsController">getLegsController</a></li><li><a href="global.html#getMyOrders">getMyOrders</a></li><li><a href="global.html#getOrders">getOrders</a></li><li><a href="global.html#getProduct">getProduct</a></li><li><a href="global.html#getProductById">getProductById</a></li><li><a href="global.html#getProductsBothLanguages">getProductsBothLanguages</a></li><li><a href="global.html#getReservations">getReservations</a></li><li><a href="global.html#getReservationsByUserId">getReservationsByUserId</a></li><li><a href="global.html#getRouteController">getRouteController</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#hostname">hostname</a></li><li><a href="global.html#listAllMyOrders">listAllMyOrders</a></li><li><a href="global.html#listAllOrders">listAllOrders</a></li><li><a href="global.html#listAllProducts">listAllProducts</a></li><li><a href="global.html#listAllProductsBothLanguages">listAllProductsBothLanguages</a></li><li><a href="global.html#listAllReservations">listAllReservations</a></li><li><a href="global.html#listReservationsByUserId">listReservationsByUserId</a></li><li><a href="global.html#modifyOrder">modifyOrder</a></li><li><a href="global.html#modifyProduct">modifyProduct</a></li><li><a href="global.html#notFoundHandler">notFoundHandler</a></li><li><a href="global.html#postOrder">postOrder</a></li><li><a href="global.html#postProduct">postProduct</a></li><li><a href="global.html#postReservation">postReservation</a></li><li><a href="global.html#postUser">postUser</a></li><li><a href="global.html#postUserAdmin">postUserAdmin</a></li><li><a href="global.html#putOrder">putOrder</a></li><li><a href="global.html#putProduct">putProduct</a></li><li><a href="global.html#putUser">putUser</a></li><li><a href="global.html#removeProduct">removeProduct</a></li><li><a href="global.html#sendContact">sendContact</a></li><li><a href="global.html#updateOrderSessionId">updateOrderSessionId</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#uploadFields">uploadFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 18:59:13 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
