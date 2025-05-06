@@ -4,7 +4,6 @@ import {
   getReservations,
   getReservationsByUserId,
   deleteReservationById,
-  deleteReservationByUserId,
 } from "../controllers/reservation-controller.js";
 import { authUser } from "../controllers/auth-controller.js";
 
