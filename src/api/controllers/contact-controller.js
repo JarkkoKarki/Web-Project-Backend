@@ -37,4 +37,19 @@ const getContacts = async (req, res) => {
   }
 };
 
-export { sendContact, getContacts };
+const deleteContact = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const isDeleted = await deleteContactMessage(id);
+    if (!isDeleted) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+    res.status(200).json({ message: "Message deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting message:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+export { sendContact, getContacts, deleteContact };
