@@ -46,7 +46,7 @@ const listAllProductsBothLanguages = async () => {
     if (row.c_id && !existingProduct.categories.some(c => c.id === row.c_id)) {
       existingProduct.categories.push({
         id: row.c_id,
-        name: row.d_category
+        name: row.c_category
       });
     }
 
