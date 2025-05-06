@@ -22,7 +22,7 @@
 
 ---
 
-## 📌 Overview
+## <h2 id="overview">📌 Overview</h2>
 
 This is a Node.js/Express backend for a web application providing a RESTful API for:
 
@@ -38,7 +38,7 @@ Supports multi-language <br>
 
 ---
 
-## ✨ Features
+## <h2 id="features">✨ Features</h2>
 
 - 👤 User registration, login, profile & JWT-based auth
 - 🛡️ Admin/user roles with access control
@@ -55,7 +55,8 @@ Supports multi-language <br>
 
 ---
 
-## 🛠️ Tech Stack
+
+## <h2 id="tech-stack">🛠️ Tech Stack</h2>
 
 - 🟩 Node.js  
 - ⚡ Express.js  
@@ -71,7 +72,7 @@ Supports multi-language <br>
 
 ---
 
-## 🚀 Getting Started
+## <h2 id="getting-started">🚀 Getting Started</h2>
 
 ### 1. 🧬 Clone the Repository
 
@@ -115,7 +116,7 @@ npm run dev
 
 ---
 
-## 📜 Scripts
+## <h2 id="scripts">📜 Scripts</h2>
 
 ```sh
 npm start
@@ -144,14 +145,14 @@ npm run deploy-docs
 
 ---
 
-## 📘 API Documentation
+## <h2 id="api-documentation">📘 API Documentation</h2>
 
 - Local API Docs: `http://localhost:3000/apidoc`
 - Main API Routes: `http://localhost:3000/`
 
 ---
 
-## 📁 Project Structure
+## <h2 id="project-structure">📁 Project Structure</h2>
 
 ```
 📦 Web-Project-Backend/
@@ -177,7 +178,7 @@ npm run deploy-docs
 
 ---
 
-## 🌐 Main Endpoints
+## <h2 id="main-endpoints">🌐 Main Endpoints</h2>
 
 ### 👤 Users
 - `GET /api/users`
@@ -221,7 +222,7 @@ npm run deploy-docs
 
 ---
 
-## 🧪 Testing the API
+## <h2 id="testing-the-api">🧪 Testing the API</h2>
 
 Use:
 - 📄 `.rest` files in `src/rest/` (with [REST Client for VSCode](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))
@@ -246,7 +247,7 @@ STRIPE_PUBLIC_KEY=your_stripe_public_key
 
 ---
 
-## 🗄️ Database
+## <h2 id="database">🗄️ Database</h2>
 
 📊 Database schema designed for all core modules (users, orders, reservations, etc.)
 
