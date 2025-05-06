@@ -4,7 +4,11 @@ import promisePool from "../../utils/database.js";
 const listAllProductsBothLanguages = async () => {
   const [rows] = await promisePool.query(`
 
-        SELECT p.*, d.diet, c.category
+        SELECT p.*,
+               d.id AS d_id,
+               d.name AS d_name,
+               c.id AS c_id,
+               c.category AS c_name
         FROM products p
                  LEFT JOIN product_categories pc ON p.id = pc.product_id
                  LEFT JOIN categories c ON pc.category_id = c.id
@@ -39,13 +43,19 @@ const listAllProductsBothLanguages = async () => {
     }
 
     // Add category to the product if it doesn't already exist
-    if (row.category && !existingProduct.categories.includes(row.category)) {
-      existingProduct.categories.push(row.category);
+    if (row.c_id && !existingProduct.categories.some(c => c.id === row.c_id)) {
+      existingProduct.categories.push({
+        id: row.c_id,
+        name: row.c_name
+      });
     }
 
     // Add diet to the product if it doesn't already exist
-    if (row.diet && !existingProduct.diets.includes(row.diet)) {
-      existingProduct.diets.push(row.diet);
+    if (row.d_id && !existingProduct.diets.some(d => d.id === row.d_id)) {
+      existingProduct.diets.push({
+        id: row.d_id,
+        name: row.d_name
+      });
     }
   });
   return products;
