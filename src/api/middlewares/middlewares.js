@@ -83,8 +83,8 @@ export const createMenuThumbnail = async (req, res, next) => {
     }
 
     const thumbnailPath = `${req.file.path}_thumb.${extension}`;
-    //300px x 300px
-    await sharp(req.file.path).resize(300, 300).toFile(thumbnailPath);
+    //400px x 400px
+    await sharp(req.file.path).resize(400, 400).toFile(thumbnailPath);
 
     console.log("Menu thumbnail created at:", thumbnailPath);
 
