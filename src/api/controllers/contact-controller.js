@@ -1,6 +1,7 @@
 import {
   addContactMessage,
   getAllContactMessages,
+  deleteContactMessage,
 } from "../models/contact-model.js";
 
 const sendContact = async (req, res) => {
