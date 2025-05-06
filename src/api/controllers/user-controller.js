@@ -134,14 +134,15 @@ const putUser = async (req, res) => {
       role: role || currentUser.role,
     };
 
+    // Only modify the password if a new one is provided
     if (password) {
       console.log(password, "Plain text password before hashing");
       const hashedPassword = bcrypt.hashSync(password, 10);
       console.log(hashedPassword, "Hashed password before saving to database");
       updateData.password = hashedPassword;
-    } else {
-      updateData.password = currentUser.password;
     }
+    // Don't include password in updateData if it's not being changed
+    // This way, the database will keep the existing password hash
 
     console.log(updateData, " PUTUSER UPDATEDATA");
 
