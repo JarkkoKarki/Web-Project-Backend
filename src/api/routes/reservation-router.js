@@ -4,6 +4,7 @@ import {
   getReservations,
   getReservationsByUserId,
   deleteReservationById,
+  deleteReservationByUserId,
 } from "../controllers/reservation-controller.js";
 import { authUser } from "../controllers/auth-controller.js";
 
@@ -15,6 +16,6 @@ reservationRouter.route("/").get(getReservations);
 
 reservationRouter.route("/:id").get(getReservationsByUserId);
 
-reservationRouter.delete("/:id", authUser, deleteReservationById);
+reservationRouter.delete("/:id", authUser, deleteReservationByUserId);
 
 export default reservationRouter;
