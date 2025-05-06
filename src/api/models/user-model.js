@@ -197,7 +197,7 @@ const modifyUser = async (updateData, userId) => {
   try {
     console.log("MODIFY USER KUTSUTTU");
     console.log(updateData);
-    delete updateData.role;
+    // delete updateData.role;
 
     const fields = Object.keys(updateData)
       .map((key) => `${key} = ?`)
