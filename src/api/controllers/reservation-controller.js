@@ -3,6 +3,7 @@ import {
   addReservation,
   checkFreeTables,
   listReservationsByUserId,
+  deleteReservation,
 } from "../models/reservation-model.js";
 
 const getReservations = async (req, res) => {
@@ -81,4 +82,68 @@ const getReservationsByUserId = async (req, res) => {
   }
 };
 
-export { postReservation, getReservations, getReservationsByUserId };
+const deleteReservationById = async (req, res) => {
+  try {
+    const reservationId = req.params.id;
+
+    if (!reservationId) {
+      return res.status(400).json({ error: "Reservation ID is required" });
+    }
+
+    const isDeleted = await deleteReservation(reservationId);
+
+    if (!isDeleted) {
+      return res
+        .status(404)
+        .json({ message: "Reservation not found or already deleted" });
+    }
+
+    res.status(200).json({ message: "Reservation deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteReservationById:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const deleteReservationByUserId = async (req, res) => {
+  try {
+    const reservationId = req.params.id;
+    const userId = req.user.id;
+
+    if (!reservationId) {
+      return res.status(400).json({ error: "Reservation ID is required" });
+    }
+
+    const reservations = await listReservationsByUserId(userId);
+    const reservation = reservations.find(
+      (r) => r.id === parseInt(reservationId)
+    );
+
+    if (!reservation) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to delete this reservation" });
+    }
+
+    const isDeleted = await deleteReservation(reservationId);
+
+    if (!isDeleted) {
+      return res
+        .status(404)
+        .json({ message: "Reservation not found or already deleted" });
+    }
+
+    res.status(200).json({ message: "Reservation deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteReservationById:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export {
+  postReservation,
+  getReservations,
+  getReservationsByUserId,
+  deleteReservationById,
+  deleteReservationByUserId,
+};

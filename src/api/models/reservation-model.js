@@ -93,9 +93,25 @@ const listReservationsByUserId = async (userId) => {
   }
 };
 
+const deleteReservation = async (reservationId) => {
+  const query = `
+    DELETE FROM reservations
+    WHERE id = ?
+  `;
+
+  try {
+    const [result] = await promisePool.execute(query, [reservationId]);
+    return result.affectedRows > 0; // Return true if a row was deleted, otherwise false
+  } catch (error) {
+    console.log("Error deleting reservation:", error);
+    throw error;
+  }
+};
+
 export {
   addReservation,
   listAllReservations,
   checkFreeTables,
   listReservationsByUserId,
+  deleteReservation,
 };
