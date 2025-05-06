@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend/badge)](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend)
+<br>
 [API](https://10.120.32.87/app)
 
 ### 1. Clone the Repository
