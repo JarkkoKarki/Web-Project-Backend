@@ -6,9 +6,9 @@ const listAllProductsBothLanguages = async () => {
 
         SELECT p.*,
                d.id AS d_id,
-               d.name AS d_name,
+               d.category AS d_category,
                c.id AS c_id,
-               c.category AS c_name
+               c.diet AS c_diet
         FROM products p
                  LEFT JOIN product_categories pc ON p.id = pc.product_id
                  LEFT JOIN categories c ON pc.category_id = c.id
@@ -46,7 +46,7 @@ const listAllProductsBothLanguages = async () => {
     if (row.c_id && !existingProduct.categories.some(c => c.id === row.c_id)) {
       existingProduct.categories.push({
         id: row.c_id,
-        name: row.c_name
+        name: row.d_category
       });
     }
 
@@ -54,10 +54,11 @@ const listAllProductsBothLanguages = async () => {
     if (row.d_id && !existingProduct.diets.some(d => d.id === row.d_id)) {
       existingProduct.diets.push({
         id: row.d_id,
-        name: row.d_name
+        name: row.d_diet
       });
     }
   });
+  console.log(products)
   return products;
 };
 
