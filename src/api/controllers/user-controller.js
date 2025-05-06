@@ -101,8 +101,16 @@ const postUser = async (req, res) => {
 
 const putUser = async (req, res) => {
   try {
-    const { username, email, password, address, first_name, last_name, phone } =
-      req.body;
+    const {
+      username,
+      email,
+      password,
+      address,
+      first_name,
+      last_name,
+      phone,
+      role,
+    } = req.body;
     const userId = req.params.id;
 
     console.log("putUSER KUTSUTTU");
@@ -123,6 +131,7 @@ const putUser = async (req, res) => {
       first_name: first_name || currentUser.first_name,
       last_name: last_name || currentUser.last_name,
       phone: phone || currentUser.phone,
+      role: role || currentUser.role,
     };
 
     if (password) {
