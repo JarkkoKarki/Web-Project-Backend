@@ -16,7 +16,6 @@
 - [📁 Project Structure](#project-structure)
 - [🌐 Main Endpoints](#main-endpoints)
 - [🧪 Testing the API](#testing-the-api)
-- [🪪 License](#license)
 - [🗄️ Database](#database)
 
 
