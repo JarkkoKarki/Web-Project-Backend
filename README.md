@@ -17,7 +17,7 @@
 - [🌐 Main Endpoints](#main-endpoints)
 - [🧪 Testing the API](#testing-the-api)
 - [🗄️ Database](#database)
-
+- [🌐 Frontend Repository](#frontend-repository)
 
 ---
 
@@ -54,19 +54,18 @@ Supports multi-language <br>
 
 ---
 
-
 ## <h2 id="tech-stack">🛠️ Tech Stack</h2>
 
-- 🟩 Node.js  
-- ⚡ Express.js  
-- 🐬 MySQL (mysql2)  
-- 🔐 JWT (jsonwebtoken)  
-- 💳 Stripe API  
-- 📤 Multer (file uploads)  
-- 🖼️ Sharp (image processing)  
-- 🌱 dotenv  
-- 📝 apidoc & jsdoc  
-- 🧭 Digitransit API  
+- 🟩 Node.js
+- ⚡ Express.js
+- 🐬 MySQL (mysql2)
+- 🔐 JWT (jsonwebtoken)
+- 💳 Stripe API
+- 📤 Multer (file uploads)
+- 🖼️ Sharp (image processing)
+- 🌱 dotenv
+- 📝 apidoc & jsdoc
+- 🧭 Digitransit API
 - 🌐 CORS
 
 ---
@@ -120,26 +119,31 @@ npm run dev
 ```sh
 npm start
 ```
+
 — 🔁 Start the server
 
 ```sh
 npm run dev
 ```
+
 — 🔄 Start with nodemon (auto-reload)
 
 ```sh
 npm run docs
 ```
+
 — 📘 Generate JSDoc
 
 ```sh
 npm run generate-docs
 ```
+
 — 📗 Generate API docs with apidoc
 
 ```sh
 npm run deploy-docs
 ```
+
 — 🚀 Deploy docs to GitHub Pages
 
 ---
@@ -180,42 +184,50 @@ npm run deploy-docs
 ## <h2 id="main-endpoints">🌐 Main Endpoints</h2>
 
 ### 👤 Users
+
 - `GET /api/users`
 - `POST /api/users`
 - `PUT /api/users/:id`
 - `DELETE /api/users/:id`
 
 ### 🔐 Auth
+
 - `POST /api/auth/login`
 - `POST /api/auth/register`
 - `GET /api/auth/me`
 - `GET /api/auth/logout`
 
 ### 🍽️ Menu
+
 - `GET /api/menu`
 - `POST /api/menu`
 - `PUT /api/menu/:id`
 - `DELETE /api/menu/:id`
 
 ### 🛒 Orders
+
 - `GET /api/orders/:lang`
 - `POST /api/orders`
 - `PUT /api/orders/:id`
 
 ### 📅 Reservations
+
 - `GET /api/reservations`
 - `POST /api/reservations/reserve`
 - `DELETE /api/reservations/:reservationId`
 
 ### 💳 Payments
+
 - `POST /api/payment/create-checkout-session`
 
 ### ✉️ Contact
+
 - `POST /api/contact`
 - `GET /api/contact`
 - `DELETE /api/contact/:id`
 
 ### 🧭 Route
+
 - `GET /api/route/:olat/:olng/:lat/:lng`
 - `GET /api/route/legs/:olat/:olng/:lat/:lng`
 
@@ -224,14 +236,15 @@ npm run deploy-docs
 ## <h2 id="testing-the-api">🧪 Testing the API</h2>
 
 Use:
+
 - 📄 `.rest` files in `src/rest/` (with [REST Client for VSCode](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))
 - 🧪 Postman / Insomnia / cURL
 
 Sample HTML request/response examples in: `public/html/document.html`
 
 ---
-<h2 id="environment-variables">🔐 Environment Variables</h2>
 
+<h2 id="environment-variables">🔐 Environment Variables</h2>
 
 ```env
 DB_HOST=your_db_host
@@ -484,6 +497,15 @@ COMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 ```
+
 </details>
+
+---
+
+## <h2 id="frontend-repository">🌐 Frontend Repository</h2>
+
+The frontend for this project is available at:
+
+[Web-Project-Frontend](https://github.com/JarkkoKarki/Web-Project-Frontend)
 
 ---
