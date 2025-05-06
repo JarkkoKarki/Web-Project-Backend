@@ -83,6 +83,7 @@ npm install
 
 ### 4. Edit .env and set:
 
+```
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
@@ -92,7 +93,7 @@ JWT_SECRET=your_jwt_secret
 DIGITRANSIT_SUBSCRIPTION_KEY=your_digitransit_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_PUBLIC_KEY=your_stripe_public_key
-
+```
 ### 5. Start the Development Server
 
 ```sh
@@ -148,7 +149,7 @@ http://localhost:3000/
 ---
 
 ### Project Structure
-
+```
 Web-Project-Backend/
 ├── apidoc/ # Generated API documentation (do not edit manually)
 ├── public/ # Static files, images, apidoc, HTML docs
@@ -168,7 +169,7 @@ Web-Project-Backend/
 ├── .env.sample # Sample env file
 ├── package.json
 ├── README.md
-
+```
 ---
 
 ### Main Endpoints
