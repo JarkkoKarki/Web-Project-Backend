@@ -59,6 +59,43 @@ export const createThumbnail = async (req, res, next) => {
   }
 };
 
+export const createMenuThumbnail = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      console.log("No file uploaded, skipping thumbnail creation.");
+      return next();
+    }
+
+    if (
+      req.file.mimetype !== "image/jpeg" &&
+      req.file.mimetype !== "image/png"
+    ) {
+      const error = new Error("Unsupported file format");
+      error.status = 400;
+      return next(error);
+    }
+
+    console.log("Uploaded file details:", req.file);
+
+    let extension = "jpg";
+    if (req.file.mimetype === "image/png") {
+      extension = "png";
+    }
+
+    const thumbnailPath = `${req.file.path}_thumb.${extension}`;
+    //400px x 400px
+    await sharp(req.file.path).resize(400, 400).toFile(thumbnailPath);
+
+    console.log("Menu thumbnail created at:", thumbnailPath);
+
+    req.file.thumbnailPath = thumbnailPath;
+    next();
+  } catch (error) {
+    console.error("Error in createMenuThumbnail:", error);
+    next(error);
+  }
+};
+
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
