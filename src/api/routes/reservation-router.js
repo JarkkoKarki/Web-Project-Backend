@@ -13,7 +13,7 @@ reservationRouter.route("/").get(getReservations);
 
 -reservationRouter.route("/reserve").post(postReservation);
 
-reservationRouter.route("/user/:userId").get(getReservationsByUserId);
+reservationRouter.route("/:id").get(getReservationsByUserId);
 
 reservationRouter.route("/:id").delete(authUser, deleteReservationById);
 
