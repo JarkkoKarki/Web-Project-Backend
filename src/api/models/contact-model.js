@@ -37,7 +37,7 @@ const getAllContactMessages = async () => {
 const deleteContactMessage = async (id) => {
   try {
     const [result] = await promisePool.execute(
-      "DELETE FROM contacts WHERE contact_id = ?",
+      "DELETE FROM contacts WHERE id = ?",
       [id]
     );
 
