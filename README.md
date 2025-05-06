@@ -230,7 +230,6 @@ Use:
 Sample HTML request/response examples in: `public/html/document.html`
 
 ---
-
 ## 🔐 Environment Variables
 
 ```env
