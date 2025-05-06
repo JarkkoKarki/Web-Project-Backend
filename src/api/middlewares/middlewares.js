@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import sharp from "sharp";
 import multer from "multer";
+import fs from "fs";
 dotenv.config();
 
 export const upload = multer({
@@ -51,7 +52,18 @@ export const createThumbnail = async (req, res, next) => {
 
     console.log("Thumbnail created at:", thumbnailPath);
 
+    // poistetaan vanha kuva
+    fs.unlink(req.file.path, (err) => {
+      if (err) {
+        console.error("Error deleting original file:", err);
+      } else {
+        console.log("Original file deleted:", req.file.path);
+      }
+    });
+
     req.file.thumbnailPath = thumbnailPath;
+    // päivitetään tiedostosijainti
+    req.file.path = thumbnailPath;
     next();
   } catch (error) {
     console.error("Error in createThumbnail:", error);
@@ -83,12 +95,23 @@ export const createMenuThumbnail = async (req, res, next) => {
     }
 
     const thumbnailPath = `${req.file.path}_thumb.${extension}`;
-    //400px x 400px
+
     await sharp(req.file.path).resize(400, 400).toFile(thumbnailPath);
 
     console.log("Menu thumbnail created at:", thumbnailPath);
 
+    // poistetaan vanha kuva
+    fs.unlink(req.file.path, (err) => {
+      if (err) {
+        console.error("Error deleting original file:", err);
+      } else {
+        console.log("Original file deleted:", req.file.path);
+      }
+    });
+
     req.file.thumbnailPath = thumbnailPath;
+    // päivitetään tiedostosijainti
+    req.file.path = thumbnailPath;
     next();
   } catch (error) {
     console.error("Error in createMenuThumbnail:", error);
