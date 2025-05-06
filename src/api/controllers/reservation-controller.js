@@ -109,15 +109,19 @@ const deleteReservationByUserId = async (req, res) => {
   try {
     const reservationId = req.params.id;
     const userId = req.user.id;
+    console.log("reservationId:", reservationId);
+    console.log("userId:", userId);
 
     if (!reservationId) {
       return res.status(400).json({ error: "Reservation ID is required" });
     }
 
     const reservations = await listReservationsByUserId(userId);
+    console.log("reservations:", reservations);
     const reservation = reservations.find(
       (r) => r.id === parseInt(reservationId)
     );
+    console.log("Reservation to delete:", reservation);
 
     if (!reservation) {
       return res
