@@ -1,90 +1,98 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend/badge)](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend)
-<br>
-[![API](https://img.shields.io/badge/View-API-blue)](https://10.120.32.87/app)
-<br>
+[![CodeFactor](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend/badge)](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend)  
+[![API](https://img.shields.io/badge/View-API-blue)](https://10.120.32.87/app)  
 [![API](https://img.shields.io/badge/View-DOC-blue)](https://jarkkokarki.github.io/Web-Project-Backend/)
 
-# Web-Project-Backend
+# 🖥️ Web-Project-Backend
 
-## Table of Contents
+## 📑 Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Scripts](#scripts)
-- [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Main Endpoints](#main-endpoints)
-- [Testing the API](#testing-the-api)
-- [License](#license)
-- [Database](#database)
-
----
-
-## Overview
-
-This is a Node.js/Express backend for a web application providing a RESTful API for user management, authentication, menu management, orders, reservations, Stripe payments, contact messages, and route calculations (Digitransit API). It supports multi-language menu items, JWT authentication, and secure payment processing.
+- [📌 Overview](#overview)
+- [✨ Features](#features)
+- [🛠️ Tech Stack](#tech-stack)
+- [🚀 Getting Started](#getting-started)
+- [🔐 Environment Variables](#environment-variables)
+- [📜 Scripts](#scripts)
+- [📘 API Documentation](#api-documentation)
+- [📁 Project Structure](#project-structure)
+- [🌐 Main Endpoints](#main-endpoints)
+- [🧪 Testing the API](#testing-the-api)
+- [🪪 License](#license)
+- [🗄️ Database](#database)
 
 ---
 
-## Features
+## 📌 Overview
 
-- User registration, login, profile management, and authentication (JWT)
-- Admin and user roles with access control
-- Menu management (CRUD, categories, diets, images)
-- Order management (create, update, view, user-specific and admin/employee)
-- Reservation system with table availability checks
-- Stripe payment integration for orders
-- Contact form/message management
-- Route and leg calculation using Digitransit API
-- RESTful API with detailed documentation (apidoc, jsdoc)
-- File upload support (user profile pictures, menu images)
-- Multi-language support for menu items (English, Finnish)
-- Environment-based configuration
+This is a Node.js/Express backend for a web application providing a RESTful API for:
 
----
-
-## Tech Stack
-
-- Node.js
-- Express.js
-- MySQL (mysql2)
-- JWT (jsonwebtoken)
-- Stripe API
-- Multer (file uploads)
-- Sharp (image processing)
-- dotenv
-- apidoc & jsdoc (documentation)
-- Digitransit API (route/leg calculations)
-- CORS
+👤 user management, <br>
+🔐 authentication, <br>
+📋 menu management, <br>
+🛒 orders, <br>
+📅 reservations, <br>
+💳 Stripe payments, <br>
+✉️ contact messages, and 🗺️ route calculations via Digitransit API. <br>
+Supports multi-language <br>
+🈯️ menu items, JWT-based auth, and secure transactions. <br>
 
 ---
 
-## Getting Started
+## ✨ Features
 
-### 1. Clone the Repository
+- 👤 User registration, login, profile & JWT-based auth
+- 🛡️ Admin/user roles with access control
+- 🧾 Menu CRUD (categories, diets, images)
+- 📦 Order management (user & admin views)
+- 📅 Reservation system with availability checks
+- 💳 Stripe payments integration
+- 📬 Contact form/message handling
+- 🚏 Route & leg data from Digitransit API
+- 🧪 API documentation (apidoc, jsdoc)
+- 🖼️ File uploads (profile/menu images)
+- 🌍 Multi-language support (EN 🇬🇧 / FI 🇫🇮)
+- ⚙️ Config via environment variables
+
+---
+
+## 🛠️ Tech Stack
+
+- 🟩 Node.js  
+- ⚡ Express.js  
+- 🐬 MySQL (mysql2)  
+- 🔐 JWT (jsonwebtoken)  
+- 💳 Stripe API  
+- 📤 Multer (file uploads)  
+- 🖼️ Sharp (image processing)  
+- 🌱 dotenv  
+- 📝 apidoc & jsdoc  
+- 🧭 Digitransit API  
+- 🌐 CORS
+
+---
+
+## 🚀 Getting Started
+
+### 1. 🧬 Clone the Repository
 
 ```sh
 git clone https://github.com/JarkkoKarki/Web-Project-Backend.git
 ```
 
-### 2. Navigate to the Project Directory
+### 2. 📂 Navigate to the Project Directory
 
 ```sh
 cd Web-Project-Backend
 ```
 
-### 3. Install Dependencies
+### 3. 📦 Install Dependencies
 
 ```sh
 npm install
 ```
 
-### 4. Edit .env and set:
+### 4. ✏️ Configure Environment
 
-```
+```env
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
@@ -96,156 +104,135 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_PUBLIC_KEY=your_stripe_public_key
 ```
 
-### 5. Start the Development Server
+### 5. ▶️ Start the Development Server
 
 ```sh
 npm run dev
 ```
 
-The server will run at http://127.0.0.1:3000.
+📍 The server will run at: http://127.0.0.1:3000
 
 ---
 
-### Scripts
+## 📜 Scripts
 
 ```sh
 npm start
 ```
-
-— Start the server
+— 🔁 Start the server
 
 ```sh
 npm run dev
 ```
-
-— Start the server with nodemon (auto-restart on changes)
+— 🔄 Start with nodemon (auto-reload)
 
 ```sh
 npm run docs
 ```
-
-— Generate JSDoc documentation
+— 📘 Generate JSDoc
 
 ```sh
 npm run generate-docs
 ```
-
-— Generate API documentation with apidoc (if configured)
+— 📗 Generate API docs with apidoc
 
 ```sh
 npm run deploy-docs
 ```
-
-— Build and deploy documentation to GitHub Pages
-
----
-
-### API Documentation
-
-API Docs:
-http://localhost:3000/apidoc (after running npx apidoc -i src/ -o public/apidoc/)
-
-HTML API endpoints:
-http://localhost:3000/
+— 🚀 Deploy docs to GitHub Pages
 
 ---
 
-### Project Structure
+## 📘 API Documentation
+
+- Local API Docs: `http://localhost:3000/apidoc`
+- Main API Routes: `http://localhost:3000/`
+
+---
+
+## 📁 Project Structure
 
 ```
-Web-Project-Backend/
-├── apidoc/ # Generated API documentation (do not edit manually)
-├── public/ # Static files, images, apidoc, HTML docs
-├── src/
-│ ├── app.js # Express app setup
-│ ├── index.js # Server entry point
-│ ├── api/
-│ │ ├── controllers/ # Route controllers (business logic)
-│ │ ├── models/ # Database models
-│ │ ├── routes/ # Express routers for each resource
-│ │ ├── middlewares/ # Custom middleware (auth, file upload, etc.)
-│ │ └── index.js # API router
-│ ├── rest/ # REST client test files (for VSCode REST Client)
-│ └── utils/ # Utility modules (database, helpers)
-├── uploads/ # Uploaded images (user/menu)
-├── .env # Environment variables (not committed)
-├── .env.sample # Sample env file
+📦 Web-Project-Backend/
+├── 📂 apidoc/
+├── 📂 public/
+├── 📂 src/
+│   ├── app.js
+│   ├── index.js
+│   ├── 📂 api/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── middlewares/
+│   │   └── index.js
+│   ├── 📂 rest/
+│   └── 📂 utils/
+├── 📂 uploads/
+├── .env
+├── .env.sample
 ├── package.json
 ├── README.md
 ```
 
 ---
 
-### Main Endpoints
+## 🌐 Main Endpoints
 
-#### Users
+### 👤 Users
+- `GET /api/users`
+- `POST /api/users`
+- `PUT /api/users/:id`
+- `DELETE /api/users/:id`
 
-- `GET /api/users` — List all users
-- `GET /api/users/:id` — Get user by ID
-- `POST /api/users` — Create user (JSON or multipart/form-data for profile picture)
-- `PUT /api/users/:id` — Update user (auth required)
-- `DELETE /api/users/:id` — Delete user (auth required)
+### 🔐 Auth
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `GET /api/auth/me`
+- `GET /api/auth/logout`
 
-#### Auth
+### 🍽️ Menu
+- `GET /api/menu`
+- `POST /api/menu`
+- `PUT /api/menu/:id`
+- `DELETE /api/menu/:id`
 
-- `POST /api/auth/login` — Login, returns JWT
-- `GET /api/auth/me` — Get current user info (auth required)
-- `POST /api/auth/register` — Register admin (admin only)
-- `GET /api/auth/logout` — Logout
+### 🛒 Orders
+- `GET /api/orders/:lang`
+- `POST /api/orders`
+- `PUT /api/orders/:id`
 
-#### Menu
+### 📅 Reservations
+- `GET /api/reservations`
+- `POST /api/reservations/reserve`
+- `DELETE /api/reservations/:reservationId`
 
-- `GET /api/menu` — Get all menu items (both languages)
-- `GET /api/menu/products/:lang` — Get menu items by language
-- `GET /api/menu/products/:id` — Get menu item by ID
-- `POST /api/menu` — Add menu item (admin only, file upload)
-- `PUT /api/menu/:id` — Update menu item (admin only)
-- `DELETE /api/menu/:id` — Delete menu item (admin only)
+### 💳 Payments
+- `POST /api/payment/create-checkout-session`
 
-#### Orders
+### ✉️ Contact
+- `POST /api/contact`
+- `GET /api/contact`
+- `DELETE /api/contact/:id`
 
-- `GET /api/orders/:lang` — List all orders (admin/employee)
-- `GET /api/orders/myorders/:lang` — List my orders (auth required)
-- `POST /api/orders` — Create order (auth required)
-- `PUT /api/orders/:id` — Update order (admin/employee)
-
-#### Reservations
-
-- `GET /api/reservations` — List all reservations
-- `POST /api/reservations/reserve` — Create reservation
-- `GET /api/reservations/:id` — Get reservations by user ID
-- `DELETE /api/reservations/:reservationId` — Delete reservation (auth required)
-
-#### Payments
-
-- `POST /api/payment/create-checkout-session` — Create Stripe checkout session
-
-#### Contact
-
-- `POST /api/contact` — Send contact message
-- `GET /api/contact` — List all contact messages
-- `DELETE /api/contact/:id` — Delete contact message
-
-#### Route
-
-- `GET /api/route/:olat/:olng/:lat/:lng` — Get route data (Digitransit)
-- `GET /api/route/legs/:olat/:olng/:lat/:lng` — Get route legs data
+### 🧭 Route
+- `GET /api/route/:olat/:olng/:lat/:lng`
+- `GET /api/route/legs/:olat/:olng/:lat/:lng`
 
 ---
 
-### Testing the API
+## 🧪 Testing the API
 
-- Use the provided `.rest` files in `src/rest/` with the [VSCode REST Client extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
-- Or use Postman, Insomnia, or cURL.
-- Example requests and responses are available in `public/html/document.html`.
+Use:
+- 📄 `.rest` files in `src/rest/` (with [REST Client for VSCode](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))
+- 🧪 Postman / Insomnia / cURL
+
+Sample HTML request/response examples in: `public/html/document.html`
 
 ---
 
-### Environment Variables
+## 🔐 Environment Variables
 
-Copy `.env.sample` to `.env` and fill in your credentials:
-
-```
+```env
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
@@ -258,11 +245,14 @@ STRIPE_PUBLIC_KEY=your_stripe_public_key
 
 ---
 
-### Database
+## 🗄️ Database
 
-The database schema for this project is designed to handle users, orders, reservations, menu items, and more. Below is the SQL code to create the necessary tables and relationships. You can copy and execute this SQL code in your MySQL database to set up the schema.
+📊 Database schema designed for all core modules (users, orders, reservations, etc.)
 
 ![Database Schema](images/database.png)
+
+<details>
+  <summary>Click to expand full SQL schema 📄</summary>
 
 ```sql
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -493,3 +483,6 @@ COMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 ```
+</details>
+
+---
