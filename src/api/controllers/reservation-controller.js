@@ -60,7 +60,7 @@ const postReservation = async (req, res) => {
 
 const getReservationsByUserId = async (req, res) => {
   try {
-    const userId = req.params.uderId || req.user.id;
+    const userId = req.params.userId || req.user.id;
 
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
