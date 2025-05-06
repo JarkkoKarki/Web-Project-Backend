@@ -134,15 +134,16 @@ const putUser = async (req, res) => {
       role: role || currentUser.role,
     };
 
-    // Only modify the password if a new one is provided
-    if (password) {
-      console.log(password, "Plain text password before hashing");
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      console.log(hashedPassword, "Hashed password before saving to database");
-      updateData.password = hashedPassword;
+    // Only modify the password if a new one is provided in the request
+    if (password && password.trim() !== "") {
+      // Only hash passwords that aren't already hashed (won't start with $2b$)
+      if (!password.startsWith("$2b$")) {
+        console.log("Hashing new plain text password");
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updateData.password = hashedPassword;
+      }
     }
-    // Don't include password in updateData if it's not being changed
-    // This way, the database will keep the existing password hash
+    // Important: Do NOT include password in updateData if it's not being changed
 
     console.log(updateData, " PUTUSER UPDATEDATA");
 
