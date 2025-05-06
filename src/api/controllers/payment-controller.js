@@ -90,8 +90,8 @@ export const createCheckoutSession = async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `https://jarkkokarki.github.io/Web-Project-Frontend/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://jarkkokarki.github.io/Web-Project-Frontend/payment/cancel`,
+      success_url: `http://10.120.32.87/payment/success/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://10.120.32.87/payment/cancel`,
     });
 
     const order = {
