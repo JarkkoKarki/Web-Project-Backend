@@ -23,6 +23,6 @@ router.use("/orders", orderRouter);
 
 router.use("/reservations", reservationRouter);
 
-app.use("/contact", contactRoutes);
+router.use("/contact", contactRoutes);
 
 export default router;
