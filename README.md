@@ -1,8 +1,8 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend/badge)](https://www.codefactor.io/repository/github/jarkkokarki/web-project-backend)
 <br>
-[API](https://10.120.32.87/app)
+[![API](https://img.shields.io/badge/View-API-blue)](https://10.120.32.87/app)
 <br>
-[DOC](https://jarkkokarki.github.io/Web-Project-Backend/)
+[![API](https://img.shields.io/badge/View-DOC-blue)](https://jarkkokarki.github.io/Web-Project-Backend/)
 
 # Web-Project-Backend
 
