@@ -3,7 +3,7 @@ import {
   postReservation,
   getReservations,
   getReservationsByUserId,
-  deleteReservationByUserId,
+  deleteReservationById,
 } from "../controllers/reservation-controller.js";
 import { authUser } from "../controllers/auth-controller.js";
 
@@ -16,6 +16,6 @@ reservationRouter.route("/").get(getReservations);
 reservationRouter
   .route("/:id")
   .get(getReservationsByUserId)
-  .delete(authUser, deleteReservationByUserId);
+  .delete(authUser, deleteReservationById);
 
 export default reservationRouter;
