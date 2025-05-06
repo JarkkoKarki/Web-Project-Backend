@@ -34,23 +34,19 @@ const getAllContactMessages = async () => {
   }
 };
 
-const deleteContactMessage = async (req, res) => {
-  const { id } = req.params;
-
+const deleteContactMessage = async (id) => {
   try {
     const [result] = await promisePool.execute(
-      "DELETE FROM contact WHERE contact_id = ?",
+      "DELETE FROM contacts WHERE contact_id = ?",
       [id]
     );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Message not found" });
-    }
+    console.log("Delete result:", result);
 
-    res.status(200).json({ message: "Message deleted successfully" });
+    return result.affectedRows > 0;
   } catch (err) {
     console.error("Error deleting message:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    throw err;
   }
 };
 
