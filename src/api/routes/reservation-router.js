@@ -15,6 +15,8 @@ reservationRouter.route("/").get(getReservations);
 
 reservationRouter.route("/:id").get(getReservationsByUserId);
 
-reservationRouter.route("/:id").delete(authUser, deleteReservationById);
+reservationRouter
+  .route("/:reservationId")
+  .delete(authUser, deleteReservationById);
 
 export default reservationRouter;
