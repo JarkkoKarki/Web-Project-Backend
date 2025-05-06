@@ -5,10 +5,11 @@ const listAllProductsBothLanguages = async () => {
   const [rows] = await promisePool.query(`
 
         SELECT p.*,
+               p.*,
                d.id AS d_id,
-               d.category AS d_category,
+               d.diet AS d_diet,
                c.id AS c_id,
-               c.diet AS c_diet
+               c.category AS c_category
         FROM products p
                  LEFT JOIN product_categories pc ON p.id = pc.product_id
                  LEFT JOIN categories c ON pc.category_id = c.id
