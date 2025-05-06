@@ -230,7 +230,8 @@ Use:
 Sample HTML request/response examples in: `public/html/document.html`
 
 ---
-## 🔐 Environment Variables
+<h2 id="environment-variables">🔐 Environment Variables</h2>
+
 
 ```env
 DB_HOST=your_db_host
