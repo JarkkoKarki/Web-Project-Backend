@@ -13,9 +13,8 @@ reservationRouter.route("/").get(getReservations);
 
 -reservationRouter.route("/reserve").post(postReservation);
 
-reservationRouter
-  .route("/:id")
-  .get(getReservationsByUserId)
-  .delete(authUser, deleteReservationById);
+reservationRouter.route("/:id").get(getReservationsByUserId);
+
+reservationRouter.delete("/:id", authUser, deleteReservationById);
 
 export default reservationRouter;
