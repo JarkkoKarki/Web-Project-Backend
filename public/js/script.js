@@ -69,13 +69,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     const jsonResponse = await result.json();
     let htmlData = null;
 
-    if (data.endpoint.includes("http://10.120.32.87/app/api/menu")) {
+    if (data.endpoint.includes("https://10.120.32.87/app/api/menu")) {
       htmlData = htmlContentMenu({
         method: data.type === "put" ? "PUT" : method,
         endpoint,
         data,
       });
-    } else if (data.endpoint.includes("http://10.120.32.87/app/api/users")) {
+    } else if (data.endpoint.includes("https://10.120.32.87/app/api/users")) {
       htmlData = htmlContentUser({
         method: data.type === "put" ? "PUT" : method,
         endpoint,
@@ -98,10 +98,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   } else {
     let htmlData = null;
-    if (data.endpoint.includes("http://10.120.32.87/app/api/menu")) {
+    if (data.endpoint.includes("https://10.120.32.87/app/api/menu")) {
       htmlData = htmlContentMenu({ method, endpoint, data });
       testerDiv.innerHTML = htmlData;
-    } else if (data.endpoint.includes("http://10.120.32.87/app/api/users")) {
+    } else if (data.endpoint.includes("https://10.120.32.87/app/api/users")) {
       htmlData = htmlContentUser({ method, endpoint, data });
       testerDiv.innerHTML = htmlData;
     } else {
