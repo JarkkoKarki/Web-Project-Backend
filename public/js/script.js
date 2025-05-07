@@ -118,7 +118,12 @@ window.addEventListener("DOMContentLoaded", async () => {
       let finalEndpoint = endpoint;
       if (["id", "put", "delete"].includes(data.type)) {
         const selectedId = document.getElementById("ids").value;
-        finalEndpoint = `${endpoint}/${selectedId}`;
+        finalEndpoint = `${endpoint.replace(
+          "http://",
+          "https://"
+        )}/${selectedId}`;
+      } else {
+        finalEndpoint = endpoint.replace("http://", "https://");
       }
 
       const res = await fetch(finalEndpoint, {
